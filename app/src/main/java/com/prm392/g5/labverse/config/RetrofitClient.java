@@ -7,16 +7,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     private static Retrofit retrofit = null;
-    //todo base url
-    //todo xem có cách nào tự động gửi token đi không, sai thì xóa ở đt đi và vứt nó về login ngay
     private static final String BASE_URL = "http://10.0.2.2:8080";
     public static Retrofit getInstance() {
         if (retrofit == null) {
-            // Logging interceptor (tùy chọn)
+            // enable logging to Logcat
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY); //change to other level, body just for dev
 
+            //auth interceptor, attach access token to the header
+            AuthInterceptor authInterceptor = new AuthInterceptor();
+
             OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(authInterceptor)
                     .addInterceptor(logging)
                     .build();
 
