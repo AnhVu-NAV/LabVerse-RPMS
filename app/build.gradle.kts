@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -13,7 +15,19 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        // Đọc local.properties **ngay trong defaultConfig**
+        val props = Properties()
+        val localFile = rootProject.file("local.properties")
+        if (localFile.exists()) {
+            props.load(localFile.inputStream())
+        }
+        val webClientId = props.getProperty("WEB_CLIENT_ID", "")
+        buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        buildConfig = true   // <--- bật tính năng BuildConfig
     }
 
     buildTypes {
@@ -36,6 +50,10 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
+    implementation("androidx.credentials:credentials:1.3.0") // Credential Manager
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0") // GIS mới
+    implementation("com.google.android.gms:play-services-auth:21.1.1")
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
