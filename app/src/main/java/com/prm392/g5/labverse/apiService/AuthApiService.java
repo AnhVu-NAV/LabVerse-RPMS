@@ -1,4 +1,4 @@
-package com.prm392.g5.labverse.ApiService;
+package com.prm392.g5.labverse.apiService;
 
 import com.prm392.g5.labverse.dto.auth.LoginRequest;
 import com.prm392.g5.labverse.dto.auth.LoginResponse;
