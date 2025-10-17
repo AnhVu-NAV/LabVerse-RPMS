@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import java.time.LocalDateTime;
-
 @Entity(tableName = "paper")
 public class Paper {
 
@@ -14,7 +12,7 @@ public class Paper {
     private String id;
     private String s3Key;
     private boolean deleteFlag = false;
-    private int lastPage = -1;
+    private int currentPage = -1;
     private int totalPage = -1;
 
     //todo paper vẫn còn thiếu thong tin nhe
@@ -47,12 +45,12 @@ public class Paper {
         this.deleteFlag = deleteFlag;
     }
 
-    public int getLastPage() {
-        return lastPage;
+    public int getCurrentPage() {
+        return currentPage;
     }
 
-    public void setLastPage(int lastPage) {
-        this.lastPage = lastPage;
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
     }
 
     public int getTotalPage() {
