@@ -1,17 +1,19 @@
 package com.prm392.g5.labverse.dto.auth;
 
 public class LoginResponse{
-        String accessToken;
+        private String accessToken;
+        private String userId;
+
+    public LoginResponse(String accessToken, String userId) {
+        this.accessToken = accessToken;
+        this.userId = userId;
+    }
 
     public String getAccessToken() {
         return accessToken;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public LoginResponse(String accessToken) {
-        this.accessToken = accessToken;
+    public String getUserId() {
+        return userId;
     }
 }

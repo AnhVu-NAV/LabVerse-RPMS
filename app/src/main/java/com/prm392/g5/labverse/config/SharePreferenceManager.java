@@ -8,6 +8,7 @@ import com.prm392.g5.labverse.LabVerse;
 public class SharePreferenceManager {
     private static final String PREF_NAME = "labverse_prefs";
     private static final String KEY_ACCESS_TOKEN = "access_token";
+    private static final String KEY_USER_ID = "user_id";
 
     private SharedPreferences prefs;
 
@@ -38,6 +39,18 @@ public class SharePreferenceManager {
 
     public void clearAccessToken() {
         prefs.edit().remove(KEY_ACCESS_TOKEN).apply();
+    }
+
+    public void saveUserId(String userId){
+        prefs.edit().putString(KEY_USER_ID, userId).apply();
+    }
+
+    public String getUserId() {
+        return prefs.getString(KEY_USER_ID, null);
+    }
+
+    public void clearUserId() {
+        prefs.edit().remove(KEY_USER_ID).apply();
     }
 
 
