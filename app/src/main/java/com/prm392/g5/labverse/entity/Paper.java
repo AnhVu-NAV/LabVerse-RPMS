@@ -14,13 +14,11 @@ public class Paper {
     private String id;
     private String s3Key;
     private boolean deleteFlag = false;
-    private String annotationS3Key;
-    private LocalDateTime annotationUpdateAt;
-    private String userId;
     private int lastPage = -1;
     private int totalPage = -1;
 
     //todo paper vẫn còn thiếu thong tin nhe
+
     public Paper() {
     }
 
@@ -47,30 +45,6 @@ public class Paper {
 
     public void setDeleteFlag(boolean deleteFlag) {
         this.deleteFlag = deleteFlag;
-    }
-
-    public String getAnnotationS3Key() {
-        return annotationS3Key;
-    }
-
-    public void setAnnotationS3Key(String annotationS3Key) {
-        this.annotationS3Key = annotationS3Key;
-    }
-
-    public LocalDateTime getAnnotationUpdateAt() {
-        return annotationUpdateAt;
-    }
-
-    public void setAnnotationUpdateAt(LocalDateTime annotationUpdateAt) {
-        this.annotationUpdateAt = annotationUpdateAt;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public int getLastPage() {

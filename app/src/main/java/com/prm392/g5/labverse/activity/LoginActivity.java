@@ -169,6 +169,9 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_LONG).show()
         );
         //todo chuyển người dùng qua activity khác
+        //test import
+//        Intent intent = new Intent(this, ImportPaperActivity.class);
+//        startActivity(intent);
     }
 
     /**

@@ -20,5 +20,6 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        //todo cửa vào cua app, kiểm tra ngươ dùng đã đăng nhập chưa, access token còn hạn không, nêếu ko đạt đk thì về login, còn không thì vào trang khác
     }
 }
