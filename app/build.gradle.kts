@@ -58,7 +58,7 @@ dependencies {
     implementation ("androidx.room:room-runtime:2.6.1")
     annotationProcessor ("androidx.room:room-compiler:2.6.1")
 
-    implementation("org.apache.pdfbox:pdfbox:2.0.29")
+    implementation("com.tom-roush:pdfbox-android:2.0.27.0")
 
     implementation(libs.appcompat)
     implementation(libs.material)
