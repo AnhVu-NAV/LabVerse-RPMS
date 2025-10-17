@@ -45,8 +45,9 @@ public class AuthInterceptor implements Interceptor {
     private void handleUnauthorized() {
         //xử lí lại lỗi nếu login sai
 
-        // xóa token
+        // xóa token và user Id trên device
         SharePreferenceManager.getInstance().clearAccessToken();
+        SharePreferenceManager.getInstance().clearUserId();
 
         //mở lại LoginActivity và xóa toàn bộ activity stack
         Intent intent = new Intent(LabVerse.getInstance(), LoginActivity.class);

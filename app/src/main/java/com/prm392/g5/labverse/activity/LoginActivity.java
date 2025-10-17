@@ -162,7 +162,9 @@ public class LoginActivity extends AppCompatActivity {
         //lưu access token để sử dụng
         Log.d("Login", "Login success fully");
         SharePreferenceManager prefManager = SharePreferenceManager.getInstance();
+        //lưu lại access token cũng như user id của người dùng hiện tại
         prefManager.saveAccessToken(loginResponse.getAccessToken());
+        prefManager.saveUserId(loginResponse.getUserId());
         runOnUiThread(() ->
                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_LONG).show()
         );

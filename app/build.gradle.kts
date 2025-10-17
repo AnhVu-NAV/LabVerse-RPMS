@@ -50,9 +50,15 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
+
     implementation("androidx.credentials:credentials:1.3.0") // Credential Manager
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0") // GIS mới
     implementation("com.google.android.gms:play-services-auth:21.1.1")
+
+    implementation ("androidx.room:room-runtime:2.6.1")
+    annotationProcessor ("androidx.room:room-compiler:2.6.1")
+
+    implementation("org.apache.pdfbox:pdfbox:2.0.29")
 
     implementation(libs.appcompat)
     implementation(libs.material)
