@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.activity.readPaper.PrepareViewPdfActivity;
 import com.prm392.g5.labverse.config.AppDatabase;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.dao.PaperDao;
@@ -67,8 +68,14 @@ public class ImportPaperActivity extends AppCompatActivity {
                     }
                 });
 
+        //todo for test
+        AppDatabase.databaseWriteExecutor.execute(() -> AppDatabase.getInstance(this).paperAnnotationDao().getAnnotationById("446795ba-6574-4319-9181-0630911a899e"));
+
         Button btnPick = findViewById(R.id.btnPickPdf);
         btnPick.setOnClickListener(v -> pickPdfLauncher.launch("application/pdf"));
+
+        Button btnOpenPaper = findViewById(R.id.btnOpenPdf);
+        btnOpenPaper.setOnClickListener(v -> PrepareViewPdfActivity.open(this, "ad069cc3-e0d5-45df-bf7d-153614965dcb"));
     }
 
 

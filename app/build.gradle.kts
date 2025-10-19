@@ -40,8 +40,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -59,6 +59,8 @@ dependencies {
     annotationProcessor ("androidx.room:room-compiler:2.6.1")
 
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
+
+    implementation("io.nutrient:nutrient:10.7.0")
 
     implementation(libs.appcompat)
     implementation(libs.material)
