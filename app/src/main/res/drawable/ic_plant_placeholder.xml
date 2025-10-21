@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- Pot -->
+    <path
+        android:fillColor="#F39C12"
+        android:pathData="M40,80 L80,80 L75,110 L45,110 Z"/>
+
+    <path
+        android:fillColor="#E67E22"
+        android:pathData="M35,75 L85,75 L80,80 L40,80 Z"/>
+
+    <!-- Soil -->
+    <path
+        android:fillColor="#8B4513"
+        android:pathData="M40,75 L80,75 L80,80 L40,80 Z"/>
+
+    <!-- Stem -->
+    <path
+        android:fillColor="#27AE60"
+        android:pathData="M58,30 L62,30 L62,75 L58,75 Z"/>
+
+    <!-- Leaves -->
+    <ellipse
+        android:fillColor="#27AE60"
+        cx="50"
+        cy="45"
+        rx="12"
+        ry="18"/>
+
+    <ellipse
+        android:fillColor="#2ECC71"
+        cx="70"
+        cy="50"
+        rx="12"
+        ry="18"/>
+
+    <ellipse
+        android:fillColor="#27AE60"
+        cx="60"
+        cy="35"
+        rx="10"
+        ry="15"/>
+
+</vector>
+

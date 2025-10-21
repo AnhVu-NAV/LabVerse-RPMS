@@ -60,6 +60,11 @@ dependencies {
 
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
 
+    // ViewPager2 and TabLayout
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
+    implementation("androidx.cardview:cardview:1.0.0")
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

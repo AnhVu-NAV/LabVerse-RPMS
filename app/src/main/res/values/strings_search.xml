@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Search Screen -->
+    <string name="search_hint">Search</string>
+    <string name="advanced_filter">Advanced Filter</string>
+    <string name="recent_searches">Recent Searches</string>
+    <string name="cd_back_button">Back</string>
+    <string name="cd_close_button">Close</string>
+    <string name="cd_clear_search">Clear search</string>
+    <string name="cd_search_icon">Search</string>
+    <string name="cd_remove_search_history">Remove from search history</string>
+
+    <!-- Sample Search History -->
+    <string name="search_history_ai_education">AI in Education</string>
+    <string name="search_history_sustainable_energy">Sustainable Energy</string>
+    <string name="search_history_biotechnology">Biotechnology</string>
+</resources>
+

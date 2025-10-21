@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_my_library">My Library</string>
+    <string name="tab_recently_added">Recently Added</string>
+    <string name="tab_recently_read">Recently Read</string>
+    <string name="tab_favorites">Favorites</string>
+    <string name="cd_fab_add">Add new paper</string>
+    <string name="menu_profile">Profile</string>
+    <string name="cd_paper_thumbnail">Paper thumbnail</string>
+</resources>
+

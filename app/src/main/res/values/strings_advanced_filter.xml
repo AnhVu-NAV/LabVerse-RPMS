@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Advanced Filter Strings -->
+    <string name="advanced_filter_title">Advanced Filter</string>
+    <string name="filter_author_label">Author</string>
+    <string name="filter_author_hint">Enter author name</string>
+    <string name="filter_journal_label">Journal</string>
+    <string name="filter_journal_hint">Enter journal name</string>
+    <string name="filter_tag_label">Tag</string>
+    <string name="filter_tag_hint">Enter tag</string>
+    <string name="filter_year_label">Publication Year</string>
+    <string name="filter_year_hint">Select year</string>
+    <string name="btn_apply_filter">Apply</string>
+    <string name="btn_reset_filter">Reset</string>
+    <string name="cd_calendar_icon">Calendar icon</string>
+    <string name="cd_bottom_sheet_handle">Bottom sheet handle</string>
+</resources>
+

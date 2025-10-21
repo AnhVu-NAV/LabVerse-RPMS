@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Paper Detail Screen -->
+    <string name="paper_detail_title">The Impact of AI on Education</string>
+    <string name="tab_read">Read</string>
+    <string name="tab_citation">Citation</string>
+    <string name="tab_annotations">Annotations</string>
+    <string name="tab_discussion">Discussion</string>
+
+    <!-- Read Fragment -->
+    <string name="research_paper_text">RESEARCH\nPAPER &amp;\nPDF</string>
+    <string name="cd_plant_illustration">Plant illustration</string>
+
+    <!-- Content Placeholders -->
+    <string name="citation_content">Citation Content</string>
+    <string name="annotations_content">Annotations Content</string>
+    <string name="discussion_content">Discussion Content</string>
+</resources>
+
