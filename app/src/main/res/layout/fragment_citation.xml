@@ -1,21 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="#F7FAFC"
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/tvCitation"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/citation_content"
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Citation Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/citation_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@android:color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <!-- Citation Info -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_citation_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Citation"
+                        android:textColor="#4D7399"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_citation_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dr. Amelia Harper, &quot;The Impact of AI on Education&quot;, Journal of Educational Technology, 2023, DOI: 10.1234/edtech.2023.0001"
+                        android:textColor="#0D141C"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:lineSpacingExtra="4dp"/>
+                </LinearLayout>
+
+                <!-- Paper Icon/Image -->
+                <ImageView
+                    android:id="@+id/iv_paper_icon"
+                    android:layout_width="80dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/ic_paper_placeholder"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@string/cd_paper_icon"
+                    android:background="#E8EDF2"
+                    android:padding="8dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Copy Format Buttons Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="12dp">
+
+            <Button
+                android:id="@+id/btn_copy_apa"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Copy APA"
+                android:textColor="#0D141C"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:background="@drawable/bg_button_secondary"
+                android:textAllCaps="false"/>
+
+            <Button
+                android:id="@+id/btn_copy_mla"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Copy MLA"
+                android:textColor="#0D141C"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:background="@drawable/bg_button_secondary"
+                android:textAllCaps="false"/>
+
+            <Button
+                android:id="@+id/btn_edit"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Edit"
+                android:textColor="#0D141C"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:background="@drawable/bg_button_secondary"
+                android:textAllCaps="false"/>
+        </LinearLayout>
+
+        <!-- Copy BibTeX Button -->
+        <Button
+            android:id="@+id/btn_copy_bibtex"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Copy BibTeX"
+            android:textColor="#0D141C"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+            android:background="@drawable/bg_button_secondary"
+            android:textAllCaps="false"/>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
+
 

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="16dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="16dp">
+
+        <!-- Back Button -->
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="@string/cd_back_button"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/the_impact_of_ai_on_education"
+            android:textColor="#0D141C"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:paddingEnd="48dp"
+            android:paddingStart="0dp"/>
+    </LinearLayout>
+
+    <!-- Citation Display Card -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="#F7FAFC">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <!-- Citation Info -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginEnd="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/citation"
+                    android:textColor="#4D7399"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
+                    android:layout_marginBottom="4dp"/>
+
+                <TextView
+                    android:id="@+id/tv_original_citation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Dr. Amelia Harper, &quot;The Impact of AI on Education&quot;, Journal of Educational Technology, 2023, DOI: 10.1234/edtech.2023.0001"
+                    android:textColor="#0D141C"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:lineSpacingExtra="4dp"/>
+            </LinearLayout>
+
+            <!-- Paper Icon/Image -->
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_paper_placeholder"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/cd_paper_icon"
+                android:background="#E8EDF2"
+                android:padding="8dp"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Citation Input Field -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/citation"
+            android:textColor="#0D141C"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium"
+            android:paddingBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/et_citation_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:background="@drawable/bg_edit_text"
+            android:padding="12dp"
+            android:hint="@string/enter_citation_text"
+            android:textColor="#0D141C"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:inputType="textMultiLine"
+            android:gravity="top|start"
+            android:maxLines="5"
+            android:scrollbars="vertical"/>
+    </LinearLayout>
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:paddingTop="12dp">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minWidth="84dp"
+            android:text="@string/cancel"
+            android:textColor="#0D141C"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+            android:background="@drawable/bg_button_secondary"
+            android:textAllCaps="false"
+            android:layout_marginEnd="12dp"/>
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minWidth="84dp"
+            android:text="@string/save"
+            android:textColor="#F7FAFC"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+            android:background="@drawable/bg_button_primary"
+            android:textAllCaps="false"/>
+    </LinearLayout>
+
+</LinearLayout>
+

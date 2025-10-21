@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LabVerse</string>
+
+    <!-- Citation Fragment -->
+    <string name="cd_paper_icon">Paper icon</string>
+    <string name="citation_copied_apa">APA citation copied to clipboard</string>
+    <string name="citation_copied_mla">MLA citation copied to clipboard</string>
+    <string name="citation_copied_bibtex">BibTeX citation copied to clipboard</string>
+    <string name="edit_citation">Edit Citation</string>
+    <string name="cd_back_button">Back</string>
+    <string name="the_impact_of_ai_on_education">The Impact of AI on Education</string>
+    <string name="citation">Citation</string>
+    <string name="enter_citation_text">Enter citation text</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="citation_updated">Citation updated successfully</string>
+    <string name="citation_empty">Citation cannot be empty</string>
 </resources>
 

@@ -15,6 +15,11 @@ import java.util.List;
 public class PaperAdapter extends RecyclerView.Adapter<PaperAdapter.PaperViewHolder> {
 
     private List<PaperItem> papers;
+    private OnPaperClickListener listener;
+
+    public interface OnPaperClickListener {
+        void onPaperClick(PaperItem paper, int position);
+    }
 
     public static class PaperItem {
         public String title;
@@ -36,6 +41,11 @@ public class PaperAdapter extends RecyclerView.Adapter<PaperAdapter.PaperViewHol
         this.papers = papers;
     }
 
+    public PaperAdapter(List<PaperItem> papers, OnPaperClickListener listener) {
+        this.papers = papers;
+        this.listener = listener;
+    }
+
     @NonNull
     @Override
     public PaperViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -48,6 +58,13 @@ public class PaperAdapter extends RecyclerView.Adapter<PaperAdapter.PaperViewHol
     public void onBindViewHolder(@NonNull PaperViewHolder holder, int position) {
         PaperItem paper = papers.get(position);
         holder.bind(paper);
+
+        // Set click listener
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onPaperClick(paper, position);
+            }
+        });
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.prm392.g5.labverse.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,17 +9,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.adapter.SearchHistoryAdapter;
 import com.prm392.g5.labverse.fragment.AdvancedFilterBottomSheet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity implements SearchHistoryAdapter.OnSearchHistoryClickListener {
+public class SearchActivity extends BaseActivity implements SearchHistoryAdapter.OnSearchHistoryClickListener {
 
     private EditText etSearch;
     private ImageView ivBack;
@@ -28,7 +25,6 @@ public class SearchActivity extends AppCompatActivity implements SearchHistoryAd
     private ImageView ivClear;
     private LinearLayout chipAdvancedFilter;
     private RecyclerView rvRecentSearches;
-    private BottomNavigationView bottomNavigation;
 
     private SearchHistoryAdapter searchHistoryAdapter;
     private List<String> searchHistoryList;
@@ -41,7 +37,7 @@ public class SearchActivity extends AppCompatActivity implements SearchHistoryAd
         initializeViews();
         setupSearchHistory();
         setupListeners();
-        setupBottomNavigation();
+        setupBottomNavigation(R.id.navigation_explore);
     }
 
     private void initializeViews() {
@@ -51,9 +47,7 @@ public class SearchActivity extends AppCompatActivity implements SearchHistoryAd
         ivClear = findViewById(R.id.iv_clear);
         chipAdvancedFilter = findViewById(R.id.chip_advanced_filter);
         rvRecentSearches = findViewById(R.id.rv_recent_searches);
-        bottomNavigation = findViewById(R.id.bottom_navigation);
     }
-
     private void setupSearchHistory() {
         // Initialize sample search history
         searchHistoryList = new ArrayList<>();
@@ -114,33 +108,6 @@ public class SearchActivity extends AppCompatActivity implements SearchHistoryAd
         chipAdvancedFilter.setOnClickListener(v -> showAdvancedFilterBottomSheet());
     }
 
-    private void setupBottomNavigation() {
-        bottomNavigation.setSelectedItemId(R.id.navigation_explore);
-
-        bottomNavigation.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-
-            if (itemId == R.id.navigation_library) {
-                Intent intent = new Intent(SearchActivity.this, MyLibraryActivity.class);
-                startActivity(intent);
-                finish();
-                return true;
-            } else if (itemId == R.id.navigation_reading_list) {
-                // TODO: Navigate to Reading List
-                Toast.makeText(this, "Reading List", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (itemId == R.id.navigation_groups) {
-                // TODO: Navigate to Groups
-                Toast.makeText(this, "Groups", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (itemId == R.id.navigation_explore) {
-                // Already on search/explore screen
-                return true;
-            }
-
-            return false;
-        });
-    }
 
     private void performSearch(String query) {
         if (query.trim().isEmpty()) {
@@ -189,6 +156,11 @@ public class SearchActivity extends AppCompatActivity implements SearchHistoryAd
             Toast.makeText(SearchActivity.this, filterQuery.toString(), Toast.LENGTH_SHORT).show();
         });
         bottomSheet.show(getSupportFragmentManager(), "AdvancedFilterBottomSheet");
+    }
+
+    @Override
+    protected int getSelectedNavigationItemId() {
+        return R.id.navigation_explore;
     }
 }
 

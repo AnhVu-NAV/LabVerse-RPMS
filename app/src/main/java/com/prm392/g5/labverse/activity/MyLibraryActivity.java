@@ -5,11 +5,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.prm392.g5.labverse.R;
@@ -17,7 +15,7 @@ import com.prm392.g5.labverse.adapter.PaperAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyLibraryActivity extends AppCompatActivity {
+public class MyLibraryActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +27,6 @@ public class MyLibraryActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         RecyclerView papersRecyclerView = findViewById(R.id.papers_recycler_view);
         FloatingActionButton fabAdd = findViewById(R.id.fab_add);
-        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
 
         // Set the toolbar as the action bar
         setSupportActionBar(toolbar);
@@ -67,13 +64,20 @@ public class MyLibraryActivity extends AppCompatActivity {
             0
         ));
 
-        // Set adapter
-        PaperAdapter adapter = new PaperAdapter(papers);
+        // Set adapter with click listener
+        PaperAdapter adapter = new PaperAdapter(papers, (paper, position) -> {
+            // Open PaperDetailActivity when paper is clicked
+            Intent intent = new Intent(MyLibraryActivity.this, PaperDetailActivity.class);
+            intent.putExtra(PaperDetailActivity.EXTRA_PAPER_TITLE, paper.title);
+            intent.putExtra(PaperDetailActivity.EXTRA_PAPER_AUTHORS, paper.authors);
+            intent.putExtra(PaperDetailActivity.EXTRA_PAPER_STATUS, paper.status);
+            startActivity(intent);
+        });
         papersRecyclerView.setAdapter(adapter);
 
         // Set the default selected item for the bottom navigation
-        bottomNavigation.setSelectedItemId(R.id.navigation_library);
-
+        // Setup bottom navigation
+        setupBottomNavigation(R.id.navigation_library);
         // Set click listener for FAB
         fabAdd.setOnClickListener(v -> {
             // TODO: Implement add paper functionality
@@ -100,5 +104,10 @@ public class MyLibraryActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected int getSelectedNavigationItemId() {
+        return R.id.navigation_library;
     }
 }

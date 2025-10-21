@@ -1,7 +1,7 @@
 package com.prm392.g5.labverse.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
@@ -9,20 +9,33 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.adapter.PaperDetailPagerAdapter;
 
-public class PaperDetailActivity extends AppCompatActivity {
+public class PaperDetailActivity extends BaseActivity {
+
+    public static final String EXTRA_PAPER_TITLE = "paper_title";
+    public static final String EXTRA_PAPER_AUTHORS = "paper_authors";
+    public static final String EXTRA_PAPER_STATUS = "paper_status";
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
     private Toolbar toolbar;
+    private String paperTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paper_detail);
 
+        // Get data from Intent
+        Intent intent = getIntent();
+        paperTitle = intent.getStringExtra(EXTRA_PAPER_TITLE);
+        if (paperTitle == null) {
+            paperTitle = "The Impact of AI on Education"; // Default title
+        }
+
         initViews();
         setupToolbar();
         setupViewPager();
+        setupBottomNavigation(R.id.navigation_library);
     }
 
     private void initViews() {
@@ -36,7 +49,7 @@ public class PaperDetailActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("The Impact of AI on Education");
+            getSupportActionBar().setTitle(paperTitle);
         }
 
         toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
@@ -63,6 +76,11 @@ public class PaperDetailActivity extends AppCompatActivity {
                     break;
             }
         }).attach();
+    }
+
+    @Override
+    protected int getSelectedNavigationItemId() {
+        return R.id.navigation_library;
     }
 }
 
