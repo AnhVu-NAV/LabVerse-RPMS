@@ -32,6 +32,7 @@
             android:exported="false" />
         <activity
             android:name=".activity.readPaper.MyPdfActivity"
+            android:theme="@style/MyPdfTheme"
             android:exported="false" />
         <activity
             android:name="com.pspdfkit.ui.PdfActivity"

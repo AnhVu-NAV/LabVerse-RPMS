@@ -4,10 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 
+import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.config.AppDatabase;
 import com.prm392.g5.labverse.dao.PaperDao;
 import com.prm392.g5.labverse.entity.Paper;
@@ -60,8 +68,82 @@ public class MyPdfActivity extends PdfActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Gọi Nutrient inflate menu mặc định trước
+        super.onCreateOptionsMenu(menu);
+
+        // Ghi log ra xem trong menu có những item gì
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem item = menu.getItem(i);
+            Log.d("MyPdfActivity", "Menu item: " + item.getTitle());
+        }
+
+        // Xoá theo tên hiển thị
+        for (int i = menu.size() - 1; i >= 0; i--) {  // lặp ngược để xoá an toàn
+            MenuItem item = menu.getItem(i);
+            CharSequence title = item.getTitle();
+            if (title != null &&
+                    (
+//                            title.toString().contains("Settings") ||
+//                            title.toString().contains("Document Info") ||
+                            title.toString().contains("Share")
+                    )
+            ) {
+                menu.removeItem(item.getItemId());
+            }
+        }
+
+        //chèn thêm item
+        menu.add(Menu.NONE, R.id.menu_upload, Menu.NONE, "Upload")
+                .setIcon(R.drawable.ic_launcher_foreground)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); // => hiển thị trong menu 3 chấm
+//                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
+        return true;
+    }
+
+    //gọi sau khi menu và toolbar đã sẵn sàng, trước khi menu hiển thị
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_upload) {
+            Toast.makeText(this, "Upload clicked!", Toast.LENGTH_SHORT).show();
+            // Gọi hàm bạn muốn ở đây
+            return true;
+        }
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onDocumentLoaded(@NonNull PdfDocument document) {
         super.onDocumentLoaded(document);
+
+//        // Dò tìm Toolbar trong layout của Nutrient
+//        Toolbar toolbar = findToolbarInHierarchy();
+//        if (toolbar != null) {
+//            toolbar.setBackgroundColor(Color.parseColor("#1E1E1E"));
+//
+//            ImageButton uploadButton = new ImageButton(this);
+//            uploadButton.setImageResource(R.drawable.ic_launcher_foreground);
+//            uploadButton.setBackgroundColor(Color.TRANSPARENT);
+//            toolbar.addView(uploadButton);
+//
+//            uploadButton.setOnClickListener(v -> exportAnnotation());
+//        } else {
+//            Toast.makeText(this, "Toolbar not found!", Toast.LENGTH_SHORT).show();
+//        }
 
         //sau khi document load xong sẽ thực hiện đống việc sau đây
         this.document = document;
@@ -79,6 +161,28 @@ public class MyPdfActivity extends PdfActivity {
         }
 
     }
+
+//    private Toolbar findToolbarInHierarchy() {
+//        ViewGroup root = findViewById(android.R.id.content);
+//        return findToolbarRecursively(root);
+//    }
+//
+//    private Toolbar findToolbarRecursively(ViewGroup parent) {
+//        for (int i = 0; i < parent.getChildCount(); i++) {
+//            View child = parent.getChildAt(i);
+//            if (child instanceof Toolbar) {
+//                return (Toolbar) child;
+//            } else if (child instanceof ViewGroup) {
+//                Toolbar toolbar = findToolbarRecursively((ViewGroup) child);
+//                if (toolbar != null) return toolbar;
+//            }
+//        }
+//        return null;
+//    }
+//
+//    private void exportAnnotation() {
+//        Log.d("toolbar", "Asns nut moiw them vaof tool bar");
+//    }
 
     @Override
     protected void onPause() {

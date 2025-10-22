@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LabVerse_PRM392_G5</string>
+
+    <item name="menu_upload" type="id" />
 </resources>
