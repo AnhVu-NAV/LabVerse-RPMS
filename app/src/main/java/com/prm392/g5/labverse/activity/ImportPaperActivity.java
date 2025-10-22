@@ -46,7 +46,7 @@ public class ImportPaperActivity extends AppCompatActivity {
 
     private Paper paper;
 
-    //todo giao diện
+    //todo cần link với giao diện của TA
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +68,7 @@ public class ImportPaperActivity extends AppCompatActivity {
                     }
                 });
 
-        //todo for test
+        //todo the line below is for test, delete it when it is not neccessary
         AppDatabase.databaseWriteExecutor.execute(() -> AppDatabase.getInstance(this).paperAnnotationDao().getAnnotationById("446795ba-6574-4319-9181-0630911a899e"));
 
         Button btnPick = findViewById(R.id.btnPickPdf);
@@ -205,7 +205,7 @@ public class ImportPaperActivity extends AppCompatActivity {
         AddPaperRequest requestDto = new AddPaperRequest();
         requestDto.setS3Key(s3Key);
         requestDto.setTotalPage(paper.getTotalPage());
-        //todo tamj thowi ddeer troongs cho ddur object
+        //todo tạm thời để cho đủ object request, sau em TA làm thì xem lại nhé
         requestDto.setAuthorName("");
         requestDto.setPublicationYear("");
         requestDto.setTitle("");

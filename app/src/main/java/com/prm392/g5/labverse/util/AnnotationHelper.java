@@ -45,28 +45,6 @@ public class AnnotationHelper {
         this.document = document;
     }
 
-    /** Ghi toàn bộ annotation hiện có ra file JSON local */
-    public void exportToLocal(File jsonFile) {
-        executor.execute(() -> {
-            try {
-                List<Annotation> annotations = document.getAnnotationProvider()
-                        .getAllAnnotationsOfType(EnumSet.allOf(AnnotationType.class));                JSONArray jsonArray = new JSONArray();
-                for (Annotation a : annotations) {
-                    jsonArray.put(a.toInstantJson());
-                }
-
-                try (FileWriter fw = new FileWriter(jsonFile, false)) {
-                    fw.write(jsonArray.toString());
-                }
-
-                Log.d("AnnotationManager", "Exported annotation to local: " + jsonFile.getPath());
-            } catch (Exception e) {
-                Log.e("AnnotationManager", "Export local failed", e);
-            }
-        });
-    }
-
-
     /** Import annotation từ file JSON local và overlay lên document */
     public void importFromLocal(File jsonFile) {
         if (jsonFile == null || !jsonFile.exists()) {
@@ -86,11 +64,39 @@ public class AnnotationHelper {
                 Log.d("AnnotationManager", "Imported annotation from local file.");
             } catch (Exception e) {
                 Log.e("AnnotationManager", "Import local failed", e);
+                //todo cái này phải cho thử lại chứ nhỉ, ko nó sẽ bị ghi đè mất khi người dùng annotate mới
+                Toast.makeText(LabVerse.getInstance(), "Fail to overlay annotation.", Toast.LENGTH_LONG).show();
             }
         });
     }
-    public void uploadToRemote(File jsonFile, String s3Key){
-        annotationRepository.getUploadUrl(s3Key, new Callback<S3SignedUrlResponse>() {
+    public void updateAnnotation(File jsonFile, PaperAnnotation paperAnnotation) {
+        //Ghi toàn bộ annotation hiện có ra file JSON local
+        executor.execute(() -> {
+            try {
+                List<Annotation> annotations = document.getAnnotationProvider()
+                        .getAllAnnotationsOfType(EnumSet.allOf(AnnotationType.class));
+                JSONArray jsonArray = new JSONArray();
+                for (Annotation a : annotations) {
+                    jsonArray.put(a.toInstantJson());
+                }
+
+                try (FileWriter fw = new FileWriter(jsonFile, false)) {
+                    fw.write(jsonArray.toString());
+                }
+
+                Log.d("AnnotationManager", "Exported annotation to local: " + jsonFile.getPath());
+                //upload annotation to remote storage
+                uploadToRemote(jsonFile, paperAnnotation);
+
+            } catch (Exception e) {
+                Log.e("AnnotationManager", "Export local failed", e);
+                Toast.makeText(LabVerse.getInstance(), "Fail to update annotation.", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void uploadToRemote(File jsonFile, PaperAnnotation paperAnnotation){
+        annotationRepository.getUploadUrl(paperAnnotation.getAnnotationS3Key(), new Callback<S3SignedUrlResponse>() {
             @Override
             public void onResponse(Call<S3SignedUrlResponse> call, Response<S3SignedUrlResponse> response) {
                 if (response.isSuccessful() && response.body() != null){
@@ -98,12 +104,15 @@ public class AnnotationHelper {
                     S3Util.uploadJsonAnnotationToS3(uploadUrl, jsonFile, new S3Util.UploadCallback() {
                         @Override
                         public void onSuccess() {
-                            Log.d("ANNOTATION_UPLOAD", "Upload thành công");
+                            Log.d("ANNOTATION_UPLOAD", "Upload annotation to S3 thành công");
+                            //add or update annotation in backend database and device database
+                            updateAnnotationInDatabases(paperAnnotation);
                         }
 
                         @Override
                         public void onError(Exception e) {
-                            Log.e("ANNOTATION_UPLOAD", "Upload lỗi", e);
+                            Log.e("ANNOTATION_UPLOAD", "Upload annotation to S3 lỗi", e);
+                            Toast.makeText(LabVerse.getInstance(), "Fail to update annotation. Unable to upload annotation", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -111,7 +120,7 @@ public class AnnotationHelper {
 
             @Override
             public void onFailure(Call<S3SignedUrlResponse> call, Throwable t) {
-                Toast.makeText(LabVerse.getInstance(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LabVerse.getInstance(), "Fail to update annotation.", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -140,14 +149,15 @@ public class AnnotationHelper {
             public void onResponse(Call<PaperAnnotationInfoResponse> call, Response<PaperAnnotationInfoResponse> response) {
                 if (response.isSuccessful() && response.body() != null){
                     //update remote db
-                    Log.d("ANNOTATION_UPDATE", "update thành công");
+                    Log.d("ANNOTATION_UPDATE", "update thành công annotation ở phía server");
+                    Toast.makeText(LabVerse.getInstance(), "Sync annotation successfully.", Toast.LENGTH_LONG).show();
                 } else {
-                    Log.d("ANNOTATION_UPDATE", "update thất bại");
+                    Toast.makeText(LabVerse.getInstance(), "Fail to update annotation.", Toast.LENGTH_LONG).show();
                 }
             }
             @Override
             public void onFailure(Call<PaperAnnotationInfoResponse> call, Throwable t) {
-                Toast.makeText(LabVerse.getInstance(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LabVerse.getInstance(), "Fail to update annotation.", Toast.LENGTH_LONG).show();
             }
         });
     }

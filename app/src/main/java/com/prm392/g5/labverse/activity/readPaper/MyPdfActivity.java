@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -72,20 +73,11 @@ public class MyPdfActivity extends PdfActivity {
             annotationHelper.importFromLocal(localAnnotationFile);
         }
 
-        restoreLastPage();
-
-    }
-
-    /**
-     * Lưu vị trí trang hiện tại + tổng số trang
-     */
-    private void restoreLastPage() {
-        int totalPages = document.getPageCount();
-        Log.d("PDF", "Tổng số trang: " + totalPages);
         // restore last page
         if (openedPaper.getCurrentPage() >= 0) {
             fragment.setPageIndex(openedPaper.getCurrentPage(), true);
         }
+
     }
 
     @Override
@@ -120,15 +112,12 @@ public class MyPdfActivity extends PdfActivity {
             if (parentDir != null && !parentDir.exists()) {
                 parentDir.mkdirs();
             }
-            annotationHelper.exportToLocal(localAnnotationFile);
-            Log.d("MyPdfActivity", "Annotation changed → saved to local");
-            //upload annotation to remote storage
-            annotationHelper.uploadToRemote(localAnnotationFile, openedAnnotation.getAnnotationS3Key());
-            //add or update annotation in backend database and device database
-            annotationHelper.updateAnnotationInDatabases(openedAnnotation);
-            //todo update cả cái last page của paper lên nữa
+            annotationHelper.updateAnnotation(localAnnotationFile, openedAnnotation);
+
+            //todo update cả cái last page aka current page của paper lên nữa
         } catch (Exception e) {
             Log.e("MyPdfActivity", "Save annotation failed", e);
+            Toast.makeText(this, "Sync annotation fail", Toast.LENGTH_LONG).show();
         }
     }
 

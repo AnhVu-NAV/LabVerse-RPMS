@@ -45,7 +45,6 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
     private static final String PAPER_ID = "paper_id";
     private Paper wouldBeOpenedPaper;
     private PaperAnnotation wouldBeOpenedAnnotation;
-    //todo file location, đang lưu ở external dir
     private File localPdfFile;
     private File localAnnotationFile;
 
@@ -68,7 +67,7 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
         String userId = SharePreferenceManager.getInstance().getUserId();
 
         if (paperId == null) {
-            Toast.makeText(this, "Không có PDF key!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No paper key! Can not open the paper!!!", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -90,16 +89,14 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
                         if (response.isSuccessful() && response.body() != null) {
                             PaperInfoResponse res = response.body();
                             //lưu thông tin vào local database
-                            Paper newPaper = new Paper();
-                            newPaper.setId(res.getId());
-                            newPaper.setS3Key(res.getS3Key());
-                            newPaper.setTotalPage(res.getTotalPage());
-                            newPaper.setCurrentPage(res.getCurrentPage());
-                            paperDao.insert(newPaper);
-                            wouldBeOpenedPaper = newPaper;
+                            wouldBeOpenedPaper = new Paper();
+                            wouldBeOpenedPaper.setId(res.getId());
+                            wouldBeOpenedPaper.setS3Key(res.getS3Key());
+                            wouldBeOpenedPaper.setTotalPage(res.getTotalPage());
+                            wouldBeOpenedPaper.setCurrentPage(res.getCurrentPage());
 
                             runOnUiThread(() -> {
-                                localPdfFile = new File(getExternalFilesDir(null), newPaper.getS3Key());
+                                localPdfFile = new File(getExternalFilesDir(null), wouldBeOpenedPaper.getS3Key());
                                 getPdfDownloadUrl();
                             });
                         } else {
@@ -133,7 +130,7 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
             if (errorResponse != null) {
                 Log.e("API_ERROR", "Code: " + errorResponse.getCode() + ", Message: " + errorResponse.getMessage());
                 Toast.makeText(PrepareViewPdfActivity.this,
-                        "Lỗi " + errorResponse.getCode() + ": " + errorResponse.getMessage(),
+                        "Error " + errorResponse.getCode() + ": " + errorResponse.getMessage(),
                         Toast.LENGTH_LONG
                 ).show();
             } else {
@@ -228,7 +225,7 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
                 });
             }
 
-            //todo ddaasy  ra class khacs xu li loi
+            //todo đẩy ra class khác để xử lí lỗi
             @Override
             public void onFailure(Call<PaperAnnotationInfoResponse> call, Throwable t) {
                 handleSendRequestFail(t);
@@ -261,7 +258,6 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
             public void onResponse(Call<S3SignedUrlResponse> call, Response<S3SignedUrlResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     String url = response.body().getUrl();
-                    //todo
                     downLoadAnnotation(url);
                 } else {
                     handleErrorResponseFromBackend(response);
@@ -279,12 +275,16 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
         S3Util.downloadFileFromS3(this, downloadUrl, localPdfFile, new S3Util.DownloadCallback() {
             @Override
             public void onSuccess() {
+                //tải thành công file pdf thì mới lưu lại thông tin vào local db
+                AppDatabase.databaseWriteExecutor.execute(() -> {
+                    paperDao.insert(wouldBeOpenedPaper);
+                });
                 handleAnnotation(SharePreferenceManager.getInstance().getUserId(), wouldBeOpenedPaper.getId());
             }
 
             @Override
             public void onError() {
-                Toast.makeText(PrepareViewPdfActivity.this, "Download file pdf thất bại, thử lại sau.", Toast.LENGTH_LONG).show();
+                Toast.makeText(PrepareViewPdfActivity.this, "Fail to download file PDF", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -300,6 +300,9 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
                     Log.d("ANNOTATION_DOWNLOAD", "Annotation updated successfully.");
                 } else {
                     Log.e("ANNOTATION_DOWNLOAD", "Rename failed, keeping old annotation.");
+                    runOnUiThread(() ->
+                            Toast.makeText(PrepareViewPdfActivity.this, "Fail to update annotation from server. Old version would be used.", Toast.LENGTH_LONG).show()
+                    );
                 }
                 runOnUiThread(() -> openPdf());
             }
@@ -307,9 +310,11 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
             @Override
             public void onError() {
                 Log.e("ANNOTATION_DOWNLOAD", "Annotation download failed");
-                Toast.makeText(PrepareViewPdfActivity.this, "Download file annotation  thất bại, bạn sẽ tiếp tục sử dụng phiên bản cũ.", Toast.LENGTH_LONG).show();
                 tempFile.delete(); // xóa file lỗi
-                runOnUiThread(() -> openPdf());
+                runOnUiThread(() -> {
+                    Toast.makeText(PrepareViewPdfActivity.this, "Fail to update annotation from server. Old version would be used.", Toast.LENGTH_LONG).show();
+                    openPdf();
+                });
             }
         });
     }
