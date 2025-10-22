@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.activity.readPaper.PrepareViewPdfActivity;
 import com.prm392.g5.labverse.config.AppDatabase;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.dao.PaperDao;
@@ -45,7 +46,7 @@ public class ImportPaperActivity extends AppCompatActivity {
 
     private Paper paper;
 
-    //todo giao diện
+    //todo cần link với giao diện của TA
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,8 +68,14 @@ public class ImportPaperActivity extends AppCompatActivity {
                     }
                 });
 
+        //todo the line below is for test, delete it when it is not neccessary
+        AppDatabase.databaseWriteExecutor.execute(() -> AppDatabase.getInstance(this).paperAnnotationDao().getAnnotationById("446795ba-6574-4319-9181-0630911a899e"));
+
         Button btnPick = findViewById(R.id.btnPickPdf);
         btnPick.setOnClickListener(v -> pickPdfLauncher.launch("application/pdf"));
+
+        Button btnOpenPaper = findViewById(R.id.btnOpenPdf);
+        btnOpenPaper.setOnClickListener(v -> PrepareViewPdfActivity.open(this, "ad069cc3-e0d5-45df-bf7d-153614965dcb"));
     }
 
 
@@ -198,7 +205,7 @@ public class ImportPaperActivity extends AppCompatActivity {
         AddPaperRequest requestDto = new AddPaperRequest();
         requestDto.setS3Key(s3Key);
         requestDto.setTotalPage(paper.getTotalPage());
-        //todo tamj thowi ddeer troongs cho ddur object
+        //todo tạm thời để cho đủ object request, sau em TA làm thì xem lại nhé
         requestDto.setAuthorName("");
         requestDto.setPublicationYear("");
         requestDto.setTitle("");
