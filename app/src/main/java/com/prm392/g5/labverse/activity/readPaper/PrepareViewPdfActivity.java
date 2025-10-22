@@ -166,70 +166,79 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<PaperAnnotationInfoResponse> call, Response<PaperAnnotationInfoResponse> response) {
                 //nhận được response từ server
-                AppDatabase.databaseWriteExecutor.execute(() -> {
+                processAnnotationResponse(userId, paperId, response);
 
-                    final AtomicBoolean needToDownload = new AtomicBoolean(false);
-
-                    PaperAnnotationInfoResponse remoteInfo = null;
-                    boolean existInRemote = response.isSuccessful() && response.body() != null;
-                    if (existInRemote) remoteInfo = response.body();
-
-                    PaperAnnotation localAnnotation = annotationDao.getAnnotationByPaperIdAndUserId(paperId, userId);
-                    boolean existInLocal = (localAnnotation != null);
-
-                    if (!existInRemote && !existInLocal) {
-                        // Case 1: chưa có ở đâu cả → tạo mới local
-                        wouldBeOpenedAnnotation = new PaperAnnotation();
-                        wouldBeOpenedAnnotation.setId();
-                        wouldBeOpenedAnnotation.setUserId(userId);
-                        wouldBeOpenedAnnotation.setPaperId(paperId);
-                        wouldBeOpenedAnnotation.setAnnotationS3Key(userId + "/annotation/" + paperId + ".json");
-                        wouldBeOpenedAnnotation.setUpdatedAt(Instant.now().toString());
-                        //để tới khi upload rồi hẵng thêm vào db
-                    } else if (!existInRemote && existInLocal) {
-                        // Case 2: local có, remote chưa → dùng local, chờ sync sau
-                        wouldBeOpenedAnnotation = localAnnotation;
-                    } else if (existInRemote && !existInLocal) {
-                        // Case 3: remote có, local chưa → tải về
-                        wouldBeOpenedAnnotation = new PaperAnnotation();
-                        wouldBeOpenedAnnotation.setId(remoteInfo.getId());
-                        wouldBeOpenedAnnotation.setUserId(userId);
-                        wouldBeOpenedAnnotation.setPaperId(paperId);
-                        wouldBeOpenedAnnotation.setAnnotationS3Key(remoteInfo.getAnnotationS3Key());
-                        wouldBeOpenedAnnotation.setUpdatedAt(remoteInfo.getUpdateAt());
-                        //tới khi upload ròi hẵng thêm vo db
-                        needToDownload.set(true);
-                    } else {
-                        // Case 4: cả hai đều có → so sánh thời gian cập nhật
-                        Instant localTime = Instant.parse(localAnnotation.getUpdatedAt());
-                        Instant remoteTime = Instant.parse(remoteInfo.getUpdateAt());
-                        if (remoteTime.isAfter(localTime)) {
-                            // Remote mới hơn → tải về
-                            wouldBeOpenedAnnotation = localAnnotation;
-                            needToDownload.set(true);
-                        } else {
-                            // Local mới hơn hoặc giống remote → giữ local
-                            wouldBeOpenedAnnotation = localAnnotation;
-                        }
-                    }
-
-                    localAnnotationFile = new File(getExternalFilesDir(null), wouldBeOpenedAnnotation.getAnnotationS3Key());
-
-                    runOnUiThread(() -> {
-                        if (needToDownload.get()) {
-                            getAnnotationDownloadUrl();
-                        } else {
-                            openPdf();
-                        }
-                    });
-                });
             }
-
-            //todo đẩy ra class khác để xử lí lỗi
             @Override
             public void onFailure(Call<PaperAnnotationInfoResponse> call, Throwable t) {
-                handleSendRequestFail(t);
+                //todo khả năng ở đây phải hiện option cho người ta, retry hay là dùng bản offline
+                // request thất bại -> xử lý như remote không tồn tại
+                processAnnotationResponse(userId, paperId, null);
             }
+        });
+    }
+
+    private void processAnnotationResponse(String userId, String paperId, Response<PaperAnnotationInfoResponse> response){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+
+            final AtomicBoolean needToDownload = new AtomicBoolean(false);
+
+            PaperAnnotationInfoResponse remoteInfo = null;
+            boolean existInRemote = false;
+            if (response != null){
+                existInRemote = response.isSuccessful() && response.body() != null;
+                if (existInRemote) remoteInfo = response.body();
+            }
+            PaperAnnotation localAnnotation = annotationDao.getAnnotationByPaperIdAndUserId(paperId, userId);
+            boolean existInLocal = (localAnnotation != null);
+
+            if (!existInRemote && !existInLocal) {
+                // Case 1: chưa có ở đâu cả → tạo mới local
+                wouldBeOpenedAnnotation = new PaperAnnotation();
+                wouldBeOpenedAnnotation.setId();
+                wouldBeOpenedAnnotation.setUserId(userId);
+                wouldBeOpenedAnnotation.setPaperId(paperId);
+                wouldBeOpenedAnnotation.setAnnotationS3Key(userId + "/annotation/" + paperId + ".json");
+                wouldBeOpenedAnnotation.setUpdatedAt(Instant.now().toString());
+                //để tới khi upload rồi hẵng thêm vào db
+            } else if (!existInRemote ) {
+//            } else if (!existInRemote && existInLocal) {
+                // Case 2: local có, remote chưa → dùng local, chờ sync sau
+                wouldBeOpenedAnnotation = localAnnotation;
+            } else if (!existInLocal) {
+//            } else if (existInRemote && !existInLocal) {
+                // Case 3: remote có, local chưa → tải về
+                wouldBeOpenedAnnotation = new PaperAnnotation();
+                wouldBeOpenedAnnotation.setId(remoteInfo.getId());
+                wouldBeOpenedAnnotation.setUserId(userId);
+                wouldBeOpenedAnnotation.setPaperId(paperId);
+                wouldBeOpenedAnnotation.setAnnotationS3Key(remoteInfo.getAnnotationS3Key());
+                wouldBeOpenedAnnotation.setUpdatedAt(remoteInfo.getUpdateAt());
+                //tới khi upload ròi hẵng thêm vo db
+                needToDownload.set(true);
+            } else {
+                // Case 4: cả hai đều có → so sánh thời gian cập nhật
+                Instant localTime = Instant.parse(localAnnotation.getUpdatedAt());
+                Instant remoteTime = Instant.parse(remoteInfo.getUpdateAt());
+                if (remoteTime.isAfter(localTime)) {
+                    // Remote mới hơn → tải về
+                    wouldBeOpenedAnnotation = localAnnotation;
+                    needToDownload.set(true);
+                } else {
+                    // Local mới hơn hoặc giống remote → giữ local
+                    wouldBeOpenedAnnotation = localAnnotation;
+                }
+            }
+
+            localAnnotationFile = new File(getExternalFilesDir(null), wouldBeOpenedAnnotation.getAnnotationS3Key());
+
+            runOnUiThread(() -> {
+                if (needToDownload.get()) {
+                    getAnnotationDownloadUrl();
+                } else {
+                    openPdf();
+                }
+            });
         });
     }
 
