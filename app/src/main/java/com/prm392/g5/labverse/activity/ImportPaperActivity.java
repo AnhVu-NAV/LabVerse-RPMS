@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.activity.handleAnnotation.ExportAnnotationActivity;
 import com.prm392.g5.labverse.activity.readPaper.PrepareViewPdfActivity;
 import com.prm392.g5.labverse.config.AppDatabase;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
@@ -74,8 +75,14 @@ public class ImportPaperActivity extends AppCompatActivity {
         Button btnPick = findViewById(R.id.btnPickPdf);
         btnPick.setOnClickListener(v -> pickPdfLauncher.launch("application/pdf"));
 
+        //todo test open pdf
+        String paperId = "ad069cc3-e0d5-45df-bf7d-153614965dcb";
         Button btnOpenPaper = findViewById(R.id.btnOpenPdf);
-        btnOpenPaper.setOnClickListener(v -> PrepareViewPdfActivity.open(this, "ad069cc3-e0d5-45df-bf7d-153614965dcb"));
+        btnOpenPaper.setOnClickListener(v -> PrepareViewPdfActivity.open(this, paperId));
+
+        //todo test export annotation
+        Button btnExportAnnotationButton = findViewById(R.id.btnExportAnnotation);
+        btnExportAnnotationButton.setOnClickListener(v -> ExportAnnotationActivity.open(this, paperId));
     }
 
 

@@ -1,5 +1,8 @@
 package com.prm392.g5.labverse.util;
 
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,6 +29,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -37,16 +42,14 @@ import retrofit2.Response;
 
 public class AnnotationHelper {
 
-    private final PdfDocument document;
+//    private final PdfDocument document;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private PaperAnnotationRepository annotationRepository = new PaperAnnotationRepository();
-    public AnnotationHelper(PdfDocument document) {
-        this.document = document;
-    }
+    public AnnotationHelper() {}
 
     /** Import annotation từ file JSON local và overlay lên document */
-    public void importFromLocal(File jsonFile) {
+    public void importFromLocal(File jsonFile, PdfDocument document) {
         if (jsonFile == null || !jsonFile.exists()) {
             Log.w("AnnotationManager", "No local annotation file found.");
             return;
@@ -69,7 +72,7 @@ public class AnnotationHelper {
             }
         });
     }
-    public void updateAnnotation(File jsonFile, PaperAnnotation paperAnnotation) {
+    public void updateAnnotation(File jsonFile, PaperAnnotation paperAnnotation, PdfDocument document) {
         //Ghi toàn bộ annotation hiện có ra file JSON local
         executor.execute(() -> {
             try {
@@ -164,7 +167,7 @@ public class AnnotationHelper {
 
 
     /** Xuất file PDF đã embed annotation (bản sao của file gốc) */
-    public void exportEmbeddedPdf(File originalPdf, File outputPdf) {
+    public void exportEmbeddedPdf(File originalPdf, File outputPdf,  PdfDocument document) {
         executor.execute(() -> {
             try {
                 // Ghi annotation vào file gốc
@@ -185,6 +188,66 @@ public class AnnotationHelper {
                 Log.e("AnnotationManager", "Export embedded PDF failed", e);
             }
         });
+    }
+
+    public void exportAnnotationFromLocalToFile(File annotationFile, ExportAnnotationCallback callback){
+        executor.execute(() -> {
+            try {
+                // Copy file sang thư mục Downloads mà user có thể truy cập
+                File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                if (!downloadsDir.exists()) downloadsDir.mkdirs();
+
+                String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+
+                File exportedFile = new File(downloadsDir, now + "_annotation.json");
+
+                //copy content to the exported file
+                try (FileInputStream in = new FileInputStream(annotationFile);
+                     FileOutputStream out = new FileOutputStream(exportedFile)) {
+
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = in.read(buffer)) > 0) {
+                        out.write(buffer, 0, length);
+                    }
+                }
+
+                new Handler(Looper.getMainLooper()).post(() -> callback.onSuccess(exportedFile));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                new Handler(Looper.getMainLooper()).post(callback::onFail);
+            }
+
+        });
+    }
+
+    public void exportAnnotationFromServerToFile(String downloadUrl, ExportAnnotationCallback callback){
+        File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        if (!downloadsDir.exists()) downloadsDir.mkdirs();
+
+        String now = Instant.now().toString();
+        File exportedFile = new File(downloadsDir, now + "_annotation.json");
+
+
+        S3Util.downloadFileFromS3(LabVerse.getInstance(), downloadUrl, exportedFile, new S3Util.DownloadCallback() {
+            @Override
+            public void onSuccess() {
+                Log.d("ANNOTATION_EXPORT", "Annotation exported successfully.");
+                new Handler(Looper.getMainLooper()).post(() -> callback.onSuccess(exportedFile));
+            }
+
+            @Override
+            public void onError() {
+                Log.e("ANNOTATION_EXPORT", "Annotation exported failed");
+                new Handler(Looper.getMainLooper()).post(callback::onFail);
+            }
+        });
+    }
+
+    public interface ExportAnnotationCallback{
+        void onSuccess(File exportedFile);
+        void onFail();
     }
 
     public void shutdown() {

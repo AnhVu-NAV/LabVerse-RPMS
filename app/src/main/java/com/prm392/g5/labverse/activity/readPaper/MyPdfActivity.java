@@ -3,7 +3,6 @@ package com.prm392.g5.labverse.activity.readPaper;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,8 +27,6 @@ import com.pspdfkit.ui.PdfActivityIntentBuilder;
 import com.pspdfkit.ui.PdfFragment;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 
 
 public class MyPdfActivity extends PdfActivity {
@@ -95,7 +92,7 @@ public class MyPdfActivity extends PdfActivity {
 
         //chèn thêm item
         menu.add(Menu.NONE, R.id.annotation_export, Menu.NONE, "Export Annotation")
-                .setIcon(R.drawable.ic_export_annotation)
+                .setIcon(R.drawable.ic_purple_export_annotation)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); // => hiển thị trong menu 3 chấm
 //                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
@@ -118,10 +115,24 @@ public class MyPdfActivity extends PdfActivity {
 //            Toast.makeText(this, "Export annotation clicked!", Toast.LENGTH_SHORT).show();
             Log.d("EXPORT_ANNOTATION", "Export annotation clicked!");
             new AlertDialog.Builder(this)
-                    .setTitle("Confirm export")
+                    .setTitle("Export Annotation")
                     .setMessage("Do you want to exporting annotation to a file?")
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        exportAnnotationToFile();
+                        annotationHelper.exportAnnotationFromLocalToFile(localAnnotationFile, new AnnotationHelper.ExportAnnotationCallback() {
+                            @Override
+                            public void onSuccess(File exportedFile) {
+                                showShareDialog(exportedFile);
+                            }
+
+                            @Override
+                            public void onFail() {
+                                new AlertDialog.Builder(MyPdfActivity.this)
+                                        .setTitle("Export Annotation")
+                                        .setMessage("There is error during export annotation. Please try later")
+                                        .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                                        .show();
+                            }
+                        });
                     })
                     .setNegativeButton("No", null)
                     .show();
@@ -141,11 +152,11 @@ public class MyPdfActivity extends PdfActivity {
         //sau khi document load xong sẽ thực hiện đống việc sau đây
         this.document = document;
         this.fragment = getPdfFragment(); // Lấy fragment hiện tại
-        this.annotationHelper = new AnnotationHelper(document);
+        this.annotationHelper = new AnnotationHelper();
 
         //Import annotation local overlay lên PDF
         if (localAnnotationFile.exists()) {
-            annotationHelper.importFromLocal(localAnnotationFile);
+            annotationHelper.importFromLocal(localAnnotationFile, document);
         }
 
         // restore last page
@@ -187,7 +198,7 @@ public class MyPdfActivity extends PdfActivity {
             if (parentDir != null && !parentDir.exists()) {
                 parentDir.mkdirs();
             }
-            annotationHelper.updateAnnotation(localAnnotationFile, openedAnnotation);
+            annotationHelper.updateAnnotation(localAnnotationFile, openedAnnotation, document);
 
             //todo update cả cái last page aka current page của paper lên nữa
         } catch (Exception e) {
@@ -196,52 +207,10 @@ public class MyPdfActivity extends PdfActivity {
         }
     }
 
-    private void exportAnnotationToFile() {
-        new Thread(() -> {
-            try {
-                // Copy file sang thư mục Downloads mà user có thể truy cập
-                File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                if (!downloadsDir.exists()) downloadsDir.mkdirs();
-
-                String fileName = localPdfFile.getName(); // ví dụ: "document.pdf"
-                String nameWithoutExt = fileName.replaceFirst("[.][^.]+$", "");
-
-                File exportedFile = new File(downloadsDir, nameWithoutExt + "_annotation.json");
-
-                //copy content to the exported file
-                try (FileInputStream in = new FileInputStream(localAnnotationFile);
-                     FileOutputStream out = new FileOutputStream(exportedFile)) {
-
-                    byte[] buffer = new byte[1024];
-                    int length;
-                    while ((length = in.read(buffer)) > 0) {
-                        out.write(buffer, 0, length);
-                    }
-                }
-
-                runOnUiThread(() -> {
-                    // Hiện thông báo cho user biết file ở đâu
-                    Toast.makeText(
-                            this,
-                            "Exported annotation to: " + exportedFile.getAbsolutePath(),
-                            Toast.LENGTH_LONG
-                    ).show();
-
-                    // Cho phép user xem hoặc chia sẻ file
-                    showShareDialog(exportedFile);
-                });
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                runOnUiThread(() -> Toast.makeText(this, "Export annotation failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-            }
-        }).start();
-    }
-
-    private void showShareDialog(File file) {
+    public void showShareDialog(File file) {
         Uri uri = FileProvider.getUriForFile(
-                this,
-                getPackageName() + ".provider",
+                MyPdfActivity.this,
+                "com.prm392.g5.labverse.provider",
                 file
         );
 
@@ -250,8 +219,7 @@ public class MyPdfActivity extends PdfActivity {
         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-        //todo thêm mấy cái alert cho máy acsi mà phải tải về nếu không thí sẽ dùng bản cũáaasy
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(MyPdfActivity.this)
                 .setTitle("Export annotation successfully")
                 .setMessage("File is saved at:\n" + file.getAbsolutePath())
                 .setPositiveButton("Share", (dialog, which) -> {
@@ -259,5 +227,7 @@ public class MyPdfActivity extends PdfActivity {
                 })
                 .setNegativeButton("Close", null)
                 .show();
+
     }
+
 }

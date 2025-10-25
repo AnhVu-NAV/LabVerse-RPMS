@@ -179,6 +179,8 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
     }
 
     private void processAnnotationResponse(String userId, String paperId, Response<PaperAnnotationInfoResponse> response){
+        //todo thêm mấy cái alert cho máy acsi mà phải tải về nếu không thí sẽ dùng bản cũáaasy
+
         AppDatabase.databaseWriteExecutor.execute(() -> {
 
             final AtomicBoolean needToDownload = new AtomicBoolean(false);
@@ -186,6 +188,7 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
             PaperAnnotationInfoResponse remoteInfo = null;
             boolean existInRemote = false;
             if (response != null){
+                //có file trên remote
                 existInRemote = response.isSuccessful() && response.body() != null;
                 if (existInRemote) remoteInfo = response.body();
             }
