@@ -19,6 +19,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LabVerse_PRM392_G5"
         >
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.prm392.g5.labverse.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <activity
             android:name=".activity.ImportPaperActivity"
             android:exported="true" >
@@ -29,6 +38,9 @@
         </activity>
         <activity
             android:name=".activity.readPaper.PrepareViewPdfActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.handleAnnotation.ExportAnnotationActivity"
             android:exported="false" />
         <activity
             android:name=".activity.readPaper.MyPdfActivity"
@@ -50,7 +62,6 @@
             android:exported="true">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
-
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
 <!--            </intent-filter>-->
         </activity>

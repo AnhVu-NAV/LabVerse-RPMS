@@ -3,17 +3,15 @@ package com.prm392.g5.labverse.activity.readPaper;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
 
 import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.config.AppDatabase;
@@ -30,6 +28,8 @@ import com.pspdfkit.ui.PdfActivityIntentBuilder;
 import com.pspdfkit.ui.PdfFragment;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 
 public class MyPdfActivity extends PdfActivity {
@@ -42,8 +42,8 @@ public class MyPdfActivity extends PdfActivity {
     private static File localAnnotationFile;
     private static File localPdfFile;
 
-//    public static void open(Context context, File pdfFile, File annotationFile, Paper paper) {
-    public static void open(Context context, Paper paper, PaperAnnotation paperAnnotation,  File pdfFile, File annotationFile) {
+    //    public static void open(Context context, File pdfFile, File annotationFile, Paper paper) {
+    public static void open(Context context, Paper paper, PaperAnnotation paperAnnotation, File pdfFile, File annotationFile) {
 
         openedPaper = paper;
         openedAnnotation = paperAnnotation;
@@ -94,8 +94,8 @@ public class MyPdfActivity extends PdfActivity {
         }
 
         //chèn thêm item
-        menu.add(Menu.NONE, R.id.menu_upload, Menu.NONE, "Upload")
-                .setIcon(R.drawable.ic_launcher_foreground)
+        menu.add(Menu.NONE, R.id.annotation_export, Menu.NONE, "Export Annotation")
+                .setIcon(R.drawable.ic_export_annotation)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); // => hiển thị trong menu 3 chấm
 //                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
@@ -114,9 +114,17 @@ public class MyPdfActivity extends PdfActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menu_upload) {
-            Toast.makeText(this, "Upload clicked!", Toast.LENGTH_SHORT).show();
-            // Gọi hàm bạn muốn ở đây
+        if (item.getItemId() == R.id.annotation_export) {
+//            Toast.makeText(this, "Export annotation clicked!", Toast.LENGTH_SHORT).show();
+            Log.d("EXPORT_ANNOTATION", "Export annotation clicked!");
+            new AlertDialog.Builder(this)
+                    .setTitle("Confirm export")
+                    .setMessage("Do you want to exporting annotation to a file?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        exportAnnotationToFile();
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
             return true;
         }
         if (item.getItemId() == android.R.id.home) {
@@ -129,21 +137,6 @@ public class MyPdfActivity extends PdfActivity {
     @Override
     public void onDocumentLoaded(@NonNull PdfDocument document) {
         super.onDocumentLoaded(document);
-
-//        // Dò tìm Toolbar trong layout của Nutrient
-//        Toolbar toolbar = findToolbarInHierarchy();
-//        if (toolbar != null) {
-//            toolbar.setBackgroundColor(Color.parseColor("#1E1E1E"));
-//
-//            ImageButton uploadButton = new ImageButton(this);
-//            uploadButton.setImageResource(R.drawable.ic_launcher_foreground);
-//            uploadButton.setBackgroundColor(Color.TRANSPARENT);
-//            toolbar.addView(uploadButton);
-//
-//            uploadButton.setOnClickListener(v -> exportAnnotation());
-//        } else {
-//            Toast.makeText(this, "Toolbar not found!", Toast.LENGTH_SHORT).show();
-//        }
 
         //sau khi document load xong sẽ thực hiện đống việc sau đây
         this.document = document;
@@ -161,28 +154,6 @@ public class MyPdfActivity extends PdfActivity {
         }
 
     }
-
-//    private Toolbar findToolbarInHierarchy() {
-//        ViewGroup root = findViewById(android.R.id.content);
-//        return findToolbarRecursively(root);
-//    }
-//
-//    private Toolbar findToolbarRecursively(ViewGroup parent) {
-//        for (int i = 0; i < parent.getChildCount(); i++) {
-//            View child = parent.getChildAt(i);
-//            if (child instanceof Toolbar) {
-//                return (Toolbar) child;
-//            } else if (child instanceof ViewGroup) {
-//                Toolbar toolbar = findToolbarRecursively((ViewGroup) child);
-//                if (toolbar != null) return toolbar;
-//            }
-//        }
-//        return null;
-//    }
-//
-//    private void exportAnnotation() {
-//        Log.d("toolbar", "Asns nut moiw them vaof tool bar");
-//    }
 
     @Override
     protected void onPause() {
@@ -225,11 +196,68 @@ public class MyPdfActivity extends PdfActivity {
         }
     }
 
-    /** Gọi khi người dùng muốn xuất file JSON annotation */
-//    public void exportAnnotationFile() {
-//        File localFile = ensureLocalAnnotationFile();
-//        annotationManager.exportToLocal(localFile);
-//        Log.d("MyPdfActivity", "Annotation file exported to: " + localFile.getPath());
-//    }
+    private void exportAnnotationToFile() {
+        new Thread(() -> {
+            try {
+                // Copy file sang thư mục Downloads mà user có thể truy cập
+                File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                if (!downloadsDir.exists()) downloadsDir.mkdirs();
 
+                String fileName = localPdfFile.getName(); // ví dụ: "document.pdf"
+                String nameWithoutExt = fileName.replaceFirst("[.][^.]+$", "");
+
+                File exportedFile = new File(downloadsDir, nameWithoutExt + "_annotation.json");
+
+                //copy content to the exported file
+                try (FileInputStream in = new FileInputStream(localAnnotationFile);
+                     FileOutputStream out = new FileOutputStream(exportedFile)) {
+
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = in.read(buffer)) > 0) {
+                        out.write(buffer, 0, length);
+                    }
+                }
+
+                runOnUiThread(() -> {
+                    // Hiện thông báo cho user biết file ở đâu
+                    Toast.makeText(
+                            this,
+                            "Exported annotation to: " + exportedFile.getAbsolutePath(),
+                            Toast.LENGTH_LONG
+                    ).show();
+
+                    // Cho phép user xem hoặc chia sẻ file
+                    showShareDialog(exportedFile);
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(this, "Export annotation failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+        }).start();
+    }
+
+    private void showShareDialog(File file) {
+        Uri uri = FileProvider.getUriForFile(
+                this,
+                getPackageName() + ".provider",
+                file
+        );
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("application/json");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        //todo thêm mấy cái alert cho máy acsi mà phải tải về nếu không thí sẽ dùng bản cũáaasy
+        new AlertDialog.Builder(this)
+                .setTitle("Export annotation successfully")
+                .setMessage("File is saved at:\n" + file.getAbsolutePath())
+                .setPositiveButton("Share", (dialog, which) -> {
+                    startActivity(Intent.createChooser(shareIntent, "Share annotation"));
+                })
+                .setNegativeButton("Close", null)
+                .show();
+    }
 }

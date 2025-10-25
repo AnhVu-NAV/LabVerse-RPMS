@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">LabVerse_PRM392_G5</string>
 
-    <item name="menu_upload" type="id" />
+    <item name="annotation_import" type="id" />
+    <item name="annotation_export" type="id" />
+
 </resources>
