@@ -194,12 +194,7 @@ public class AnnotationHelper {
         executor.execute(() -> {
             try {
                 // Copy file sang thư mục Downloads mà user có thể truy cập
-                File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                if (!downloadsDir.exists()) downloadsDir.mkdirs();
-
-                String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-
-                File exportedFile = new File(downloadsDir, now + "_annotation.json");
+                File exportedFile = getExportedFile();
 
                 //copy content to the exported file
                 try (FileInputStream in = new FileInputStream(annotationFile);
@@ -223,12 +218,8 @@ public class AnnotationHelper {
     }
 
     public void exportAnnotationFromServerToFile(String downloadUrl, ExportAnnotationCallback callback){
-        File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        if (!downloadsDir.exists()) downloadsDir.mkdirs();
 
-        String now = Instant.now().toString();
-        File exportedFile = new File(downloadsDir, now + "_annotation.json");
-
+        File exportedFile = getExportedFile();
 
         S3Util.downloadFileFromS3(LabVerse.getInstance(), downloadUrl, exportedFile, new S3Util.DownloadCallback() {
             @Override
@@ -243,6 +234,13 @@ public class AnnotationHelper {
                 new Handler(Looper.getMainLooper()).post(callback::onFail);
             }
         });
+    }
+
+    private File getExportedFile() {
+        File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        if (!downloadsDir.exists()) downloadsDir.mkdirs();
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        return new File(downloadsDir, now + "_annotation.json");
     }
 
     public interface ExportAnnotationCallback{
