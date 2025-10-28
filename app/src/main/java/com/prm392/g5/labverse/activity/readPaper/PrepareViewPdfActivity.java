@@ -37,7 +37,6 @@ import retrofit2.Response;
 
 public class PrepareViewPdfActivity extends AppCompatActivity {
 
-    private AppDatabase db;
     private PaperDao paperDao;
     private PaperAnnotationDao annotationDao;
     private PaperRepository paperRepository = new PaperRepository();
@@ -72,7 +71,7 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
             return;
         }
 
-        db = AppDatabase.getInstance(this);
+        AppDatabase db = AppDatabase.getInstance(this);
         paperDao = db.paperDao();
         annotationDao = db.paperAnnotationDao();
 

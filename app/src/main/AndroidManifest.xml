@@ -29,7 +29,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
         <activity
-            android:name=".activity.ImportPaperActivity"
+            android:name=".activity.TestActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,10 +37,16 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activity.ImportPaperActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.readPaper.PrepareViewPdfActivity"
             android:exported="false" />
         <activity
             android:name=".activity.handleAnnotation.ExportAnnotationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.handleAnnotation.ImportAnnotationActivity"
             android:exported="false" />
         <activity
             android:name=".activity.readPaper.MyPdfActivity"

@@ -27,6 +27,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class S3Util {
+    private S3Util() {}
 
     private static final OkHttpClient client = new OkHttpClient();
 

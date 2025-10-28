@@ -23,10 +23,7 @@ import org.json.JSONArray;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -173,15 +170,7 @@ public class AnnotationHelper {
                 // Ghi annotation vào file gốc
                 document.saveIfModified();
 
-                // Copy file PDF gốc (đã chứa annotation) ra vị trí mới
-                try (InputStream in = new FileInputStream(originalPdf);
-                     OutputStream out = new FileOutputStream(outputPdf)) {
-                    byte[] buffer = new byte[8192];
-                    int len;
-                    while ((len = in.read(buffer)) > 0) {
-                        out.write(buffer, 0,  len);
-                    }
-                }
+                FileUtil.copyContentFromTo(originalPdf, outputPdf);
 
                 Log.d("AnnotationManager", "Copied annotated PDF to: " + outputPdf.getPath());
             } catch (Exception e) {
@@ -197,15 +186,7 @@ public class AnnotationHelper {
                 File exportedFile = getExportedFile();
 
                 //copy content to the exported file
-                try (FileInputStream in = new FileInputStream(annotationFile);
-                     FileOutputStream out = new FileOutputStream(exportedFile)) {
-
-                    byte[] buffer = new byte[1024];
-                    int length;
-                    while ((length = in.read(buffer)) > 0) {
-                        out.write(buffer, 0, length);
-                    }
-                }
+                FileUtil.copyContentFromTo(annotationFile, exportedFile);
 
                 new Handler(Looper.getMainLooper()).post(() -> callback.onSuccess(exportedFile));
 

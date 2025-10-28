@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import com.prm392.g5.labverse.LabVerse;
+import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.config.AppDatabase;
 import com.prm392.g5.labverse.config.RetrofitClient;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
@@ -37,12 +38,13 @@ import retrofit2.Response;
 
 public class ExportAnnotationActivity extends AppCompatActivity {
 
-    private PaperAnnotationRepository annotationRepository = new PaperAnnotationRepository();
-    private AnnotationHelper annotationHelper = new AnnotationHelper();
+    private final PaperAnnotationRepository annotationRepository = new PaperAnnotationRepository();
+    private final AnnotationHelper annotationHelper = new AnnotationHelper();
     private static final String PAPER_ID = "paper_id";
 
     public static void open(Context context, String paperId) {
         new AlertDialog.Builder(context)
+                .setIcon(R.drawable.ic_export_annotation)
                 .setTitle("Export Annotation")
                 .setMessage("Do you want to exporting annotation to a file?")
                 .setPositiveButton("Yes", (dialog, which) -> {
