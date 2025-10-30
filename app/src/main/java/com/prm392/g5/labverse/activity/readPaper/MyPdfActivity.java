@@ -69,12 +69,6 @@ public class MyPdfActivity extends PdfActivity {
         // Gọi Nutrient inflate menu mặc định trước
         super.onCreateOptionsMenu(menu);
 
-        // Ghi log ra xem trong menu có những item gì
-        for (int i = 0; i < menu.size(); i++) {
-            MenuItem item = menu.getItem(i);
-            Log.d("MyPdfActivity", "Menu item: " + item.getTitle());
-        }
-
         // Xoá theo tên hiển thị
         for (int i = menu.size() - 1; i >= 0; i--) {  // lặp ngược để xoá an toàn
             MenuItem item = menu.getItem(i);
@@ -227,7 +221,6 @@ public class MyPdfActivity extends PdfActivity {
                 })
                 .setNegativeButton("Close", null)
                 .show();
-
     }
 
 }

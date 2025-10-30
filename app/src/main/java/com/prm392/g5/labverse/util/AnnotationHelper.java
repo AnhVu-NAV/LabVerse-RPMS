@@ -48,7 +48,7 @@ public class AnnotationHelper {
     /** Import annotation từ file JSON local và overlay lên document */
     public void importFromLocal(File jsonFile, PdfDocument document) {
         if (jsonFile == null || !jsonFile.exists()) {
-            Log.w("AnnotationManager", "No local annotation file found.");
+            Log.w("AnnotationHelper", "No local annotation file found.");
             return;
         }
         executor.execute(() -> {
@@ -61,9 +61,9 @@ public class AnnotationHelper {
                     document.getAnnotationProvider().createAnnotationFromInstantJson(json);
                 }
 
-                Log.d("AnnotationManager", "Imported annotation from local file.");
+                Log.d("ANNOTATION_OVERLAY", "Imported annotation from local file.");
             } catch (Exception e) {
-                Log.e("AnnotationManager", "Import local failed", e);
+                Log.e("ANNOTATION_OVERLAY", "Import local failed", e);
                 //todo cái này phải cho thử lại chứ nhỉ, ko nó sẽ bị ghi đè mất khi người dùng annotate mới
                 Toast.makeText(LabVerse.getInstance(), "Fail to overlay annotation.", Toast.LENGTH_LONG).show();
             }
@@ -84,12 +84,12 @@ public class AnnotationHelper {
                     fw.write(jsonArray.toString());
                 }
 
-                Log.d("AnnotationManager", "Exported annotation to local: " + jsonFile.getPath());
+                Log.d("ANNOTATION_UPDATE", "Exported annotation to local: " + jsonFile.getPath());
                 //upload annotation to remote storage
                 uploadToRemote(jsonFile, paperAnnotation);
 
             } catch (Exception e) {
-                Log.e("AnnotationManager", "Export local failed", e);
+                Log.e("ANNOTATION_UPDATE", "Export local failed", e);
                 Toast.makeText(LabVerse.getInstance(), "Fail to update annotation.", Toast.LENGTH_LONG).show();
             }
         });
@@ -172,9 +172,9 @@ public class AnnotationHelper {
 
                 FileUtil.copyContentFromTo(originalPdf, outputPdf);
 
-                Log.d("AnnotationManager", "Copied annotated PDF to: " + outputPdf.getPath());
+                Log.d("AnnotationHelper", "Copied annotated PDF to: " + outputPdf.getPath());
             } catch (Exception e) {
-                Log.e("AnnotationManager", "Export embedded PDF failed", e);
+                Log.e("AnnotationHelper", "Export embedded PDF failed", e);
             }
         });
     }
@@ -187,11 +187,12 @@ public class AnnotationHelper {
 
                 //copy content to the exported file
                 FileUtil.copyContentFromTo(annotationFile, exportedFile);
-
+                Log.d("ANNOTATION_EXPORT", "Annotation exported from local file successfully.");
                 new Handler(Looper.getMainLooper()).post(() -> callback.onSuccess(exportedFile));
 
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.e("ANNOTATION_EXPORT", "Annotation exported from local file failed");
                 new Handler(Looper.getMainLooper()).post(callback::onFail);
             }
 
@@ -205,13 +206,13 @@ public class AnnotationHelper {
         S3Util.downloadFileFromS3(LabVerse.getInstance(), downloadUrl, exportedFile, new S3Util.DownloadCallback() {
             @Override
             public void onSuccess() {
-                Log.d("ANNOTATION_EXPORT", "Annotation exported successfully.");
+                Log.d("ANNOTATION_EXPORT", "Annotation exported from server successfully.");
                 new Handler(Looper.getMainLooper()).post(() -> callback.onSuccess(exportedFile));
             }
 
             @Override
             public void onError() {
-                Log.e("ANNOTATION_EXPORT", "Annotation exported failed");
+                Log.e("ANNOTATION_EXPORT", "Annotation exported from server failed");
                 new Handler(Looper.getMainLooper()).post(callback::onFail);
             }
         });

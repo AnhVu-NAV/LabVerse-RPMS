@@ -114,7 +114,7 @@ public class ImportAnnotationActivity extends AppCompatActivity {
             uploadToS3();
         } catch (Exception e) {
             Log.e("IMPORT ANNOTATION", "Copy file lỗi", e);
-            Toast.makeText(ImportAnnotationActivity.this, "Có lỗi xảy ra trong quá trình import annotation. Hãy thử lại", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ImportAnnotationActivity.this, "There is error during import annotation. Please try again", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -183,12 +183,12 @@ public class ImportAnnotationActivity extends AppCompatActivity {
                             annotationDao.update(paperAnnotation);
                         }
                     });
-                    Log.d("IMPORT ANNOTATION", "Saved annotation to local db: " + paperAnnotation.getPaperId());
+                    Log.d("ANNOTATION_IMPORT", "Saved annotation to local db: " + paperAnnotation.getPaperId());
                     Toast.makeText(ImportAnnotationActivity.this, "Import annotation successfully", Toast.LENGTH_SHORT).show();
                     finish();
 
                 } else {
-                    Toast.makeText(ImportAnnotationActivity.this, "Export annotation successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ImportAnnotationActivity.this, "There is error during import annotation. Please try again", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }

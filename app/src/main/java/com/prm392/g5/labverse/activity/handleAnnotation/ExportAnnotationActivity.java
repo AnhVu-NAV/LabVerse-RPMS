@@ -100,7 +100,7 @@ public class ExportAnnotationActivity extends AppCompatActivity {
                 // Case 1: chưa có ở đâu cả -> hiện thông báo cho user la ko export duoc do khong co file
                 new AlertDialog.Builder(this)
                         .setTitle("Export Annotation")
-                        .setMessage("You are not having annotation for this file, can not export!")
+                        .setMessage("You are not having any annotation for this file, can not export!")
                         .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                         .show();
                 //muốn nếu vào th này thì kết thúc luôn

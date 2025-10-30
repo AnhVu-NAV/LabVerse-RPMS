@@ -7,8 +7,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.config.AppDatabase;
 import com.prm392.g5.labverse.config.RetrofitClient;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
@@ -39,8 +41,8 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
 
     private PaperDao paperDao;
     private PaperAnnotationDao annotationDao;
-    private PaperRepository paperRepository = new PaperRepository();
-    private PaperAnnotationRepository annotationRepository = new PaperAnnotationRepository();
+    private final PaperRepository paperRepository = new PaperRepository();
+    private final PaperAnnotationRepository annotationRepository = new PaperAnnotationRepository();
     private static final String PAPER_ID = "paper_id";
     private Paper wouldBeOpenedPaper;
     private PaperAnnotation wouldBeOpenedAnnotation;
@@ -66,6 +68,7 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
         String userId = SharePreferenceManager.getInstance().getUserId();
 
         if (paperId == null) {
+                Log.e("PDF_OPEN", "No paper key provided to open PDF.");
             Toast.makeText(this, "No paper key! Can not open the paper!!!", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -170,16 +173,23 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<PaperAnnotationInfoResponse> call, Throwable t) {
-                //todo khả năng ở đây phải hiện option cho người ta, retry hay là dùng bản offline
-                // request thất bại -> xử lý như remote không tồn tại
-                processAnnotationResponse(userId, paperId, null);
+                //hiện option cho người ta, retry hay là dùng bản offline
+                new AlertDialog.Builder(PrepareViewPdfActivity.this)
+                        .setIcon(R.drawable.ic_import_annotation)
+                        .setTitle("Open paper")
+                        .setMessage("There was an error connecting to server to get annotation info." +
+                                " If you continue to open the paper, the existed annotation (if has) would be override!.")
+                        .setMessage("Do you still want to open the paper?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            processAnnotationResponse(userId, paperId, null);
+                        })
+                        .setNegativeButton("No", (dialog, which) -> finish())
+                        .show();
             }
         });
     }
 
     private void processAnnotationResponse(String userId, String paperId, Response<PaperAnnotationInfoResponse> response){
-        //todo thêm mấy cái alert cho máy acsi mà phải tải về nếu không thí sẽ dùng bản cũáaasy
-
         AppDatabase.databaseWriteExecutor.execute(() -> {
 
             final AtomicBoolean needToDownload = new AtomicBoolean(false);
@@ -205,7 +215,7 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
                 //để tới khi upload rồi hẵng thêm vào db
             } else if (!existInRemote ) {
 //            } else if (!existInRemote && existInLocal) {
-                // Case 2: local có, remote chưa → dùng local, chờ sync sau
+                // Case 2: local có, remote chưa → dùng local
                 wouldBeOpenedAnnotation = localAnnotation;
             } else if (!existInLocal) {
 //            } else if (existInRemote && !existInLocal) {
@@ -295,7 +305,8 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
 
             @Override
             public void onError() {
-                Toast.makeText(PrepareViewPdfActivity.this, "Fail to download file PDF", Toast.LENGTH_LONG).show();
+                Log.d("PDF_OPEN", "Fail to download PDF file from S3");
+                runOnUiThread(() -> Toast.makeText(PrepareViewPdfActivity.this, "Fail to download file PDF", Toast.LENGTH_LONG).show());
             }
         });
     }
@@ -308,23 +319,37 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
             public void onSuccess() {
                 // ghi đè khi tải thành công
                 if (tempFile.renameTo(localAnnotationFile)) {
-                    Log.d("ANNOTATION_DOWNLOAD", "Annotation updated successfully.");
+                    Log.d("PDF_OPEN", "Annotation download successfully.");
+                    runOnUiThread(() -> openPdf());
                 } else {
-                    Log.e("ANNOTATION_DOWNLOAD", "Rename failed, keeping old annotation.");
-                    runOnUiThread(() ->
-                            Toast.makeText(PrepareViewPdfActivity.this, "Fail to update annotation from server. Old version would be used.", Toast.LENGTH_LONG).show()
-                    );
+                    Log.e("PDF_OPEN", "Annotation download successfully, But rename failed");
+                    runOnUiThread(() -> {
+                        new AlertDialog.Builder(PrepareViewPdfActivity.this)
+                                .setIcon(R.drawable.ic_import_annotation)
+                                .setTitle("Open paper")
+                                .setMessage("There was an error while processing annotation." +
+                                        " If you continue to open the paper, the existed annotation (if has) would be override!.")
+                                .setPositiveButton("Yes", (dialog, which) -> openPdf())
+                                .setNegativeButton("No", (dialog, which) -> finish())
+                                .show();
+                    });
                 }
-                runOnUiThread(() -> openPdf());
+
             }
 
             @Override
             public void onError() {
-                Log.e("ANNOTATION_DOWNLOAD", "Annotation download failed");
+                Log.e("PDF_OPEN", "Annotation download failed");
                 tempFile.delete(); // xóa file lỗi
                 runOnUiThread(() -> {
-                    Toast.makeText(PrepareViewPdfActivity.this, "Fail to update annotation from server. Old version would be used.", Toast.LENGTH_LONG).show();
-                    openPdf();
+                    new AlertDialog.Builder(PrepareViewPdfActivity.this)
+                            .setIcon(R.drawable.ic_import_annotation)
+                            .setTitle("Open paper")
+                            .setMessage("There was an error connecting to server to get annotation info." +
+                                    " If you continue to open the paper, the existed annotation (if has) would be override!.")
+                            .setPositiveButton("Yes", (dialog, which) -> openPdf())
+                            .setNegativeButton("No", (dialog, which) -> finish())
+                            .show();
                 });
             }
         });
