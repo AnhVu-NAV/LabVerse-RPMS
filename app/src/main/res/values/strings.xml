@@ -1,5 +1,30 @@
 <resources>
     <string name="app_name">LabVerse_PRM392_G5</string>
+    <string name="back">Back</string>
+    <string name="forgot_password_title">Forgot password</string>
+    <string name="forgot_password_subtitle">Please enter your email to reset the password</string>
+    <string name="your_email">Your Email</string>
+    <string name="hint_email">Enter your email</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="pwreset_title">Password reset</string>
+    <string name="pwreset_subtitle">Your password has been successfully reset. Click confirm to set a new password</string>
+    <string name="confirm">Confirm</string>
+    <string name="newpass_title">Set a new password</string>
+    <string name="newpass_subtitle">Create a new password. Ensure it differs from previous ones for security</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="hint_new_password">Enter your new password</string>
+    <string name="hint_confirm_password">Re-enter password</string>
+    <string name="update_password">Update Password</string>
+
+    <!-- error messages -->
+    <string name="err_password_short">Password must be at least 8 characters</string>
+    <string name="err_password_weak">Use letters and numbers (and a symbol) for better security</string>
+    <string name="err_password_mismatch">Passwords do not match</string>
+    <string name="msg_password_updated">Password updated. Please sign in again.</string>
+    <string name="success">Successful</string>
+    <string name="pw_updated_desc">Congratulations! Your password has been successfully updated. Click Continue to login</string>
+    <string name="continue_">Continue</string>
 
     <item name="annotation_import" type="id" />
     <item name="annotation_export" type="id" />

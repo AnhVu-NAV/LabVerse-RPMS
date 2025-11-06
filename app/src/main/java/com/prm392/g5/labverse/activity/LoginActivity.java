@@ -134,6 +134,15 @@ public class LoginActivity extends AppCompatActivity {
                 }
         );
 
+        TextView tvSignUpAction = findViewById(R.id.tvSignUpAction);
+        tvSignUpAction.setOnClickListener(v -> {
+            Intent i = new Intent(LoginActivity.this, SignUpActivity.class);
+            startActivity(i);
+        });
+
+        findViewById(R.id.tvForgot).setOnClickListener(v ->
+                startActivity(new Intent(this, ForgotPasswordActivity.class))
+        );
     }
 
     public void login(LoginRequest loginRequest) {

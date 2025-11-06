@@ -16,7 +16,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LabVerse_PRM392_G5"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".activity.RoleSelectActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.OtpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.PasswordSuccessActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.SetNewPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.PasswordResetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.SignUpActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.team.ListTeamOfPiActivity"
             android:exported="false" />

@@ -1,8 +1,40 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.LabVerse_PRM392_G5" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <!-- App theme (Material3 DayNight) -->
+    <style name="Theme.LabVerse_PRM392_G5" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Tham chiếu @color thay vì hex -->
+        <item name="colorPrimary">@color/lv_primary</item>
+        <item name="colorOnPrimary">@color/lv_on_primary</item>
+        <item name="colorPrimaryContainer">@color/lv_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/lv_on_primary_container</item>
+
+        <item name="android:colorBackground">@color/lv_background</item>
+        <item name="colorSurface">@color/lv_surface</item>
+        <item name="colorOnSurface">@color/lv_on_surface</item>
+        <item name="colorOutline">@color/lv_outline</item>
+
+        <!-- Rounded shapes -->
+        <item name="shapeAppearanceSmallComponent">@style/Shape.Corner.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/Shape.Corner.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/Shape.Corner.Large</item>
+
+        <!-- Status bar (light) -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+    </style>
+
+    <!-- Shapes -->
+    <style name="Shape.Corner.Small" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+    <style name="Shape.Corner.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">14dp</item>
+    </style>
+    <style name="Shape.Corner.Large" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
     </style>
 
     <style name="Theme.LabVerse_PRM392_G5" parent="Base.Theme.LabVerse_PRM392_G5" />
