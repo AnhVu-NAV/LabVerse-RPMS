@@ -24,3 +24,9 @@ local.properties
 /.idea/.name
 /.idea/.gitignore
 /.idea/deviceManager.xml
+# IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
