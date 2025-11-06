@@ -31,6 +31,7 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.prm392.g5.labverse.BuildConfig;
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.activity.team.ListTeamOfPiActivity;
 import com.prm392.g5.labverse.config.RetrofitClient;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.dto.ErrorResponse;
@@ -171,11 +172,21 @@ public class LoginActivity extends AppCompatActivity {
         //lưu access token để sử dụng
         Log.d("Login", "Login success fully");
         SharePreferenceManager prefManager = SharePreferenceManager.getInstance();
+        //lưu lại access token cũng như user id của người dùng hiện tại
         prefManager.saveAccessToken(loginResponse.getAccessToken());
+        prefManager.saveUserId(loginResponse.getUserId());
         runOnUiThread(() ->
                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_LONG).show()
         );
-        //todo chuyển người dùng qua activity khác
+        //todo chuyển người dùng qua activity Library của Tuấn Anh
+        //test import
+//        Intent intent = new Intent(this, ImportPaperActivity.class);
+//        startActivity(intent);
+
+        //todo chuyển người dùng qua activity ListTeamOfPiActivity
+//        Intent intent = new Intent(this, ListTeamOfPiActivity.class);
+//        startActivity(intent);
+        finish();
     }
 
     /**

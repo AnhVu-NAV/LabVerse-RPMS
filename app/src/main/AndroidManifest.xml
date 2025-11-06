@@ -11,6 +11,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LabVerse_PRM392_G5"
@@ -37,14 +38,64 @@
             android:name=".activity.SignUpActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.team.ListTeamOfPiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.team.CreateTeamActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.team.TeamDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.team.EditTeamActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.team.ListMemberActivity"
+            android:exported="false" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.prm392.g5.labverse.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name=".activity.TestActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.ImportPaperActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.readPaper.PrepareViewPdfActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.handleAnnotation.ExportAnnotationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.handleAnnotation.ImportAnnotationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.readPaper.MyPdfActivity"
+            android:exported="false"
+            android:theme="@style/MyPdfTheme" />
+        <activity
+            android:name="com.pspdfkit.ui.PdfActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
             android:name=".activity.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

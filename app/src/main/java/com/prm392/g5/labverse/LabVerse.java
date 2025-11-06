@@ -2,6 +2,8 @@ package com.prm392.g5.labverse;
 
 import android.app.Application;
 
+import com.tom_roush.pdfbox.android.PDFBoxResourceLoader;
+
 public class LabVerse extends Application {
     //this class would be created before Activity/Service
     //used to keep global variance, singleton, init library
@@ -12,6 +14,7 @@ public class LabVerse extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this; //the Application, aka application context
+        PDFBoxResourceLoader.init(this);
     }
 
     public static LabVerse getInstance(){

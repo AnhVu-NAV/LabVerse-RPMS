@@ -25,4 +25,8 @@
     <string name="success">Successful</string>
     <string name="pw_updated_desc">Congratulations! Your password has been successfully updated. Click Continue to login</string>
     <string name="continue_">Continue</string>
+
+    <item name="annotation_import" type="id" />
+    <item name="annotation_export" type="id" />
+
 </resources>
