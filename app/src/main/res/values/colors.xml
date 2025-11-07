@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray_text">#61758A</color>
+
     <!-- Brand -->
     <color name="lv_primary">#1D61E7</color>
     <color name="lv_on_primary">#FFFFFF</color>
