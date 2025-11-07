@@ -31,7 +31,6 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.prm392.g5.labverse.BuildConfig;
 import com.prm392.g5.labverse.R;
-import com.prm392.g5.labverse.activity.team.ListTeamOfPiActivity;
 import com.prm392.g5.labverse.config.RetrofitClient;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.dto.ErrorResponse;
@@ -59,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText edEmail, edPassword;
     private Button btnLogin, btnLoginWGg;
     //TODO LINK QUA SIGN UP
-    private TextView tvSignUp, tvLoginError;
+    private TextView tvSignUpAction, tvLoginError;
 
     private AuthRepository authRepository = new AuthRepository();
 
@@ -84,8 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         edPassword = findViewById(R.id.edPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnLoginWGg = findViewById(R.id.btnLoginWGg);
-        //todo xử lí sign up
-        tvSignUp= findViewById(R.id.tvSignUp);
+        tvSignUpAction = findViewById(R.id.tvSignUpAction);
         tvLoginError = findViewById(R.id.tvLoginError);
 
         //normal login
@@ -134,7 +132,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
         );
 
-        TextView tvSignUpAction = findViewById(R.id.tvSignUpAction);
         tvSignUpAction.setOnClickListener(v -> {
             Intent i = new Intent(LoginActivity.this, SignUpActivity.class);
             startActivity(i);
@@ -178,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Login successfully!", Toast.LENGTH_LONG).show()
         );
 
-        //todo: xem người dùng đăng nhập lần đầu hay là lần 2, để xem vào trang chọn role hay là vào Library của Tuấn Anh luôn
+        //xem người dùng đăng nhập lần đầu hay là lần 2, để xem vào trang chọn role hay là vào Library của Tuấn Anh luôn
         if (loginResponse.getUserRole() == null || loginResponse.getUserRole().isEmpty()) {
             //chưa chọn role, chuyển qua chọn role
             Intent intent = new Intent(this, RoleSelectActivity.class);
@@ -211,7 +208,7 @@ public class LoginActivity extends AppCompatActivity {
             // Nếu không có error body thì dừng sớm, tránh lồng if
             if (errorBody == null) {
                 Log.e("Login", "Empty error body");
-                tvLoginError.setText("Unknown error");
+                Toast.makeText(LoginActivity.this, "Unknown error", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -232,11 +229,11 @@ public class LoginActivity extends AppCompatActivity {
             //TODO THIẾT LẬP CƠ CHẾ XỬ LÍ LỖIIIIIIII
 
             Log.e("Login", "Error " + code + ": " + message);
-            tvLoginError.setText(message);
+            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
 
         } catch (IOException e) {
             Log.e("Login", "Failed to parse error response", e);
-            tvLoginError.setText("Something went wrong");
+            Toast.makeText(LoginActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -250,15 +247,15 @@ public class LoginActivity extends AppCompatActivity {
         Log.e("Login", "Request failed", t);
 
         if (t instanceof java.net.UnknownHostException) {
-            tvLoginError.setText("Không có kết nối mạng. Vui lòng kiểm tra Internet.");
+            Toast.makeText(LoginActivity.this, "No internet connection!", Toast.LENGTH_SHORT).show();
         } else if (t instanceof java.net.SocketTimeoutException) {
-            tvLoginError.setText("Kết nối bị hết hạn. Vui lòng thử lại.");
+            Toast.makeText(LoginActivity.this, "Timeout!", Toast.LENGTH_SHORT).show();
         } else if (t instanceof java.net.ConnectException) {
-            tvLoginError.setText("Không thể kết nối tới máy chủ.");
+            Toast.makeText(LoginActivity.this, "Unable to connect to server", Toast.LENGTH_SHORT).show();
         } else if (t instanceof javax.net.ssl.SSLException) {
-            tvLoginError.setText("Lỗi chứng chỉ bảo mật.");
+            Toast.makeText(LoginActivity.this, "SSL Exception", Toast.LENGTH_SHORT).show();
         } else {
-            tvLoginError.setText("Đã xảy ra lỗi không xác định. Vui lòng thử lại.");
+            Toast.makeText(LoginActivity.this, "Unknown error", Toast.LENGTH_SHORT).show();
         }
     }
 
