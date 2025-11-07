@@ -1,5 +1,7 @@
 package com.prm392.g5.labverse.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -15,16 +17,34 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.dto.auth.VerifyForgotPasswordOtpResponse;
+import com.prm392.g5.labverse.repository.AuthRepository;
+import com.prm392.g5.labverse.util.ApiErrorHandler;
 
-public class OtpActivity extends AppCompatActivity {
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class VerifyForgotPasswordActivity extends AppCompatActivity {
 
     private final EditText[] ets = new EditText[6];
     private MaterialButton btnVerify;
+
+    private String email;
+
+    public static void open(String email, Context context) {
+        Intent intent = new Intent(context, VerifyAccountActivity.class);
+        intent.putExtra("email", email);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp);
+
+        email = getIntent().getStringExtra("email");
 
         // Back
         ImageButton btnBack = findViewById(R.id.btnBack);
@@ -41,23 +61,57 @@ public class OtpActivity extends AppCompatActivity {
         btnVerify = findViewById(R.id.btnVerify);
         btnVerify.setEnabled(false);
 
+        AuthRepository authRepository = new AuthRepository();
+
         // Resend OTP (TextView đã tách làm 2 phần trong XML)
         TextView tvResendOtpAction = findViewById(R.id.tvResendOtpAction);
         tvResendOtpAction.setOnClickListener(v -> {
-            Toast.makeText(this, "Resend OTP clicked", Toast.LENGTH_SHORT).show();
-            // TODO: call resend API here
+            //call resend API
+            authRepository.resentForgotPasswordOtp(email, new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(VerifyForgotPasswordActivity.this, "Resent successfully, please check your email to get OTP", Toast.LENGTH_LONG).show();
+                    } else {
+                        ApiErrorHandler.handleApiResponseError(VerifyForgotPasswordActivity.this, response, "ResentForgotPassOtp");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    // request chưa đến được server hoặc không thể đọc được phản hồi
+                    ApiErrorHandler.handleNetworkFailure(VerifyForgotPasswordActivity.this, t, "ResentForgotPassOtp");
+                }
+            });
         });
 
         setupOtpInputs();
 
         btnVerify.setOnClickListener(v -> {
-            String code = collectCode();
-            if (code.length() != 6) {
+            String inputOtp = collectCode();
+            if (inputOtp.length() != 6) {
                 Toast.makeText(this, "Please enter 6 digits", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // TODO: call verify API
-            Toast.makeText(this, "OTP = " + code, Toast.LENGTH_SHORT).show();
+            //call verify API
+            authRepository.verifyForgotPasswordOtp(email, inputOtp, new Callback<VerifyForgotPasswordOtpResponse>() {
+                @Override
+                public void onResponse(Call<VerifyForgotPasswordOtpResponse> call, Response<VerifyForgotPasswordOtpResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        SetNewPasswordActivity.open(email, response.body().getResetPasswordToken(), VerifyForgotPasswordActivity.this);
+                        finish();
+                    } else {
+                        ApiErrorHandler.handleApiResponseError(VerifyForgotPasswordActivity.this, response, "VerifyForgotPassOtp");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<VerifyForgotPasswordOtpResponse> call, Throwable t) {
+                    // request chưa đến được server hoặc không thể đọc được phản hồi
+                    ApiErrorHandler.handleNetworkFailure(VerifyForgotPasswordActivity.this, t, "VerifyForgotPassOtp");
+                }
+            });
+
         });
     }
 

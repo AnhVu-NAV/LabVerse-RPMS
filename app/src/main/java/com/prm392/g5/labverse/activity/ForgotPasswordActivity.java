@@ -11,6 +11,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.repository.AuthRepository;
+import com.prm392.g5.labverse.util.ApiErrorHandler;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
@@ -36,9 +43,27 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 return;
             }
 
-            // TODO: gọi API reset password (send email). Demo:
-            Toast.makeText(this, "Reset link sent to " + email, Toast.LENGTH_SHORT).show();
-            finish(); // quay lại Login
+            //gọi API reset password (send email)
+            AuthRepository authRepository = new AuthRepository();
+            authRepository.forgotPassword(email, new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(ForgotPasswordActivity.this, "OTP has been sent to the email", Toast.LENGTH_LONG).show();
+                        VerifyForgotPasswordActivity.open(email, ForgotPasswordActivity.this);
+                        finish();
+                    } else {
+                        ApiErrorHandler.handleApiResponseError(ForgotPasswordActivity.this, response, "ForgotPassword");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    // request chưa đến được server hoặc không thể đọc được phản hồi
+                    ApiErrorHandler.handleNetworkFailure(ForgotPasswordActivity.this, t, "ForgotPassword");
+                    finish(); // quay lại Login
+                }
+            });
         });
     }
 }

@@ -81,7 +81,6 @@ public class VerifyAccountActivity extends AppCompatActivity {
                     // request chưa đến được server hoặc không thể đọc được phản hồi
                     ApiErrorHandler.handleNetworkFailure(VerifyAccountActivity.this, t, "ResentVerifyAccount");
                 }
-
             });
         });
 

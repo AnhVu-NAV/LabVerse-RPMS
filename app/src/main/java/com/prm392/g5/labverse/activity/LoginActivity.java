@@ -133,11 +133,13 @@ public class LoginActivity extends AppCompatActivity {
                 }
         );
 
+        //link qua sign up
         tvSignUpAction.setOnClickListener(v -> {
             Intent i = new Intent(LoginActivity.this, SignUpActivity.class);
             startActivity(i);
         });
 
+        //link quên mật khẩu
         findViewById(R.id.tvForgot).setOnClickListener(v ->
                 startActivity(new Intent(this, ForgotPasswordActivity.class))
         );

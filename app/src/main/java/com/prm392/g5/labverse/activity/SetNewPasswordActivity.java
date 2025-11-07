@@ -1,10 +1,8 @@
 package com.prm392.g5.labverse.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Patterns;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,16 +11,36 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.repository.AuthRepository;
+import com.prm392.g5.labverse.util.ApiErrorHandler;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SetNewPasswordActivity extends AppCompatActivity {
 
     private TextInputLayout tilPassword, tilConfirm;
     private TextInputEditText edPassword, edConfirm;
 
+    private String email;
+    private String resetPassToken;
+
+    public static void open(String email, String resetPassToken, Context context) {
+        Intent intent = new Intent(context, VerifyAccountActivity.class);
+        intent.putExtra("email", email);
+        intent.putExtra("resetPassToken", resetPassToken);
+        context.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_new_password);
+
+        email = getIntent().getStringExtra("email");
+        resetPassToken = getIntent().getStringExtra("resetPassToken");
 
         tilPassword = findViewById(R.id.tilPassword);
         tilConfirm  = findViewById(R.id.tilConfirm);
@@ -51,13 +69,26 @@ public class SetNewPasswordActivity extends AppCompatActivity {
                 return;
             }
 
-            // TODO: call backend API to set new password with reset token
-            // giả lập thành công:
-            Toast.makeText(this, getString(R.string.msg_password_updated), Toast.LENGTH_SHORT).show();
+            //call backend API to set new password with reset token
+            AuthRepository authRepository = new AuthRepository();
+            authRepository.resetPassword(email, resetPassToken, p1, new Callback<ResponseBody>() {
 
-            // quay về Login
-            startActivity(new Intent(this, PasswordSuccessActivity.class));
-            finish();
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        Intent intent = new Intent(SetNewPasswordActivity.this, PasswordSuccessActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        ApiErrorHandler.handleApiResponseError(SetNewPasswordActivity.this, response, "ResetPassword");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    ApiErrorHandler.handleNetworkFailure(SetNewPasswordActivity.this, t, "ResetPassword");
+                }
+            });
         });
     }
 
