@@ -17,6 +17,9 @@
         android:theme="@style/Theme.LabVerse_PRM392_G5"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.VerifyAccountActivity"
+            android:exported="false"/>
+        <activity
             android:name=".activity.RoleSelectActivity"
             android:exported="false" />
         <activity
