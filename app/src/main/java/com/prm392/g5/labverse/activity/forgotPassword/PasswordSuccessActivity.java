@@ -1,10 +1,11 @@
-package com.prm392.g5.labverse.activity;
+package com.prm392.g5.labverse.activity.forgotPassword;
 
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.activity.LoginActivity;
 
 public class PasswordSuccessActivity extends AppCompatActivity {
     @Override

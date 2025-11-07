@@ -23,16 +23,16 @@
             android:name=".activity.RoleSelectActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.VerifyForgotPasswordActivity"
+            android:name=".activity.forgotPassword.VerifyForgotPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.PasswordSuccessActivity"
+            android:name=".activity.forgotPassword.PasswordSuccessActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.SetNewPasswordActivity"
+            android:name=".activity.forgotPassword.SetNewPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.ForgotPasswordActivity"
+            android:name=".activity.forgotPassword.ForgotPasswordActivity"
             android:exported="false" />
         <activity
             android:name=".activity.SignUpActivity"

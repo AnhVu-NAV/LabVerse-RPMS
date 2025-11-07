@@ -31,9 +31,8 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.prm392.g5.labverse.BuildConfig;
 import com.prm392.g5.labverse.R;
-import com.prm392.g5.labverse.config.RetrofitClient;
+import com.prm392.g5.labverse.activity.forgotPassword.ForgotPasswordActivity;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
-import com.prm392.g5.labverse.dto.ErrorResponse;
 import com.prm392.g5.labverse.dto.auth.LoginRequest;
 import com.prm392.g5.labverse.dto.auth.LoginResponse;
 import com.prm392.g5.labverse.dto.auth.LoginWGoogleRequest;
@@ -41,15 +40,11 @@ import com.prm392.g5.labverse.repository.AuthRepository;
 import com.prm392.g5.labverse.util.ApiErrorHandler;
 
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Converter;
 import retrofit2.Response;
 
 

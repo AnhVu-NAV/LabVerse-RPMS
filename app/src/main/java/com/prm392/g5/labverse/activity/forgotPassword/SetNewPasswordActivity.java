@@ -1,4 +1,4 @@
-package com.prm392.g5.labverse.activity;
+package com.prm392.g5.labverse.activity.forgotPassword;
 
 import android.content.Context;
 import android.content.Intent;
