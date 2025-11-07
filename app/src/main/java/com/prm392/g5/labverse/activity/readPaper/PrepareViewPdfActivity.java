@@ -24,6 +24,7 @@ import com.prm392.g5.labverse.entity.Paper;
 import com.prm392.g5.labverse.entity.PaperAnnotation;
 import com.prm392.g5.labverse.repository.PaperAnnotationRepository;
 import com.prm392.g5.labverse.repository.PaperRepository;
+import com.prm392.g5.labverse.util.ApiErrorHandler;
 import com.prm392.g5.labverse.util.S3Util;
 
 import java.io.File;
@@ -102,13 +103,13 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
                                 getPdfDownloadUrl();
                             });
                         } else {
-                            handleErrorResponseFromBackend(response);
+                            ApiErrorHandler.handleApiResponseError(PrepareViewPdfActivity.this, response, "GetPaperInfo");
                         }
                     }
 
                     @Override
                     public void onFailure(Call<PaperInfoResponse> call, Throwable t) {
-                        handleSendRequestFail(t);
+                        ApiErrorHandler.handleNetworkFailure(PrepareViewPdfActivity.this, t, "GetPaperInfo");
                     }
                 });
             } else {
@@ -177,9 +178,9 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
                 new AlertDialog.Builder(PrepareViewPdfActivity.this)
                         .setIcon(R.drawable.ic_import_annotation)
                         .setTitle("Open paper")
-                        .setMessage("There was an error connecting to server to get annotation info." +
-                                " If you continue to open the paper, the existed annotation (if has) would be override!.")
-                        .setMessage("Do you still want to open the paper?")
+                        .setMessage("There was an error connecting to server to get annotation info.\n" +
+                                "If you continue to open the paper, the existed annotation (if has) would be override!\n\n" +
+                                "Do you still want to open the paper?")
                         .setPositiveButton("Yes", (dialog, which) -> {
                             processAnnotationResponse(userId, paperId, null);
                         })
@@ -262,13 +263,13 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
                     String url = response.body().getUrl();
                     downloadPdf(url);
                 } else {
-                    handleErrorResponseFromBackend(response);
+                    ApiErrorHandler.handleApiResponseError(PrepareViewPdfActivity.this, response, "GetPdfDownloadUrl");
                 }
             }
 
             @Override
             public void onFailure(Call<S3SignedUrlResponse> call, Throwable t) {
-                handleSendRequestFail(t);
+                ApiErrorHandler.handleNetworkFailure(PrepareViewPdfActivity.this, t, "GetPdfDownloadUrl");
             }
         });
     }
@@ -327,7 +328,7 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
                         new AlertDialog.Builder(PrepareViewPdfActivity.this)
                                 .setIcon(R.drawable.ic_import_annotation)
                                 .setTitle("Open paper")
-                                .setMessage("There was an error while processing annotation." +
+                                .setMessage("There was an error while processing annotation. \n" +
                                         " If you continue to open the paper, the existed annotation (if has) would be override!.")
                                 .setPositiveButton("Yes", (dialog, which) -> openPdf())
                                 .setNegativeButton("No", (dialog, which) -> finish())
@@ -345,7 +346,7 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
                     new AlertDialog.Builder(PrepareViewPdfActivity.this)
                             .setIcon(R.drawable.ic_import_annotation)
                             .setTitle("Open paper")
-                            .setMessage("There was an error connecting to server to get annotation info." +
+                            .setMessage("There was an error connecting to server to get annotation info.\n" +
                                     " If you continue to open the paper, the existed annotation (if has) would be override!.")
                             .setPositiveButton("Yes", (dialog, which) -> openPdf())
                             .setNegativeButton("No", (dialog, which) -> finish())

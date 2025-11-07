@@ -24,6 +24,7 @@ import com.prm392.g5.labverse.dto.paperAnnotation.PaperAnnotationInfoResponse;
 import com.prm392.g5.labverse.entity.PaperAnnotation;
 import com.prm392.g5.labverse.repository.PaperAnnotationRepository;
 import com.prm392.g5.labverse.util.AnnotationHelper;
+import com.prm392.g5.labverse.util.ApiErrorHandler;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
@@ -159,12 +160,12 @@ public class ExportAnnotationActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    handleErrorResponseFromBackend(response);
+                    ApiErrorHandler.handleApiResponseError(ExportAnnotationActivity.this, response, "GetAnnotationDownloadUrl");
                 }
             }
             @Override
             public void onFailure(Call<S3SignedUrlResponse> call, Throwable t) {
-                handleSendRequestFail(t);
+                ApiErrorHandler.handleNetworkFailure(ExportAnnotationActivity.this, t, "GetAnnotationDownloadUrl");
             }
         });
     }
@@ -198,47 +199,6 @@ public class ExportAnnotationActivity extends AppCompatActivity {
                 .setNegativeButton("Close", ((dialog, which) -> finish()))
                 .show();
 
-    }
-
-    //đẩy mấy cái xử lí lỗi này ra class khác
-    private void handleErrorResponseFromBackend(Response<?> response) {
-        try {
-            Converter<ResponseBody, ErrorResponse> converter =
-                    RetrofitClient.getInstance()
-                            .responseBodyConverter(ErrorResponse.class, new Annotation[0]);
-
-            ErrorResponse errorResponse = converter.convert(response.errorBody());
-
-            if (errorResponse != null) {
-                Log.e("API_ERROR", "Code: " + errorResponse.getCode() + ", Message: " + errorResponse.getMessage());
-                Toast.makeText(LabVerse.getInstance(),
-                        "Error " + errorResponse.getCode() + ": " + errorResponse.getMessage(),
-                        Toast.LENGTH_LONG
-                ).show();
-            } else {
-                Log.e("API_ERROR", "Lỗi không rõ định dạng JSON.");
-            }
-
-        } catch (Exception e) {
-            Log.e("API_ERROR", "Không parse được lỗi: " + e.getMessage(), e);
-        }
-    }
-
-    private void handleSendRequestFail(Throwable t) {
-        Log.e("Login", "Request failed", t);
-
-        //xem xem co phai chuyeen ve main thread khoong
-        if (t instanceof java.net.UnknownHostException) {
-            Toast.makeText(LabVerse.getInstance(), "Không có kết nối mạng. Vui lòng kiểm tra Internet.", Toast.LENGTH_LONG).show();
-        } else if (t instanceof java.net.SocketTimeoutException) {
-            Toast.makeText(LabVerse.getInstance(), "Kết nối bị hết hạn. Vui lòng thử lại.", Toast.LENGTH_LONG).show();
-        } else if (t instanceof java.net.ConnectException) {
-            Toast.makeText(LabVerse.getInstance(), "Không thể kết nối tới máy chủ.", Toast.LENGTH_LONG).show();
-        } else if (t instanceof javax.net.ssl.SSLException) {
-            Toast.makeText(LabVerse.getInstance(), "Lỗi chứng chỉ bảo mật.", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(LabVerse.getInstance(), "Đã xảy ra lỗi không xác định. Vui lòng thử lại.", Toast.LENGTH_LONG).show();
-        }
     }
 
 }

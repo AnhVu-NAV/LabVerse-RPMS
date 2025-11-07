@@ -46,8 +46,8 @@ public class ImportAnnotationActivity extends AppCompatActivity {
         new AlertDialog.Builder(context)
                 .setIcon(R.drawable.ic_import_annotation)
                 .setTitle("Import Annotation")
-                .setMessage("Once you import annotation, the existed annotation would be override!Be careful when picking file.")
-                .setMessage("Do you want to import annotation to your paper's file?")
+                .setMessage("Once you import annotation, the existed annotation would be override!Be careful when picking file.\n" +
+                        "Do you want to import annotation to your paper's file?")
                 .setPositiveButton("Yes", (dialog, which) -> {
                     Intent intent = new Intent(context, ImportAnnotationActivity.class);
                     intent.putExtra(PAPER_ID, paperId);
