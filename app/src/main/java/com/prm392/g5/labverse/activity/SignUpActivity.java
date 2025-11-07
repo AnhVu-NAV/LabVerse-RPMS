@@ -16,10 +16,10 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.config.RetrofitClient;
 import com.prm392.g5.labverse.dto.ErrorResponse;
-import com.prm392.g5.labverse.dto.auth.LoginResponse;
 import com.prm392.g5.labverse.dto.user.RegisterAccountRequest;
 import com.prm392.g5.labverse.dto.user.UserSimpleResponse;
 import com.prm392.g5.labverse.repository.UserRepository;
+import com.prm392.g5.labverse.util.ApiErrorHandler;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -89,71 +89,22 @@ public class SignUpActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<UserSimpleResponse> call, Response<UserSimpleResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        //todo chuyển qua trang nhập OTP verify account
                         Toast.makeText(SignUpActivity.this, "Sign up successfully, please check your email to get OTP", Toast.LENGTH_SHORT).show();
+
+                        //chuyển qua trang nhập OTP verify account
+                        VerifyAccountActivity.open(email, SignUpActivity.this);
                     } else {
-                        handleSignUpRequestFail(response);
+                        ApiErrorHandler.handleApiResponseError(SignUpActivity.this, response, "SignUp");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UserSimpleResponse> call, Throwable t) {
                     // request chưa đến được server hoặc không thể đọc được phản hồi
-                    handleSendRequestFail(t);
+                    ApiErrorHandler.handleNetworkFailure(SignUpActivity.this, t, "SignUp");
                 }
             });
         });
-    }
-
-    private void handleSignUpRequestFail(Response<UserSimpleResponse> response) {
-        try(ResponseBody errorBody = response.errorBody()) {
-            // Nếu không có error body thì dừng sớm, tránh lồng if
-            if (errorBody == null) {
-                Log.e("Login", "Empty error body");
-                Toast.makeText(SignUpActivity.this, "Unknown error", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Dùng Retrofit converter để parse errorBody thành ErrorResponse
-            Converter<ResponseBody, ErrorResponse> converter =
-                    RetrofitClient.getInstance()
-                            .responseBodyConverter(ErrorResponse.class, new Annotation[0]);
-            ErrorResponse errorResponse = converter.convert(response.errorBody());
-
-            //parse thành công
-            if (errorResponse == null) {
-                throw new IOException("ErrorResponse is null");
-            }
-
-            int code = errorResponse.getCode();
-            String message = errorResponse.getMessage();
-
-            //TODO THIẾT LẬP CƠ CHẾ XỬ LÍ LỖIIIIIIII
-
-            Log.e("Login", "Error " + code + ": " + message);
-            Toast.makeText(SignUpActivity.this, message, Toast.LENGTH_SHORT).show();
-
-
-        } catch (IOException e) {
-            Log.e("Login", "Failed to parse error response", e);
-            Toast.makeText(SignUpActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void handleSendRequestFail(Throwable t){
-        Log.e("Login", "Request failed", t);
-
-        if (t instanceof java.net.UnknownHostException) {
-            Toast.makeText(SignUpActivity.this, "No internet connection!", Toast.LENGTH_SHORT).show();
-        } else if (t instanceof java.net.SocketTimeoutException) {
-            Toast.makeText(SignUpActivity.this, "Timeout!", Toast.LENGTH_SHORT).show();
-        } else if (t instanceof java.net.ConnectException) {
-            Toast.makeText(SignUpActivity.this, "Unable to connect to server", Toast.LENGTH_SHORT).show();
-        } else if (t instanceof javax.net.ssl.SSLException) {
-            Toast.makeText(SignUpActivity.this, "SSL Exception", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(SignUpActivity.this, "Unknown error", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private boolean validateForm() {

@@ -38,6 +38,7 @@ import com.prm392.g5.labverse.dto.auth.LoginRequest;
 import com.prm392.g5.labverse.dto.auth.LoginResponse;
 import com.prm392.g5.labverse.dto.auth.LoginWGoogleRequest;
 import com.prm392.g5.labverse.repository.AuthRepository;
+import com.prm392.g5.labverse.util.ApiErrorHandler;
 
 
 import java.io.IOException;
@@ -149,13 +150,13 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     handleLoginRequestSuceess(response.body());
                 } else {
-                    handleLoginRequestFail(response);
+                    ApiErrorHandler.handleApiResponseError(LoginActivity.this, response, "Login");
                 }
             }
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 // request chưa đến được server hoặc không thể đọc được phản hồi
-                handleSendRequestFail(t);
+                ApiErrorHandler.handleNetworkFailure(LoginActivity.this, t, "Login");
             }
         });
 
@@ -197,66 +198,6 @@ public class LoginActivity extends AppCompatActivity {
 //        Intent intent = new Intent(this, ListTeamOfPiActivity.class);
 //        startActivity(intent);
         finish();
-    }
-
-    /**
-     * send login request to backend server, but receive response not 200 OK
-     * @param response
-     */
-    private void handleLoginRequestFail(Response<LoginResponse> response) {
-        try(ResponseBody errorBody = response.errorBody()) {
-            // Nếu không có error body thì dừng sớm, tránh lồng if
-            if (errorBody == null) {
-                Log.e("Login", "Empty error body");
-                Toast.makeText(LoginActivity.this, "Unknown error", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Dùng Retrofit converter để parse errorBody thành ErrorResponse
-            Converter<ResponseBody, ErrorResponse> converter =
-                    RetrofitClient.getInstance()
-                            .responseBodyConverter(ErrorResponse.class, new Annotation[0]);
-            ErrorResponse errorResponse = converter.convert(response.errorBody());
-
-            //parse thành công
-            if (errorResponse == null) {
-                throw new IOException("ErrorResponse is null");
-            }
-
-            int code = errorResponse.getCode();
-            String message = errorResponse.getMessage();
-
-            //TODO THIẾT LẬP CƠ CHẾ XỬ LÍ LỖIIIIIIII
-
-            Log.e("Login", "Error " + code + ": " + message);
-            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
-
-        } catch (IOException e) {
-            Log.e("Login", "Failed to parse error response", e);
-            Toast.makeText(LoginActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     * called when can not send the request
-     * không thể gửi request về server backend
-     *
-     * @param t
-     */
-    private void handleSendRequestFail(Throwable t){
-        Log.e("Login", "Request failed", t);
-
-        if (t instanceof java.net.UnknownHostException) {
-            Toast.makeText(LoginActivity.this, "No internet connection!", Toast.LENGTH_SHORT).show();
-        } else if (t instanceof java.net.SocketTimeoutException) {
-            Toast.makeText(LoginActivity.this, "Timeout!", Toast.LENGTH_SHORT).show();
-        } else if (t instanceof java.net.ConnectException) {
-            Toast.makeText(LoginActivity.this, "Unable to connect to server", Toast.LENGTH_SHORT).show();
-        } else if (t instanceof javax.net.ssl.SSLException) {
-            Toast.makeText(LoginActivity.this, "SSL Exception", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(LoginActivity.this, "Unknown error", Toast.LENGTH_SHORT).show();
-        }
     }
 
     public void loginWithGoogle() {
@@ -339,12 +280,12 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     handleLoginRequestSuceess(response.body());
                 } else {
-                    handleLoginRequestFail(response);
+                    ApiErrorHandler.handleApiResponseError(LoginActivity.this, response, "LoginWGgToBackend");
                 }
             }
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-                handleSendRequestFail(t);
+                ApiErrorHandler.handleNetworkFailure(LoginActivity.this, t, "LoginWGgToBackend");
             }
         });
     }
