@@ -58,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText edEmail, edPassword;
     private Button btnLogin, btnLoginWGg;
+    //TODO LINK QUA SIGN UP
     private TextView tvSignUp, tvLoginError;
 
     private AuthRepository authRepository = new AuthRepository();
@@ -116,7 +117,6 @@ public class LoginActivity extends AppCompatActivity {
 
         //login with Google
         btnLoginWGg.setOnClickListener(v -> {
-            //todo, nhảy qua chọn role xong hẵng đăng nhập, tạm thời server đang để mặc đinhj là Intern hết
             loginWithGoogle();
         });
 
@@ -170,16 +170,29 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void handleLoginRequestSuceess(LoginResponse loginResponse){
         //lưu access token để sử dụng
-        Log.d("Login", "Login success fully");
+        Log.d("Login", "Login successfully");
         SharePreferenceManager prefManager = SharePreferenceManager.getInstance();
         //lưu lại access token cũng như user id của người dùng hiện tại
-        prefManager.saveAccessToken(loginResponse.getAccessToken());
-        prefManager.saveUserId(loginResponse.getUserId());
+        prefManager.saveUserAuthData(loginResponse.getAccessToken(), loginResponse.getUserId(), loginResponse.getUserRole());
         runOnUiThread(() ->
-                Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_LONG).show()
+                Toast.makeText(LoginActivity.this, "Login successfully!", Toast.LENGTH_LONG).show()
         );
-        //todo chuyển người dùng qua activity Library của Tuấn Anh
-        //test import
+
+        //todo: xem người dùng đăng nhập lần đầu hay là lần 2, để xem vào trang chọn role hay là vào Library của Tuấn Anh luôn
+        if (loginResponse.getUserRole() == null || loginResponse.getUserRole().isEmpty()) {
+            //chưa chọn role, chuyển qua chọn role
+            Intent intent = new Intent(this, RoleSelectActivity.class);
+            startActivity(intent);
+        } else {
+            Log.d("Login", "User has role: " + prefManager.getUserRole());
+
+//            //todo chuyển người dùng qua activity Library của Tuấn Anh
+//            //đã chọn role, chuyển qua Library
+//            Intent intent = new Intent(this, LibraryActivity.class);
+//            startActivity(intent);
+        }
+
+        //todo test import
 //        Intent intent = new Intent(this, ImportPaperActivity.class);
 //        startActivity(intent);
 
@@ -298,19 +311,23 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onError(GetCredentialException e) {
             if (e instanceof androidx.credentials.exceptions.NoCredentialException) {
+
+                Log.e("GOOGLE_LOGIN", "Credential exception type: " + e.getClass().getSimpleName()
+                        + ", message: " + e.getMessage());
+
                 //oh no, fail rồi, chưa có tk gg nào có sẵn trên máy cả
                 Log.d("GOOGLE_LOGIN", "Không tìm thấy tài khoản Google nào. Mở trình chọn tài khoản...");
                 runOnUiThread(() -> {
                     Toast.makeText(LoginActivity.this,
-                            "Không tìm thấy tài khoản Google nào. Mở trình chọn tài khoản...",
+                            "No existing Google account found. Please choose an account to sign in.",
                             Toast.LENGTH_SHORT).show();
                 });
                 startLegacyGoogleSignIn(); // gọi tới cái mở trang đăng nhập tk gg ra nè
             } else {
-                Log.d("GOOGLE_LOGIN", "Đăng nhập thất bại");
+                Log.d("GOOGLE_LOGIN", "Đăng nhập thất bại: " + e.getMessage());
                 runOnUiThread(() ->
                         Toast.makeText(LoginActivity.this,
-                                "Đăng nhập thất bại: " + e.getMessage(),
+                                "Login failed",
                                 Toast.LENGTH_SHORT).show()
                 );
             }

@@ -37,8 +37,6 @@
         <item name="cornerSize">24dp</item>
     </style>
 
-    <style name="Theme.LabVerse_PRM392_G5" parent="Base.Theme.LabVerse_PRM392_G5" />
-
     <style name="MyPdfTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Màu chủ đạo -->
         <item name="colorPrimary">#3F51B5</item>
