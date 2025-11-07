@@ -34,7 +34,7 @@ public class VerifyForgotPasswordActivity extends AppCompatActivity {
     private String email;
 
     public static void open(String email, Context context) {
-        Intent intent = new Intent(context, VerifyAccountActivity.class);
+        Intent intent = new Intent(context, VerifyForgotPasswordActivity.class);
         intent.putExtra("email", email);
         context.startActivity(intent);
     }

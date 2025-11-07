@@ -28,7 +28,7 @@ public class SetNewPasswordActivity extends AppCompatActivity {
     private String resetPassToken;
 
     public static void open(String email, String resetPassToken, Context context) {
-        Intent intent = new Intent(context, VerifyAccountActivity.class);
+        Intent intent = new Intent(context, SetNewPasswordActivity.class);
         intent.putExtra("email", email);
         intent.putExtra("resetPassToken", resetPassToken);
         context.startActivity(intent);
