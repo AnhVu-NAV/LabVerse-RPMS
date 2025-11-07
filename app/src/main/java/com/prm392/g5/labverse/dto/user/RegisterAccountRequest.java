@@ -7,5 +7,8 @@ public class RegisterAccountRequest {
     //The password must have at least 8 characters, contain at least 1 digit
     private String password;
 
-    private String roleName;
+    public RegisterAccountRequest(String password, String email) {
+        this.password = password;
+        this.email = email;
+    }
 }

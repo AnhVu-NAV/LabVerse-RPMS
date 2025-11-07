@@ -75,26 +75,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilFullname"
-            style="@style/Widget.LabVerse.OutlinedField"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Full Name"
-            app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="28dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edFullname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="textPersonName"
-                android:textColor="?attr/colorOnSurface"
-                android:textColorHint="@color/lv_hint" />
-        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Email -->
         <com.google.android.material.textfield.TextInputLayout
@@ -103,7 +84,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Email"
-            app:layout_constraintTop_toBottomOf="@id/tilFullname"
+            app:layout_constraintTop_toBottomOf="@+id/tvSubtitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="16dp">
@@ -118,32 +99,6 @@
                 android:textColorHint="@color/lv_hint"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- DOB -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilDob"
-            style="@style/Widget.LabVerse.OutlinedField"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Birth of date"
-            app:endIconMode="custom"
-            app:endIconDrawable="@drawable/ic_calendar_24"
-            app:layout_constraintTop_toBottomOf="@id/tilEmail"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edDob"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:clickable="true"
-                android:inputType="date"
-                android:imeOptions="actionNext"
-                android:textColor="?attr/colorOnSurface"
-                android:textColorHint="@color/lv_hint"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
         <!-- Confirm Password -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilConfirmPassword"
@@ -152,7 +107,7 @@
             android:layout_height="wrap_content"
             android:hint=" Password"
             app:endIconMode="password_toggle"
-            app:layout_constraintTop_toBottomOf="@id/tilDob"
+            app:layout_constraintTop_toBottomOf="@+id/tilEmail"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="16dp">

@@ -1,7 +1,7 @@
 package com.prm392.g5.labverse.activity;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -14,16 +14,28 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.config.RetrofitClient;
+import com.prm392.g5.labverse.dto.ErrorResponse;
+import com.prm392.g5.labverse.dto.auth.LoginResponse;
+import com.prm392.g5.labverse.dto.user.RegisterAccountRequest;
+import com.prm392.g5.labverse.dto.user.UserSimpleResponse;
+import com.prm392.g5.labverse.repository.UserRepository;
 
-import java.util.Calendar;
-import java.util.Locale;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Converter;
+import retrofit2.Response;
 
 public class SignUpActivity extends AppCompatActivity {
 
     // TextInputLayout
-    private TextInputLayout tilFullname, tilEmail, tilDob, tilPassword, tilConfirmPassword;
+    private TextInputLayout tilEmail, tilPassword, tilConfirmPassword;
     // EditText
-    private TextInputEditText edFullname, edEmail, edDob, edPassword, edConfirmPassword;
+    private TextInputEditText edEmail, edPassword, edConfirmPassword;
     // Buttons / actions
     private MaterialButton btnRegister;
 
@@ -33,21 +45,16 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
         bindViews();
-        setupDobPicker();
         setupLiveErrorClearing();
         setupActions();
     }
 
     private void bindViews() {
-        tilFullname = findViewById(R.id.tilFullname);
         tilEmail = findViewById(R.id.tilEmail);
-        tilDob = findViewById(R.id.tilDob);
         tilPassword = findViewById(R.id.tilPassword);
         tilConfirmPassword = findViewById(R.id.tilConfirmPassword);
 
-        edFullname = findViewById(R.id.edFullname);
         edEmail = findViewById(R.id.edEmail);
-        edDob = findViewById(R.id.edDob);
         edPassword = findViewById(R.id.edPassword);
         edConfirmPassword = findViewById(R.id.edConfirmPassword);
 
@@ -57,36 +64,8 @@ public class SignUpActivity extends AppCompatActivity {
         findViewById(R.id.tvLogin).setOnClickListener(v -> finish());
     }
 
-    private void setupDobPicker() {
-        // Không bật bàn phím cho DOB
-        edDob.setFocusable(false);
-        edDob.setClickable(true);
-
-        View.OnClickListener openDatePicker = v -> {
-            final Calendar c = Calendar.getInstance();
-            int y = c.get(Calendar.YEAR);
-            int m = c.get(Calendar.MONTH);
-            int d = c.get(Calendar.DAY_OF_MONTH);
-
-            DatePickerDialog dialog = new DatePickerDialog(
-                    SignUpActivity.this,
-                    (view, yy, mm, dd) -> {
-                        String formatted = String.format(Locale.getDefault(), "%02d/%02d/%04d", dd, (mm + 1), yy);
-                        edDob.setText(formatted);
-                        tilDob.setError(null);
-                    },
-                    y, m, d
-            );
-            dialog.show();
-        };
-
-        tilDob.setEndIconOnClickListener(openDatePicker);
-        edDob.setOnClickListener(openDatePicker);
-    }
-
     private void setupLiveErrorClearing() {
         // mỗi khi gõ lại thì clear error
-        addTextChangedClearError(tilFullname, edFullname);
         addTextChangedClearError(tilEmail, edEmail);
         addTextChangedClearError(tilPassword, edPassword);
         addTextChangedClearError(tilConfirmPassword, edConfirmPassword);
@@ -101,27 +80,88 @@ public class SignUpActivity extends AppCompatActivity {
             hideKeyboard(v);
             if (!validateForm()) return;
 
-            // TODO: gọi API đăng ký ở đây
-            Toast.makeText(this, "Sign up OK ✅", Toast.LENGTH_SHORT).show();
-            // Ví dụ: finish để quay lại màn Login
-            finish();
+            String email = safe(edEmail);
+            String password = safe(edPassword);
+            // gọi API đăng ký ở đây
+            UserRepository userRepository = new UserRepository();
+            RegisterAccountRequest request = new RegisterAccountRequest(password, email);
+            userRepository.registerAccount(request, new Callback<UserSimpleResponse>() {
+                @Override
+                public void onResponse(Call<UserSimpleResponse> call, Response<UserSimpleResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        //todo chuyển qua trang nhập OTP verify account
+                        Toast.makeText(SignUpActivity.this, "Sign up successfully, please check your email to get OTP", Toast.LENGTH_SHORT).show();
+                    } else {
+                        handleSignUpRequestFail(response);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserSimpleResponse> call, Throwable t) {
+                    // request chưa đến được server hoặc không thể đọc được phản hồi
+                    handleSendRequestFail(t);
+                }
+            });
         });
+    }
+
+    private void handleSignUpRequestFail(Response<UserSimpleResponse> response) {
+        try(ResponseBody errorBody = response.errorBody()) {
+            // Nếu không có error body thì dừng sớm, tránh lồng if
+            if (errorBody == null) {
+                Log.e("Login", "Empty error body");
+                Toast.makeText(SignUpActivity.this, "Unknown error", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Dùng Retrofit converter để parse errorBody thành ErrorResponse
+            Converter<ResponseBody, ErrorResponse> converter =
+                    RetrofitClient.getInstance()
+                            .responseBodyConverter(ErrorResponse.class, new Annotation[0]);
+            ErrorResponse errorResponse = converter.convert(response.errorBody());
+
+            //parse thành công
+            if (errorResponse == null) {
+                throw new IOException("ErrorResponse is null");
+            }
+
+            int code = errorResponse.getCode();
+            String message = errorResponse.getMessage();
+
+            //TODO THIẾT LẬP CƠ CHẾ XỬ LÍ LỖIIIIIIII
+
+            Log.e("Login", "Error " + code + ": " + message);
+            Toast.makeText(SignUpActivity.this, message, Toast.LENGTH_SHORT).show();
+
+
+        } catch (IOException e) {
+            Log.e("Login", "Failed to parse error response", e);
+            Toast.makeText(SignUpActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void handleSendRequestFail(Throwable t){
+        Log.e("Login", "Request failed", t);
+
+        if (t instanceof java.net.UnknownHostException) {
+            Toast.makeText(SignUpActivity.this, "No internet connection!", Toast.LENGTH_SHORT).show();
+        } else if (t instanceof java.net.SocketTimeoutException) {
+            Toast.makeText(SignUpActivity.this, "Timeout!", Toast.LENGTH_SHORT).show();
+        } else if (t instanceof java.net.ConnectException) {
+            Toast.makeText(SignUpActivity.this, "Unable to connect to server", Toast.LENGTH_SHORT).show();
+        } else if (t instanceof javax.net.ssl.SSLException) {
+            Toast.makeText(SignUpActivity.this, "SSL Exception", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(SignUpActivity.this, "Unknown error", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private boolean validateForm() {
         boolean ok = true;
 
-        String name = safe(edFullname);
         String email = safe(edEmail);
-        String dob = safe(edDob);
         String pw = safe(edPassword);
         String cfpw = safe(edConfirmPassword);
-
-        // Fullname
-        if (name.isEmpty()) {
-            tilFullname.setError("Please enter your full name");
-            ok = false;
-        }
 
         // Email
         if (email.isEmpty()) {
@@ -132,12 +172,6 @@ public class SignUpActivity extends AppCompatActivity {
             ok = false;
         }
 
-        // DOB
-        if (dob.isEmpty()) {
-            tilDob.setError("Please select your date of birth");
-            ok = false;
-        }
-
         // Password length + strength (tối thiểu 6)
         if (pw.isEmpty()) {
             tilPassword.setError("Please enter password");
@@ -145,8 +179,8 @@ public class SignUpActivity extends AppCompatActivity {
         } else if (pw.length() < 6) {
             tilPassword.setError("Use at least 6 characters");
             ok = false;
-        } else if (!pw.matches("^(?=.*[A-Z])(?=.*\\d).{6,}$")) {
-            tilPassword.setError("Min 6 chars, include 1 uppercase & 1 number");
+        } else if (!pw.matches("^(?=.*[A-Za-z])(?=.*\\d).{8,}$")) {
+            tilPassword.setError("Min 8 chars, include at least 1 letter and 1 number");
             ok = false;
         }
 
