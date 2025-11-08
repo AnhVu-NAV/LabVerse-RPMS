@@ -73,9 +73,18 @@ public class ExportAnnotationActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<PaperAnnotationInfoResponse> call, Throwable t) {
-                //todo khả năng ở đây phải hiện option cho người ta, retry hay là dùng bản offline
-                // request thất bại -> xử lý như remote không tồn tại
-                processAnnotationResponse(userId, paperId, null);
+                //hiện option cho người ta, retry hay là dùng bản offline
+                new AlertDialog.Builder(ExportAnnotationActivity.this)
+                        .setTitle("Export Annotation")
+                        .setMessage("Network error occurred during exporting annotation. If you export annotation," +
+                                " the annotation might not the version you had on the server.\n" +
+                                " Do you still want to export annotation?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            // request thất bại -> xử lý như remote không tồn tại
+                            processAnnotationResponse(userId, paperId, null);
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
             }
         });
     }

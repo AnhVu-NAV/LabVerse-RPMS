@@ -49,11 +49,9 @@ import retrofit2.Response;
 
 
 public class LoginActivity extends AppCompatActivity {
-    //todo sửa giao diện
 
     private EditText edEmail, edPassword;
     private Button btnLogin, btnLoginWGg;
-    //TODO LINK QUA SIGN UP
     private TextView tvSignUpAction, tvLoginError;
 
     private AuthRepository authRepository = new AuthRepository();
@@ -181,8 +179,8 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             Log.d("Login", "User has role: " + prefManager.getUserRole());
 
-//            //todo chuyển người dùng qua activity Library của Tuấn Anh
-//            //đã chọn role, chuyển qua Library
+           //todo chuyển người dùng qua activity Library của Tuấn Anh
+            //đã chọn role, chuyển qua Library
 //            Intent intent = new Intent(this, LibraryActivity.class);
 //            startActivity(intent);
         }
