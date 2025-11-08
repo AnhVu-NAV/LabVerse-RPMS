@@ -5,6 +5,8 @@ import com.prm392.g5.labverse.apiService.TeamApiService;
 import com.prm392.g5.labverse.config.RetrofitClient;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.dto.team.MemberResponse;
+import com.prm392.g5.labverse.dto.team.TeamReadingListRequest;
+import com.prm392.g5.labverse.dto.team.TeamReadingListResponse;
 import com.prm392.g5.labverse.dto.team.TeamRequest;
 import com.prm392.g5.labverse.dto.team.TeamResponse;
 
@@ -12,6 +14,7 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Callback;
+import retrofit2.http.Path;
 
 public class TeamRepository {
     private final TeamApiService teamApiService;
@@ -45,4 +48,25 @@ public class TeamRepository {
     public void removeMember(String teamId, String memberId, Callback<ResponseBody> callback) {
         teamApiService.removeMember(teamId, memberId).enqueue(callback);
     }
+
+    public void getReadingLists(String teamId, Callback<List<TeamReadingListResponse>> callback) {
+        teamApiService.getTeamReadingLists(teamId).enqueue(callback);
+    }
+
+    public void getReadingListById(String teamId, String readingListId, Callback<TeamReadingListResponse> callback) {
+        teamApiService.getTeamReadingListById(teamId, readingListId).enqueue(callback);
+    }
+
+    public void createReadingList(String teamId, TeamReadingListRequest request, Callback<TeamReadingListResponse> callback) {
+        teamApiService.createTeamReadingList(teamId, request).enqueue(callback);
+    }
+
+    public void updateReadingList(String teamId, String readingListId, TeamReadingListRequest request, Callback<TeamReadingListResponse> callback) {
+        teamApiService.updateTeamReadingList(teamId, readingListId, request).enqueue(callback);
+    }
+    public void deleteReadingList(String teamId, String readingListId, Callback<ResponseBody> callback) {
+        teamApiService.deleteTeamReadingList(teamId, readingListId).enqueue(callback);
+    }
+
+
 }

@@ -1,63 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="12dp"
-    android:background="#FFFFFF"
     android:layout_marginBottom="8dp"
-    android:elevation="2dp"
-    android:gravity="center_vertical">
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@android:color/white">
 
-    <!-- Member Info -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/tvMemberName"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:textColor="#121417"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/tvMemberEmail"
-            android:textSize="14sp"
-            android:textColor="#61758A"
-            android:layout_width="match_parent"
+        <!-- Member Info -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"/>
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvMemberRole"
+            <TextView
+                android:id="@+id/tvMemberName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="John Doe"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#121417" />
+
+            <TextView
+                android:id="@+id/tvMemberEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="john@example.com"
+                android:textSize="14sp"
+                android:textColor="#61758A"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tvMemberRole"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PI"
+                android:textSize="12sp"
+                android:textColor="#61758A"
+                android:layout_marginTop="4dp" />
+
+            <!-- Status Badge -->
+            <TextView
+                android:id="@+id/tvMemberStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Active"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/holo_green_dark"
+                android:layout_marginTop="8dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:background="@drawable/bg_status_badge" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnDeleteMember"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remove"
             android:textSize="12sp"
-            android:textColor="#61758A"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"/>
-
-        <TextView
-            android:id="@+id/tvMemberStatus"
-            android:textSize="12sp"
-            android:textColor="@android:color/holo_green_dark"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"/>
+            android:textColor="@android:color/white"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:visibility="visible" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btnDeleteMember"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Remove"
-        android:textSize="12sp"
-        android:textColor="@android:color/white"
-        android:backgroundTint="@android:color/holo_red_light"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:visibility="gone" />
-</LinearLayout>
+</androidx.cardview.widget.CardView>

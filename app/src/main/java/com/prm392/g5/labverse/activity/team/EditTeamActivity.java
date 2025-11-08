@@ -15,6 +15,7 @@ import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.dto.team.TeamRequest;
 import com.prm392.g5.labverse.dto.team.TeamResponse;
 import com.prm392.g5.labverse.repository.TeamRepository;
+import com.prm392.g5.labverse.util.ApiErrorHandler;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,8 +38,12 @@ public class EditTeamActivity extends AppCompatActivity {
         // Setup toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Edit Team");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Edit Team");
+        }
+
+        toolbar.setNavigationOnClickListener(v -> finish());
 
         etTeamName = findViewById(R.id.etTeamName);
         etTeamDescription = findViewById(R.id.etTeamDescription);
@@ -69,37 +74,65 @@ public class EditTeamActivity extends AppCompatActivity {
         String name = etTeamName.getText().toString().trim();
         String description = etTeamDescription.getText().toString().trim();
 
+        //  Validation
         if (name.isEmpty()) {
-            Toast.makeText(this, "Team name is required", Toast.LENGTH_SHORT).show();
+            etTeamName.setError("Team name is required");
+            etTeamName.requestFocus();
             return;
         }
 
+        if (name.length() < 3) {
+            etTeamName.setError("Team name must be at least 3 characters");
+            etTeamName.requestFocus();
+            return;
+        }
+
+        if (name.length() > 100) {
+            etTeamName.setError("Team name is too long");
+            etTeamName.requestFocus();
+            return;
+        }
+
+        if (description.length() > 500) {
+            etTeamDescription.setError("Description is too long (max 500 characters)");
+            etTeamDescription.requestFocus();
+            return;
+        }
+
+        //  Set loading state
         progressBar.setVisibility(View.VISIBLE);
         btnSaveTeam.setEnabled(false);
+        btnSaveTeam.setText("Updating...");
+        etTeamName.setEnabled(false);
+        etTeamDescription.setEnabled(false);
 
         TeamRequest request = new TeamRequest();
         request.setName(name);
         request.setDescription(description);
+
 
         teamRepository.updateTeam(teamId, request, new Callback<TeamResponse>() {
             @Override
             public void onResponse(Call<TeamResponse> call, Response<TeamResponse> response) {
                 progressBar.setVisibility(View.GONE);
                 btnSaveTeam.setEnabled(true);
+                btnSaveTeam.setText("Save Changes");
+                etTeamName.setEnabled(true);
+                etTeamDescription.setEnabled(true);
 
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(EditTeamActivity.this,
-                            "Team updated successfully!", Toast.LENGTH_SHORT).show();
+                    TeamResponse updatedTeam = response.body();
 
-                    // Return updated data to parent activity
+                    Toast.makeText(EditTeamActivity.this,
+                            " Team updated successfully!", Toast.LENGTH_SHORT).show();
+
                     Intent resultIntent = new Intent();
-                    resultIntent.putExtra("TEAM_NAME", name);
-                    resultIntent.putExtra("TEAM_DESCRIPTION", description);
+                    resultIntent.putExtra("UPDATED_TEAM_NAME", updatedTeam.getName());
+                    resultIntent.putExtra("UPDATED_TEAM_DESCRIPTION", updatedTeam.getDescription());
                     setResult(RESULT_OK, resultIntent);
                     finish();
                 } else {
-                    Toast.makeText(EditTeamActivity.this,
-                            "Failed to update team", Toast.LENGTH_SHORT).show();
+                    ApiErrorHandler.handleApiResponseError(EditTeamActivity.this, response, "EditTeam");
                 }
             }
 
@@ -107,8 +140,11 @@ public class EditTeamActivity extends AppCompatActivity {
             public void onFailure(Call<TeamResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 btnSaveTeam.setEnabled(true);
-                Toast.makeText(EditTeamActivity.this,
-                        "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                btnSaveTeam.setText("Save Changes");
+                etTeamName.setEnabled(true);
+                etTeamDescription.setEnabled(true);
+                Toast.makeText(EditTeamActivity.this, "Failed to update team", Toast.LENGTH_SHORT).show();
+                ApiErrorHandler.handleNetworkFailure(EditTeamActivity.this, t, "EditTeam");
             }
         });
     }
@@ -118,4 +154,6 @@ public class EditTeamActivity extends AppCompatActivity {
         finish();
         return true;
     }
+
+
 }

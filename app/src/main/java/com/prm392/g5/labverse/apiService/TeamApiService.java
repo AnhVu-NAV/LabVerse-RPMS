@@ -1,6 +1,8 @@
 package com.prm392.g5.labverse.apiService;
 
 import com.prm392.g5.labverse.dto.team.MemberResponse;
+import com.prm392.g5.labverse.dto.team.TeamReadingListRequest;
+import com.prm392.g5.labverse.dto.team.TeamReadingListResponse;
 import com.prm392.g5.labverse.dto.team.TeamRequest;
 import com.prm392.g5.labverse.dto.team.TeamResponse;
 
@@ -42,4 +44,35 @@ public interface TeamApiService {
             @Path("teamId") String teamId,
             @Path("memberId") String memberId
     );
+
+    @GET("api/team/{teamId}/reading-lists")
+    Call<List<TeamReadingListResponse>> getTeamReadingLists(
+            @Path("teamId") String teamId
+    );
+
+    @GET("api/team/{teamId}/reading-lists/{readingListId}")
+    Call<TeamReadingListResponse> getTeamReadingListById(
+            @Path("teamId") String teamId,
+            @Path("readingListId") String readingListId
+    );
+
+    @POST("api/team/{teamId}/create-reading-lists")
+    Call<TeamReadingListResponse> createTeamReadingList(
+            @Path("teamId") String teamId,
+            @Body TeamReadingListRequest request
+    );
+
+    @PUT("api/team/{teamId}/update-reading-lists/{readingListId}")
+    Call<TeamReadingListResponse> updateTeamReadingList(
+            @Path("teamId") String teamId,
+            @Path("readingListId") String readingListId,
+            @Body TeamReadingListRequest request
+    );
+
+    @DELETE("api/team/{teamId}/delete-reading-lists/{readingListId}")
+    Call<ResponseBody> deleteTeamReadingList(
+            @Path("teamId") String teamId,
+            @Path("readingListId") String readingListId
+    );
+
 }
