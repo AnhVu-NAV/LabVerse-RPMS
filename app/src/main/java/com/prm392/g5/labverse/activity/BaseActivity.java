@@ -45,8 +45,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 navigateToActivity(MyLibraryActivity.class);
                 return true;
             } else if (itemId == R.id.navigation_reading_list) {
-                // TODO: Navigate to Reading List when implemented
-                Toast.makeText(this, "Reading List - Coming Soon", Toast.LENGTH_SHORT).show();
+                navigateToActivity(ReadingListActivity.class);
                 return true;
             } else if (itemId == R.id.navigation_groups) {
                 // TODO: Navigate to Groups when implemented

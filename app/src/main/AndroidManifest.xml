@@ -7,7 +7,6 @@
     <application
         android:usesCleartextTraffic="true"
         android:name=".LabVerse"
-
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -46,6 +45,15 @@
             android:name=".activity.SearchActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity.ReadingListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ReadingListDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AddPapersToReadingListActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.PaperDetailActivity"
             android:exported="false" />

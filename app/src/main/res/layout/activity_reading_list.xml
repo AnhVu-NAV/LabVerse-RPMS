@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7FAFC"
+    android:fitsSystemWindows="true"
+    tools:context=".activity.ReadingListActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F7FAFC"
+        android:elevation="0dp"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#F7FAFC"
+            android:elevation="0dp"
+            app:title="My Reading Lists"
+            app:titleTextAppearance="@style/TextAppearance.App.Toolbar.Title"
+            app:titleTextColor="#0D141C"
+            app:titleCentered="true" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/reading_lists_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="88dp"
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/item_reading_list_card" />
+
+    <com.prm392.g5.labverse.widget.DraggableFloatingActionButton
+        android:id="@+id/fab_add_reading_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="72dp"
+        android:clickable="true"
+        android:contentDescription="Add Reading List"
+        android:focusable="true"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="#1273D4"
+        app:fabSize="normal"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.App.SmallComponent.Round"
+        app:tint="@android:color/white" />
+
+    <include
+        android:id="@+id/bottom_navigation"
+        layout="@layout/include_bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

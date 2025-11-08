@@ -14,6 +14,18 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/paper_checkbox"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:visibility="gone"
+            app:buttonTint="@color/checkbox_tint"
+            app:useMaterialThemeColors="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:visibility="visible" />
+
         <ImageView
             android:id="@+id/paper_thumbnail"
             android:layout_width="0dp"
@@ -23,18 +35,29 @@
             android:padding="8dp"
             android:contentDescription="@string/cd_paper_thumbnail"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/paper_arrow_icon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/guideline"
             tools:src="@tools:sample/backgrounds/scenic" />
+
+        <ImageView
+            android:id="@+id/paper_arrow_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_forward"
+            android:contentDescription="@string/cd_navigate_to_paper"
+            app:tint="@color/text_primary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.66" />
+            app:layout_constraintGuide_percent="0.60" />
 
         <TextView
             android:id="@+id/paper_title"
@@ -43,9 +66,12 @@
             android:textStyle="bold"
             android:textSize="16sp"
             android:textColor="@color/text_primary"
-            app:layout_constraintStart_toStartOf="parent"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintStart_toEndOf="@id/paper_checkbox"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/paper_thumbnail"
+            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             tools:text="The Impact of AI on Education" />
 
@@ -56,9 +82,12 @@
             android:layout_marginTop="4dp"
             android:textSize="14sp"
             android:textColor="@color/text_secondary"
-            app:layout_constraintStart_toStartOf="parent"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintStart_toEndOf="@id/paper_checkbox"
             app:layout_constraintTop_toBottomOf="@id/paper_title"
             app:layout_constraintEnd_toStartOf="@id/paper_thumbnail"
+            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             tools:text="Dr. Emily Carter, Dr. David Lee" />
 
@@ -79,8 +108,9 @@
             app:chipEndPadding="8dp"
             app:chipIconTint="#0D141C"
             app:ensureMinTouchTargetSize="false"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/paper_checkbox"
             app:layout_constraintTop_toBottomOf="@id/paper_authors"
+            android:layout_marginStart="16dp"
             tools:text="Reading"
             tools:chipIcon="@drawable/ic_chip_reading" />
 
@@ -94,9 +124,10 @@
             android:progress="60"
             android:progressTint="@color/primary"
             android:progressBackgroundTint="@color/progress_track"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/paper_checkbox"
             app:layout_constraintTop_toBottomOf="@id/paper_status_chip"
             app:layout_constraintEnd_toStartOf="@id/paper_thumbnail"
+            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             tools:visibility="visible"/>
 

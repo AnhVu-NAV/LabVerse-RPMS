@@ -16,5 +16,13 @@
     <string name="save">Save</string>
     <string name="citation_updated">Citation updated successfully</string>
     <string name="citation_empty">Citation cannot be empty</string>
-</resources>
 
+    <!-- Paper Card -->
+    <string name="cd_paper_thumbnail">Paper thumbnail</string>
+    <string name="cd_navigate_to_paper">Navigate to paper details</string>
+
+    <!-- Reading List Detail -->
+    <string name="select_all">Select all</string>
+    <string name="deselect_all">Deselect all</string>
+    <string name="reading_list">Reading list</string>
+</resources>

@@ -21,7 +21,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"
-            android:src="@drawable/ic_arrow_back"
+            android:src="@drawable/ic_back_arrow"
             android:contentDescription="@string/cd_back_button"
             android:background="?attr/selectableItemBackgroundBorderless"/>
 
@@ -114,7 +114,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:background="@drawable/bg_edit_text"
+            android:background="@drawable/bg_filter_input"
             android:padding="12dp"
             android:hint="@string/enter_citation_text"
             android:textColor="#0D141C"

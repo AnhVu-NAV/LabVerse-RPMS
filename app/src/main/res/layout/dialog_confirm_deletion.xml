@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/dialog_background">
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Confirm Deletion"
+        android:textSize="22sp"
+        android:textColor="#0D141C"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:paddingBottom="12dp" />
+
+    <TextView
+        android:id="@+id/dialog_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Are you sure you want to delete 3 selected papers?"
+        android:textSize="15sp"
+        android:textColor="#0D141C"
+        android:fontFamily="sans-serif"
+        android:lineHeight="24dp"
+        android:paddingBottom="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:paddingTop="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Cancel"
+            android:textSize="14sp"
+            android:textColor="#0D141C"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
+            android:backgroundTint="#E8EDF2"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:minWidth="84dp"
+            android:layout_marginEnd="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Delete"
+            android:textSize="14sp"
+            android:textColor="#F7FAFC"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
+            android:backgroundTint="#1273D4"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:minWidth="84dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
+

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:paddingBottom="24dp">
+
+    <!-- Drag Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bottom_sheet_drag_handle"
+        android:backgroundTint="#CFDBE8" />
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sort"
+        android:textSize="20sp"
+        android:textColor="#0D141C"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="8dp"
+        android:fontFamily="sans-serif-medium" />
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E8EDF2"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Sort By Row -->
+    <LinearLayout
+        android:id="@+id/sort_by_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="12dp"
+        android:gravity="center_vertical"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_sort"
+            android:layout_marginEnd="16dp"
+            app:tint="#4D7399" />
+
+        <TextView
+            android:id="@+id/sort_by_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Sort By: Title"
+            android:textSize="16sp"
+            android:textColor="#0D141C"
+            android:fontFamily="sans-serif" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_arrow_right"
+            android:contentDescription="Change sort criteria"
+            app:tint="#4D7399" />
+
+    </LinearLayout>
+
+    <!-- Spacer -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <!-- Order Label -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Order"
+        android:textSize="14sp"
+        android:textColor="#4D7399"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="8dp"
+        android:fontFamily="sans-serif-medium" />
+
+    <!-- Sort Order Toggle -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/sort_toggle_background"
+        android:layout_marginHorizontal="20dp"
+        android:padding="4dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_ascending"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Ascending"
+            android:textSize="15sp"
+            android:textColor="@color/sort_button_text"
+            android:fontFamily="sans-serif-medium"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:layout_marginEnd="4dp"
+            app:cornerRadius="8dp"
+            app:elevation="0dp"
+            app:strokeWidth="0dp"
+            app:backgroundTint="@color/sort_button_background"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_descending"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Descending"
+            android:textSize="15sp"
+            android:textColor="@color/sort_button_text"
+            android:fontFamily="sans-serif-medium"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:layout_marginStart="4dp"
+            app:cornerRadius="8dp"
+            app:elevation="0dp"
+            app:strokeWidth="0dp"
+            app:backgroundTint="@color/sort_button_background"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+    </LinearLayout>
+
+</LinearLayout>
+
