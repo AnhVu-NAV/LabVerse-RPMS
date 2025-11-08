@@ -24,4 +24,7 @@ public interface UserApiService {
             @Query("email") String email,
             @Query("otp") String otp
     );
+
+    @PUT("/api/accounts/select-role")
+    Call<UserSimpleResponse> selectRole(@Query("userId") String userId, @Query("roleName") String roleName);
 }

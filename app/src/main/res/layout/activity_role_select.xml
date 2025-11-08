@@ -37,7 +37,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Discover which role matches your skills and ambitions — explore and choose the path that fits you best."
+            android:text="Discover which role matches your skills and ambitions — explore and choose the path that fits you best. Please carefully, as this selection will shape your experience within the app."
             android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="18sp"
             android:lineSpacingExtra="2dp"

@@ -28,4 +28,8 @@ public class UserRepository {
         userApiService.verifyAccount(email, otp).enqueue(callback);
     }
 
+    public void selectRole(String userId, String roleName, Callback<UserSimpleResponse> callback) {
+        userApiService.selectRole(userId, roleName).enqueue(callback);
+    }
+
 }
