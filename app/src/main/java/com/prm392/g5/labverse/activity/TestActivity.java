@@ -1,5 +1,6 @@
 package com.prm392.g5.labverse.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
@@ -50,6 +51,12 @@ public class TestActivity extends AppCompatActivity {
         btnImportAnnotationButton.setOnClickListener(v -> ImportAnnotationActivity.open(this, paperId));
 
         //Todo logout acvitity test
-//        Button btnLogout = findViewById(R.id.btnLogout);
+        Button btnLogout = findViewById(R.id.btnLogout);
+        btnLogout.setOnClickListener(v -> {
+            Intent intent = new Intent(TestActivity.this, LogoutActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
     }
 }
