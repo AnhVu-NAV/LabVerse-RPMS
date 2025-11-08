@@ -16,7 +16,7 @@ import com.prm392.g5.labverse.util.LocalDateTimeConverter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Paper.class, PaperAnnotation.class}, version = 1, exportSchema = false)
+@Database(entities = {Paper.class, PaperAnnotation.class}, version = 2, exportSchema = false)
 @TypeConverters({LocalDateTimeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 

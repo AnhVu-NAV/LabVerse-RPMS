@@ -48,5 +48,8 @@ public class TestActivity extends AppCompatActivity {
         //todo test import annotation
         Button btnImportAnnotationButton = findViewById(R.id.btnImportAnnotation);
         btnImportAnnotationButton.setOnClickListener(v -> ImportAnnotationActivity.open(this, paperId));
+
+        //Todo logout acvitity test
+//        Button btnLogout = findViewById(R.id.btnLogout);
     }
 }

@@ -96,7 +96,6 @@ public class PrepareViewPdfActivity extends AppCompatActivity {
                             wouldBeOpenedPaper.setId(res.getId());
                             wouldBeOpenedPaper.setS3Key(res.getS3Key());
                             wouldBeOpenedPaper.setTotalPage(res.getTotalPage());
-                            wouldBeOpenedPaper.setCurrentPage(res.getCurrentPage());
 
                             runOnUiThread(() -> {
                                 localPdfFile = new File(getExternalFilesDir(null), wouldBeOpenedPaper.getS3Key());

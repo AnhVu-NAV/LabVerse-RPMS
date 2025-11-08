@@ -14,10 +14,15 @@ import androidx.core.content.FileProvider;
 
 import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.config.AppDatabase;
+import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.dao.PaperDao;
+import com.prm392.g5.labverse.dto.readingStatus.ReadingStatusRequest;
+import com.prm392.g5.labverse.dto.readingStatus.ReadingStatusResponse;
 import com.prm392.g5.labverse.entity.Paper;
 import com.prm392.g5.labverse.entity.PaperAnnotation;
+import com.prm392.g5.labverse.repository.ReadingStatusRepository;
 import com.prm392.g5.labverse.util.AnnotationHelper;
+import com.prm392.g5.labverse.util.ApiErrorHandler;
 import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
 import com.pspdfkit.configuration.page.PageScrollDirection;
 import com.pspdfkit.configuration.page.PageScrollMode;
@@ -28,16 +33,22 @@ import com.pspdfkit.ui.PdfFragment;
 
 import java.io.File;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class MyPdfActivity extends PdfActivity {
 
     private PdfFragment fragment;
     private PdfDocument document;
     private AnnotationHelper annotationHelper;
+    private final ReadingStatusRepository readingStatusRepository = new ReadingStatusRepository();
     private static Paper openedPaper;
     private static PaperAnnotation openedAnnotation;
     private static File localAnnotationFile;
     private static File localPdfFile;
+    private ReadingStatusRequest readingStatusRequest = new ReadingStatusRequest();
 
     //    public static void open(Context context, File pdfFile, File annotationFile, Paper paper) {
     public static void open(Context context, Paper paper, PaperAnnotation paperAnnotation, File pdfFile, File annotationFile) {
@@ -153,11 +164,32 @@ public class MyPdfActivity extends PdfActivity {
             annotationHelper.importFromLocal(localAnnotationFile, document);
         }
 
-        // restore last page
-        if (openedPaper.getCurrentPage() >= 0) {
-            fragment.setPageIndex(openedPaper.getCurrentPage(), true);
-        }
+        //restore last page
+        readingStatusRequest.setUserId(SharePreferenceManager.getInstance().getUserId());
+        readingStatusRequest.setPaperId(openedPaper.getId());
 
+        readingStatusRepository.getReadingStatusInfo(
+                SharePreferenceManager.getInstance().getUserId(),
+                openedPaper.getId(),
+                new Callback<ReadingStatusResponse>() {
+                    @Override
+                    public void onResponse(Call<ReadingStatusResponse> call, Response<ReadingStatusResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            ReadingStatusResponse readingStatus = response.body();
+                            int lastPage = readingStatus.getCurrentPage();
+                            fragment.setPageIndex(lastPage, true);
+
+                            //lưu lại để dùng khi đóng pdf
+                            readingStatusRequest.setId(readingStatus.getId());
+                        }
+                        //lỗi thì thôi không làm gì cả, không restore, kệ nutrient nó mở đâu thì mở
+                    }
+
+                    @Override
+                    public void onFailure(Call<ReadingStatusResponse> call, Throwable t) {
+                        //lỗi thì thôi không làm gì cả, không restore, kệ nutrient nó mở đâu thì mở
+                    }
+                });
     }
 
     @Override
@@ -165,16 +197,12 @@ public class MyPdfActivity extends PdfActivity {
         super.onPause();
         if (fragment == null) return;
 
-        int currentPage = fragment.getPageIndex();
-
         // Save last page
         AppDatabase.databaseWriteExecutor.execute(() -> {
             PaperDao dao = AppDatabase.getInstance(this).paperDao();
             Paper paper = dao.getById(openedPaper.getId());
             if (paper != null) {
-                paper.setCurrentPage(currentPage);
                 dao.update(paper);
-                Log.d("PDF", "Saved last page: " + currentPage);
             }
         });
     }
@@ -194,11 +222,32 @@ public class MyPdfActivity extends PdfActivity {
             }
             annotationHelper.updateAnnotation(localAnnotationFile, openedAnnotation, document);
 
-            //todo update cả cái last page aka current page của paper lên nữa
         } catch (Exception e) {
             Log.e("MyPdfActivity", "Save annotation failed", e);
             Toast.makeText(this, "Sync annotation fail", Toast.LENGTH_LONG).show();
         }
+
+        //update cả cái last page aka current page của paper lên nữa
+//            int currentPage = fragment.getPageIndex();
+        readingStatusRequest.setCurrentPage(fragment.getPageIndex());
+        readingStatusRepository.createOrUpdateReadingStatus(
+                readingStatusRequest,
+                new Callback<ReadingStatusResponse>() {
+                    @Override
+                    public void onResponse(Call<ReadingStatusResponse> call, Response<ReadingStatusResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            Log.d("UpdateReadingStatus", "Sync reading status successfully");
+                            Toast.makeText(MyPdfActivity.this, "Sync reading status successfully", Toast.LENGTH_LONG).show();
+                        } else {
+                            ApiErrorHandler.handleApiResponseError(MyPdfActivity.this, response, "UpdateReadingStatus");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ReadingStatusResponse> call, Throwable t) {
+                        ApiErrorHandler.handleNetworkFailure(MyPdfActivity.this, t, "UpdateReadingStatus");
+                    }
+                });
     }
 
     public void showShareDialog(File file) {

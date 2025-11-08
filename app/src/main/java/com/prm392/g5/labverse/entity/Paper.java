@@ -12,7 +12,6 @@ public class Paper {
     private String id;
     private String s3Key;
     private boolean deleteFlag = false;
-    private int currentPage = -1;
     private int totalPage = -1;
 
     //todo paper vẫn còn thiếu thong tin nhe
@@ -43,14 +42,6 @@ public class Paper {
 
     public void setDeleteFlag(boolean deleteFlag) {
         this.deleteFlag = deleteFlag;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
     }
 
     public int getTotalPage() {
