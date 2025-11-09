@@ -24,6 +24,7 @@ public class TeamReadingListPaperAdapter extends RecyclerView.Adapter<TeamReadin
 
     public interface OnPaperActionListener {
         void onSetPriorityClick(TeamReadingListPaperResponse paper, int position);
+        void onViewStatusClick(TeamReadingListPaperResponse paper);
     }
 
     public TeamReadingListPaperAdapter(List<TeamReadingListPaperResponse> papers, boolean isOwner, OnPaperActionListener listener) {
@@ -51,6 +52,12 @@ public class TeamReadingListPaperAdapter extends RecyclerView.Adapter<TeamReadin
         // Priority badge
         String priority = paper.getPriority() != null ? paper.getPriority() : "MEDIUM";
         holder.chipPriority.setText(priority);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onViewStatusClick(paper);
+            }
+        });
 
         switch (priority.toUpperCase()) {
             case "HIGH":
@@ -102,4 +109,5 @@ public class TeamReadingListPaperAdapter extends RecyclerView.Adapter<TeamReadin
             btnSetPriority = itemView.findViewById(R.id.btnSetPriority);
         }
     }
+
 }

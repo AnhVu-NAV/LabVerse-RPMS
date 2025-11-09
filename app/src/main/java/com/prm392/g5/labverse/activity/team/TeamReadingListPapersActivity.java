@@ -1,5 +1,6 @@
 package com.prm392.g5.labverse.activity.team;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -32,7 +33,7 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
     private LinearLayout layoutEmpty;
     private ProgressBar progressBar;
 
-    private TeamReadingListPaperAdapter adapter; // ✅ Updated type
+    private TeamReadingListPaperAdapter adapter;
     private TeamRepository teamRepository;
 
     private String teamId;
@@ -96,12 +97,16 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
                         rvPapers.setVisibility(View.VISIBLE);
 
                         if (adapter == null) {
-                            //  Updated adapter instantiation
                             adapter = new TeamReadingListPaperAdapter(papers, isOwner,
                                     new TeamReadingListPaperAdapter.OnPaperActionListener() {
                                         @Override
                                         public void onSetPriorityClick(TeamReadingListPaperResponse paper, int position) {
                                             showSetPriorityDialog(paper, position);
+                                        }
+
+                                        @Override
+                                        public void onViewStatusClick(TeamReadingListPaperResponse paper) {
+                                            openReadingStatus(paper);
                                         }
                                     });
                             rvPapers.setAdapter(adapter);
@@ -203,5 +208,13 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    private void openReadingStatus(TeamReadingListPaperResponse paper) {
+        Intent intent = new Intent(this, TeamPaperReadingStatusActivity.class);
+        intent.putExtra("TEAM_ID", teamId);
+        intent.putExtra("PAPER_ID", paper.getPaperId());
+        intent.putExtra("PAPER_TITLE", paper.getTitle());
+        startActivity(intent);
     }
 }
