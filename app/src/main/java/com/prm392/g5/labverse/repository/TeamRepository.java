@@ -5,6 +5,8 @@ import com.prm392.g5.labverse.apiService.TeamApiService;
 import com.prm392.g5.labverse.config.RetrofitClient;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.dto.team.MemberResponse;
+import com.prm392.g5.labverse.dto.team.SetPaperPriorityRequest;
+import com.prm392.g5.labverse.dto.team.TeamReadingListPaperResponse;
 import com.prm392.g5.labverse.dto.team.TeamReadingListRequest;
 import com.prm392.g5.labverse.dto.team.TeamReadingListResponse;
 import com.prm392.g5.labverse.dto.team.TeamRequest;
@@ -14,7 +16,6 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Callback;
-import retrofit2.http.Path;
 
 public class TeamRepository {
     private final TeamApiService teamApiService;
@@ -67,6 +68,18 @@ public class TeamRepository {
     public void deleteReadingList(String teamId, String readingListId, Callback<ResponseBody> callback) {
         teamApiService.deleteTeamReadingList(teamId, readingListId).enqueue(callback);
     }
+    public void getReadingListPapers(String teamId, String readingListId,
+                                     Callback<List<TeamReadingListPaperResponse>> callback) {
+        teamApiService.getTeamReadingListPapers(teamId, readingListId).enqueue(callback);
+    }
+
+    public void updatePaperPriority(String teamId, String readingListId, String paperId,
+                                    SetPaperPriorityRequest request,
+                                    Callback<TeamReadingListPaperResponse> callback) {
+        teamApiService.updateTeamReadingListPaperPriority(teamId, readingListId, paperId, request)
+                .enqueue(callback);
+    }
+
 
 
 }

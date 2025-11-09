@@ -879,7 +879,12 @@ public class TeamDetailActivity extends AppCompatActivity {
     }
 
     private void viewReadingListDetail(TeamReadingListResponse readingList) {
-        Toast.makeText(this, "View: " + readingList.getName(), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, TeamReadingListPapersActivity.class);
+        intent.putExtra("TEAM_ID", teamId);
+        intent.putExtra("READING_LIST_ID", readingList.getId());
+        intent.putExtra("READING_LIST_NAME", readingList.getName());
+        intent.putExtra("IS_OWNER", isOwner);
+        startActivity(intent);
     }
 
     @Override

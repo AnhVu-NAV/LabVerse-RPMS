@@ -45,4 +45,8 @@ public class PaperInfoResponse{
     public String getDoi() {
         return doi;
     }
+    public String getPublishedDate() {
+        return publicationYear;
+    }
+
 }
