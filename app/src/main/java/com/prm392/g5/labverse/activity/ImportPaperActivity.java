@@ -1,22 +1,17 @@
 package com.prm392.g5.labverse.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
-import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.config.AppDatabase;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.dao.PaperDao;
@@ -25,11 +20,11 @@ import com.prm392.g5.labverse.dto.paper.AddPaperRequest;
 import com.prm392.g5.labverse.dto.paper.AddPaperResponse;
 import com.prm392.g5.labverse.entity.Paper;
 import com.prm392.g5.labverse.repository.PaperRepository;
+import com.prm392.g5.labverse.util.FileUtil;
 import com.prm392.g5.labverse.util.PdfMetadataUtil;
 import com.prm392.g5.labverse.util.S3Util;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import retrofit2.Call;
@@ -38,37 +33,30 @@ import retrofit2.Response;
 
 public class ImportPaperActivity extends AppCompatActivity {
 
-    private PaperRepository paperRepository = new PaperRepository();
-    private ActivityResultLauncher<String> pickPdfLauncher;
+    private final PaperRepository paperRepository = new PaperRepository();
     private File uploadedFile;
     private String s3Key;
-
     private Paper paper;
 
-    //todo giao diện
+    public static void open(Context context) {
+        Intent intent = new Intent(context, ImportPaperActivity.class);
+        context.startActivity(intent);
+    }
+
+    //todo cần link với giao diện của TA
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_import_paper);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
 
         // Đăng ký launcher chọn file PDF
-        pickPdfLauncher = registerForActivityResult(
+        ActivityResultLauncher<String> pickPdfLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
                 uri -> {
                     if (uri != null) {
                         copyUriToTempFile(uri);
                     }
                 });
-
-        Button btnPick = findViewById(R.id.btnPickPdf);
-        btnPick.setOnClickListener(v -> pickPdfLauncher.launch("application/pdf"));
+        pickPdfLauncher.launch("application/pdf");
     }
 
 
@@ -88,18 +76,15 @@ public class ImportPaperActivity extends AppCompatActivity {
             }
 
             //viết ra file đích
-            try (FileOutputStream outputStream = new FileOutputStream(uploadedFile)) {
-                byte[] buffer = new byte[4096];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
-                }
-            }
+            FileUtil.copyContentFromTo(inputStream, uploadedFile);
+
             //file location được dùng làm s3 key luôn
             //hơi liều nhưng để xử lí nhanh thì đành làm thế
             uploadToS3();
         } catch (Exception e) {
             Log.e("Upload", "Copy file lỗi", e);
+            Toast.makeText(ImportPaperActivity.this, "Có lỗi xảy ra trong quá trình import paper. Hãy thử lại", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
@@ -133,7 +118,6 @@ public class ImportPaperActivity extends AppCompatActivity {
         // ._-   vẫn giữ lại dấu chấm, gạch dưới, gạch ngang như trước
         // [^...]   nghĩa là bất kỳ ký tự nào KHÔNG thuộc nhóm này sẽ bị thay bằng _
         name = name.replaceAll("[^\\p{L}\\p{N}._-]", "_");
-
         return name;
     }
 
@@ -198,7 +182,7 @@ public class ImportPaperActivity extends AppCompatActivity {
         AddPaperRequest requestDto = new AddPaperRequest();
         requestDto.setS3Key(s3Key);
         requestDto.setTotalPage(paper.getTotalPage());
-        //todo tamj thowi ddeer troongs cho ddur object
+        //todo tạm thời để cho đủ object request, sau em TA làm thì xem lại nhé
         requestDto.setAuthorName("");
         requestDto.setPublicationYear("");
         requestDto.setTitle("");
@@ -217,14 +201,16 @@ public class ImportPaperActivity extends AppCompatActivity {
                         dao.insert(paper);
                         Log.d("PDF", "Saved paper: " + paperId);
                     });
-
+                    finish();
                 } else {
                     Toast.makeText(ImportPaperActivity.this, "Thêm paper vào server thất bại", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
             }
             @Override
             public void onFailure(Call<AddPaperResponse> call, Throwable t) {
                 Toast.makeText(ImportPaperActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
 

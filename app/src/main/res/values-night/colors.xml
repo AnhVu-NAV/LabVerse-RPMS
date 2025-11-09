@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand -->
+    <color name="lv_primary">#1D61E7</color>
+    <color name="lv_on_primary">#0B2E76</color>
+    <color name="lv_primary_container">#103A90</color>
+    <color name="lv_on_primary_container">#D9E6FF</color>
+
+    <!-- Secondary / Neutral -->
+    <color name="lv_secondary">#9AA4B2</color>
+    <color name="lv_on_secondary">#14181F</color>
+    <color name="lv_secondary_container">#2A3038</color>
+    <color name="lv_on_secondary_container">#E5EAF0</color>
+
+    <!-- Tertiary -->
+    <color name="lv_tertiary">#FFA388</color>
+    <color name="lv_on_tertiary">#3E1911</color>
+    <color name="lv_tertiary_container">#5A2419</color>
+    <color name="lv_on_tertiary_container">#FFD7CB</color>
+
+    <!-- Surfaces -->
+    <color name="lv_background">#0B0F14</color>
+    <color name="lv_on_background">#E5E7EB</color>
+    <color name="lv_surface">#0F141A</color>
+    <color name="lv_on_surface">#E5E7EB</color>
+    <color name="lv_surface_variant">#1F2730</color>
+    <color name="lv_on_surface_variant">#B6C0CC</color>
+    <color name="lv_outline">#334155</color>
+
+    <!-- Status -->
+    <color name="lv_error">#F87171</color>
+    <color name="lv_on_error">#140A0A</color>
+
+    <!-- Brand helpers -->
+    <color name="lv_hint">#94A3B8</color>
+    <color name="lv_divider">#2A3440</color>
+</resources>
+

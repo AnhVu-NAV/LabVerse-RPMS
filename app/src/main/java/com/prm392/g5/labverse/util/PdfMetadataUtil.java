@@ -13,6 +13,7 @@ import java.io.IOException;
 
 public class PdfMetadataUtil {
 
+    private PdfMetadataUtil() {}
     public static PdfInfo extractMetadata(Context context, File pdfFile) {
         // Ensure PDFBox is initialized
         PDFBoxResourceLoader.init(context);

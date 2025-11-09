@@ -31,33 +31,31 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.prm392.g5.labverse.BuildConfig;
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.activity.forgotPassword.ForgotPasswordActivity;
+import com.prm392.g5.labverse.activity.team.ListTeamOfPiActivity;
+import com.prm392.g5.labverse.activity.team.MyInvitationsActivity;
 import com.prm392.g5.labverse.config.RetrofitClient;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
-import com.prm392.g5.labverse.dto.ErrorResponse;
 import com.prm392.g5.labverse.dto.auth.LoginRequest;
 import com.prm392.g5.labverse.dto.auth.LoginResponse;
 import com.prm392.g5.labverse.dto.auth.LoginWGoogleRequest;
 import com.prm392.g5.labverse.repository.AuthRepository;
+import com.prm392.g5.labverse.util.ApiErrorHandler;
 
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Converter;
 import retrofit2.Response;
 
 
 public class LoginActivity extends AppCompatActivity {
-    //todo sửa giao diện
 
     private EditText edEmail, edPassword;
     private Button btnLogin, btnLoginWGg;
-    private TextView tvSignUp, tvLoginError;
+    private TextView tvSignUpAction, tvLoginError;
 
     private AuthRepository authRepository = new AuthRepository();
 
@@ -82,8 +80,7 @@ public class LoginActivity extends AppCompatActivity {
         edPassword = findViewById(R.id.edPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnLoginWGg = findViewById(R.id.btnLoginWGg);
-        //todo xử lí sign up
-        tvSignUp= findViewById(R.id.tvSignUp);
+        tvSignUpAction = findViewById(R.id.tvSignUpAction);
         tvLoginError = findViewById(R.id.tvLoginError);
 
         //normal login
@@ -115,7 +112,6 @@ public class LoginActivity extends AppCompatActivity {
 
         //login with Google
         btnLoginWGg.setOnClickListener(v -> {
-            //todo, nhảy qua chọn role xong hẵng đăng nhập, tạm thời server đang để mặc đinhj là Intern hết
             loginWithGoogle();
         });
 
@@ -133,6 +129,16 @@ public class LoginActivity extends AppCompatActivity {
                 }
         );
 
+        //link qua sign up
+        tvSignUpAction.setOnClickListener(v -> {
+            Intent i = new Intent(LoginActivity.this, SignUpActivity.class);
+            startActivity(i);
+        });
+
+        //link quên mật khẩu
+        findViewById(R.id.tvForgot).setOnClickListener(v ->
+                startActivity(new Intent(this, ForgotPasswordActivity.class))
+        );
     }
 
     public void login(LoginRequest loginRequest) {
@@ -142,13 +148,13 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     handleLoginRequestSuceess(response.body());
                 } else {
-                    handleLoginRequestFail(response);
+                    ApiErrorHandler.handleApiResponseError(LoginActivity.this, response, "Login");
                 }
             }
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 // request chưa đến được server hoặc không thể đọc được phản hồi
-                handleSendRequestFail(t);
+                ApiErrorHandler.handleNetworkFailure(LoginActivity.this, t, "Login");
             }
         });
 
@@ -160,78 +166,39 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void handleLoginRequestSuceess(LoginResponse loginResponse){
         //lưu access token để sử dụng
-        Log.d("Login", "Login success fully");
+        Log.d("Login", "Login successfully");
         SharePreferenceManager prefManager = SharePreferenceManager.getInstance();
         //lưu lại access token cũng như user id của người dùng hiện tại
-        prefManager.saveAccessToken(loginResponse.getAccessToken());
-        prefManager.saveUserId(loginResponse.getUserId());
+        prefManager.saveUserAuthData(loginResponse.getAccessToken(), loginResponse.getUserId(), loginResponse.getUserRole());
         runOnUiThread(() ->
-                Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_LONG).show()
+                Toast.makeText(LoginActivity.this, "Login successfully!", Toast.LENGTH_LONG).show()
         );
-        //todo chuyển người dùng qua activity khác
-        //test import
-//        Intent intent = new Intent(this, ImportPaperActivity.class);
-//        startActivity(intent);
-    }
 
-    /**
-     * send login request to backend server, but receive response not 200 OK
-     * @param response
-     */
-    private void handleLoginRequestFail(Response<LoginResponse> response) {
-        try(ResponseBody errorBody = response.errorBody()) {
-            // Nếu không có error body thì dừng sớm, tránh lồng if
-            if (errorBody == null) {
-                Log.e("Login", "Empty error body");
-                tvLoginError.setText("Unknown error");
-                return;
-            }
-
-            // Dùng Retrofit converter để parse errorBody thành ErrorResponse
-            Converter<ResponseBody, ErrorResponse> converter =
-                    RetrofitClient.getInstance()
-                            .responseBodyConverter(ErrorResponse.class, new Annotation[0]);
-            ErrorResponse errorResponse = converter.convert(response.errorBody());
-
-            //parse thành công
-            if (errorResponse == null) {
-                throw new IOException("ErrorResponse is null");
-            }
-
-            int code = errorResponse.getCode();
-            String message = errorResponse.getMessage();
-
-            //TODO THIẾT LẬP CƠ CHẾ XỬ LÍ LỖIIIIIIII
-
-            Log.e("Login", "Error " + code + ": " + message);
-            tvLoginError.setText(message);
-
-        } catch (IOException e) {
-            Log.e("Login", "Failed to parse error response", e);
-            tvLoginError.setText("Something went wrong");
-        }
-    }
-
-    /**
-     * called when can not send the request
-     * không thể gửi request về server backend
-     *
-     * @param t
-     */
-    private void handleSendRequestFail(Throwable t){
-        Log.e("Login", "Request failed", t);
-
-        if (t instanceof java.net.UnknownHostException) {
-            tvLoginError.setText("Không có kết nối mạng. Vui lòng kiểm tra Internet.");
-        } else if (t instanceof java.net.SocketTimeoutException) {
-            tvLoginError.setText("Kết nối bị hết hạn. Vui lòng thử lại.");
-        } else if (t instanceof java.net.ConnectException) {
-            tvLoginError.setText("Không thể kết nối tới máy chủ.");
-        } else if (t instanceof javax.net.ssl.SSLException) {
-            tvLoginError.setText("Lỗi chứng chỉ bảo mật.");
+        //xem người dùng đăng nhập lần đầu hay là lần 2, để xem vào trang chọn role hay là vào Library của Tuấn Anh luôn
+        if (loginResponse.getUserRole() == null || loginResponse.getUserRole().isEmpty()) {
+            //chưa chọn role, chuyển qua chọn role
+            Intent intent = new Intent(this, RoleSelectActivity.class);
+            startActivity(intent);
         } else {
-            tvLoginError.setText("Đã xảy ra lỗi không xác định. Vui lòng thử lại.");
+            Log.d("Login", "User has role: " + prefManager.getUserRole());
+
+           //todo chuyển người dùng qua activity Library của Tuấn Anh
+            //đã chọn role, chuyển qua Library
+//            Intent intent = new Intent(this, LibraryActivity.class);
+//            startActivity(intent);
         }
+
+        //todo test import
+        Intent intent = new Intent(this, ImportPaperActivity.class);
+        startActivity(intent);
+
+        //todo chuyển người dùng qua activity ListTeamOfPiActivity
+//        Intent intent = new Intent(this, ListTeamOfPiActivity.class);
+//        startActivity(intent);
+
+//        Intent intent = new Intent(this, MyInvitationsActivity.class);
+//        startActivity(intent);
+        finish();
     }
 
     public void loginWithGoogle() {
@@ -283,19 +250,23 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onError(GetCredentialException e) {
             if (e instanceof androidx.credentials.exceptions.NoCredentialException) {
+
+                Log.e("GOOGLE_LOGIN", "Credential exception type: " + e.getClass().getSimpleName()
+                        + ", message: " + e.getMessage());
+
                 //oh no, fail rồi, chưa có tk gg nào có sẵn trên máy cả
                 Log.d("GOOGLE_LOGIN", "Không tìm thấy tài khoản Google nào. Mở trình chọn tài khoản...");
                 runOnUiThread(() -> {
                     Toast.makeText(LoginActivity.this,
-                            "Không tìm thấy tài khoản Google nào. Mở trình chọn tài khoản...",
+                            "No existing Google account found. Please choose an account to sign in.",
                             Toast.LENGTH_SHORT).show();
                 });
                 startLegacyGoogleSignIn(); // gọi tới cái mở trang đăng nhập tk gg ra nè
             } else {
-                Log.d("GOOGLE_LOGIN", "Đăng nhập thất bại");
+                Log.d("GOOGLE_LOGIN", "Đăng nhập thất bại: " + e.getMessage());
                 runOnUiThread(() ->
                         Toast.makeText(LoginActivity.this,
-                                "Đăng nhập thất bại: " + e.getMessage(),
+                                "Login failed",
                                 Toast.LENGTH_SHORT).show()
                 );
             }
@@ -310,12 +281,12 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     handleLoginRequestSuceess(response.body());
                 } else {
-                    handleLoginRequestFail(response);
+                    ApiErrorHandler.handleApiResponseError(LoginActivity.this, response, "LoginWGgToBackend");
                 }
             }
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-                handleSendRequestFail(t);
+                ApiErrorHandler.handleNetworkFailure(LoginActivity.this, t, "LoginWGgToBackend");
             }
         });
     }

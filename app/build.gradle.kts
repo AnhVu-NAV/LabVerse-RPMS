@@ -40,13 +40,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
 dependencies {
-
+    implementation("com.google.android.material:material:1.12.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
@@ -59,6 +59,8 @@ dependencies {
     annotationProcessor ("androidx.room:room-compiler:2.6.1")
 
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
+
+    implementation("io.nutrient:nutrient:10.7.0")
 
     // ViewPager2 and TabLayout
     implementation("androidx.viewpager2:viewpager2:1.0.0")

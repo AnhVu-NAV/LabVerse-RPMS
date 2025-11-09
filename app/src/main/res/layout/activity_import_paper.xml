@@ -18,4 +18,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5" />
+
+    <Button
+        android:id="@+id/btnOpenPdf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="open pdf"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnPickPdf" />
+
+    <Button
+        android:id="@+id/btnExportAnnotation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="export annotation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnOpenPdf" />
+    <Button
+        android:id="@+id/btnImportAnnotation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="import annotation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnExportAnnotation" />
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnImportAnnotation" />
 </androidx.constraintlayout.widget.ConstraintLayout>
