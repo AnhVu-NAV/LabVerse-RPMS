@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class ReadingListAdapter extends RecyclerView.Adapter<ReadingListAdapter.ViewHolder> {
+public class TeamReadingListAdapter extends RecyclerView.Adapter<TeamReadingListAdapter.ViewHolder> {
 
     private List<TeamReadingListResponse> readingLists;
     private OnReadingListActionListener listener;
@@ -32,7 +32,7 @@ public class ReadingListAdapter extends RecyclerView.Adapter<ReadingListAdapter.
         void onDeleteClick(TeamReadingListResponse readingList, int position);
     }
 
-    public ReadingListAdapter(List<TeamReadingListResponse> readingLists, boolean isOwner, OnReadingListActionListener listener) {
+    public TeamReadingListAdapter(List<TeamReadingListResponse> readingLists, boolean isOwner, OnReadingListActionListener listener) {
         this.readingLists = readingLists;
         this.isOwner = isOwner;
         this.listener = listener;

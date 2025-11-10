@@ -22,6 +22,7 @@ import com.prm392.g5.labverse.util.ApiErrorHandler;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -108,6 +109,19 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
                                         public void onViewStatusClick(TeamReadingListPaperResponse paper) {
                                             openReadingStatus(paper);
                                         }
+
+                                        @Override
+                                        public void onPaperClick(TeamReadingListPaperResponse paper) {
+                                            // TODO: Implement detail view later
+                                            Toast.makeText(TeamReadingListPapersActivity.this,
+                                                    "Clicked: " + paper.getTitle(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+
+                                        @Override
+                                        public void onRemovePaperClick(TeamReadingListPaperResponse paper, int position) {
+                                            showRemovePaperDialog(paper);
+                                        }
                                     });
                             rvPapers.setAdapter(adapter);
                         } else {
@@ -135,6 +149,56 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
                 );
             }
         });
+    }
+
+    private void showRemovePaperDialog(TeamReadingListPaperResponse paper) {
+        new AlertDialog.Builder(this)
+                .setTitle("Remove Paper")
+                .setMessage("Are you sure you want to remove \"" + paper.getTitle() + "\" from this reading list?")
+                .setPositiveButton("Remove", (dialog, which) -> {
+                    removePaper(paper);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void removePaper(TeamReadingListPaperResponse paper) {
+        progressBar.setVisibility(View.VISIBLE);
+
+        teamRepository.removePaperFromReadingList(
+                teamId,
+                readingListId,
+                paper.getPaperId(),
+                new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        progressBar.setVisibility(View.GONE);
+
+                        if (response.isSuccessful()) {
+                            Toast.makeText(TeamReadingListPapersActivity.this,
+                                    "Paper removed successfully",
+                                    Toast.LENGTH_SHORT).show();
+                            loadPapers(); // Reload list
+                        } else {
+                            ApiErrorHandler.handleApiResponseError(
+                                    TeamReadingListPapersActivity.this,
+                                    response,
+                                    "RemovePaper"
+                            );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        progressBar.setVisibility(View.GONE);
+                        ApiErrorHandler.handleNetworkFailure(
+                                TeamReadingListPapersActivity.this,
+                                t,
+                                "RemovePaper"
+                        );
+                    }
+                }
+        );
     }
 
     private void showSetPriorityDialog(TeamReadingListPaperResponse paper, int position) {

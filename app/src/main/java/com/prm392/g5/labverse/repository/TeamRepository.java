@@ -79,7 +79,8 @@ public class TeamRepository {
         teamApiService.updateTeamReadingListPaperPriority(teamId, readingListId, paperId, request)
                 .enqueue(callback);
     }
-
-
+    public void removePaperFromReadingList(String teamId, String readingListId, String paperId, Callback<ResponseBody> callback) {
+        teamApiService.removePaperFromReadingList(teamId, readingListId, paperId).enqueue(callback);
+    }
 
 }

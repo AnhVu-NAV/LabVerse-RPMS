@@ -27,7 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.adapter.MemberAdapter;
-import com.prm392.g5.labverse.adapter.ReadingListAdapter;
+import com.prm392.g5.labverse.adapter.TeamReadingListAdapter;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.dto.team.InvitationRequest;
 import com.prm392.g5.labverse.dto.team.MemberResponse;
@@ -70,7 +70,7 @@ public class TeamDetailActivity extends AppCompatActivity {
     private RecyclerView rvReadingLists;
     private TextView tvEmptyReadingLists;
     private Button btnCreateReadingList;
-    private ReadingListAdapter readingListAdapter;
+    private TeamReadingListAdapter teamReadingListAdapter;
     private FloatingActionButton fabCreateReadingList;
     private AlertDialog readingListDialog;
     private ActivityResultLauncher<Intent> editTeamLauncher;
@@ -618,9 +618,9 @@ public class TeamDetailActivity extends AppCompatActivity {
                         tvEmptyReadingLists.setVisibility(View.GONE);
                         rvReadingLists.setVisibility(View.VISIBLE);
 
-                        if (readingListAdapter == null) {
-                            readingListAdapter = new ReadingListAdapter(readingLists, isOwner,
-                                    new ReadingListAdapter.OnReadingListActionListener() {
+                        if (teamReadingListAdapter == null) {
+                            teamReadingListAdapter = new TeamReadingListAdapter(readingLists, isOwner,
+                                    new TeamReadingListAdapter.OnReadingListActionListener() {
                                         @Override
                                         public void onItemClick(TeamReadingListResponse readingList) {
                                             viewReadingListDetail(readingList);
@@ -636,9 +636,9 @@ public class TeamDetailActivity extends AppCompatActivity {
                                             showDeleteReadingListDialog(readingList);
                                         }
                                     });
-                            rvReadingLists.setAdapter(readingListAdapter);
+                            rvReadingLists.setAdapter(teamReadingListAdapter);
                         } else {
-                            readingListAdapter.updateReadingLists(readingLists);
+                            teamReadingListAdapter.updateReadingLists(readingLists);
                         }
                     }
                 } else {

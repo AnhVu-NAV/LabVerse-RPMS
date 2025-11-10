@@ -92,4 +92,11 @@ public interface TeamApiService {
             @Body SetPaperPriorityRequest request
     );
 
+    @DELETE("api/team/{teamId}/reading-lists/{readingListId}/papers/{paperId}")
+    Call<ResponseBody> removePaperFromReadingList(
+            @Path("teamId") String teamId,
+            @Path("readingListId") String readingListId,
+            @Path("paperId") String paperId
+    );
+
 }

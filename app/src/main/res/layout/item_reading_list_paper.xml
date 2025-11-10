@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
-    android:fitsSystemWindows="true">
+    app:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +13,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Paper Title & Priority Badge -->
+        <!-- Header: Title & Priority -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,14 +38,14 @@
                 android:layout_height="wrap_content"
                 android:text="HIGH"
                 android:textColor="@android:color/white"
+                android:textSize="12sp"
                 style="@style/Widget.MaterialComponents.Chip.Action"
                 app:chipBackgroundColor="@android:color/holo_red_dark"
-                app:chipCornerRadius="8dp"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp" />
+                app:chipCornerRadius="6dp"
+                app:chipMinHeight="24dp" />
         </LinearLayout>
 
-        <!-- Paper Authors -->
+        <!-- Authors -->
         <TextView
             android:id="@+id/tvPaperAuthors"
             android:layout_width="match_parent"
@@ -58,17 +57,56 @@
             android:maxLines="1"
             android:ellipsize="end" />
 
-
-        <!-- Action Button -->
-        <Button
-            android:id="@+id/btnSetPriority"
-            android:layout_width="wrap_content"
+        <!-- Action Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Set Priority"
-            android:textColor="@android:color/holo_blue_dark"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_gravity="end"
-            android:layout_marginTop="8dp" />
+            android:orientation="horizontal"
+            android:gravity="end|center_vertical"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Tap to view details"
+                android:textSize="12sp"
+                android:textColor="#9AA5B1"
+                android:gravity="start" />
+
+            <!-- View Status Icon -->
+            <ImageButton
+                android:id="@+id/btnViewStatus"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_view_status"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="View Status"
+                android:padding="8dp" />
+
+            <!-- Set Priority Icon -->
+            <ImageButton
+                android:id="@+id/btnSetPriority"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_set_priority"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Set Priority"
+                android:padding="8dp"
+                android:layout_marginStart="4dp" />
+
+            <!-- Remove Icon -->
+            <ImageButton
+                android:id="@+id/btnRemove"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_remove_paper"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Remove"
+                android:padding="8dp"
+                android:layout_marginStart="4dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
