@@ -1,5 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">LabVerse_PRM392_G5</string>
+    <string name="app_name">LabVerse</string>
+
+    <!-- Citation Fragment -->
+    <string name="cd_paper_icon">Paper icon</string>
+    <string name="citation_copied_apa">APA citation copied to clipboard</string>
+    <string name="citation_copied_mla">MLA citation copied to clipboard</string>
+    <string name="citation_copied_bibtex">BibTeX citation copied to clipboard</string>
+    <string name="edit_citation">Edit Citation</string>
+    <string name="cd_back_button">Back</string>
+    <string name="the_impact_of_ai_on_education">The Impact of AI on Education</string>
+    <string name="citation">Citation</string>
+    <string name="enter_citation_text">Enter citation text</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="citation_updated">Citation updated successfully</string>
+    <string name="citation_empty">Citation cannot be empty</string>
+
+    <!-- Paper Card -->
+    <string name="cd_paper_thumbnail">Paper thumbnail</string>
+    <string name="cd_navigate_to_paper">Navigate to paper details</string>
+
+    <!-- Reading List Detail -->
+    <string name="select_all">Select all</string>
+    <string name="deselect_all">Deselect all</string>
+    <string name="reading_list">Reading list</string>
     <string name="back">Back</string>
     <string name="forgot_password_title">Forgot password</string>
     <string name="forgot_password_subtitle">Please enter your email to reset the password</string>
@@ -28,5 +53,10 @@
 
     <item name="annotation_import" type="id" />
     <item name="annotation_export" type="id" />
+    <string name="paper_thumbnail">Paper thumbnail</string>
+    <string name="paper_open">Open paper detail</string>
+    <string name="please_enter_search_query">Please enter a search query</string>
+    <string name="removed_from_search_history">Removed from search history</string>
+
 
 </resources>

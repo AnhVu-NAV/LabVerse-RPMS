@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_library"
+        android:icon="@drawable/ic_library"
+        android:title="Library" />
+    <item
+        android:id="@+id/navigation_reading_list"
+        android:icon="@drawable/ic_reading_list"
+        android:title="Reading List" />
+    <item
+        android:id="@+id/navigation_groups"
+        android:icon="@drawable/ic_groups"
+        android:title="Groups" />
+    <item
+        android:id="@+id/navigation_explore"
+        android:icon="@drawable/ic_explore"
+        android:title="Explore" />
+</menu>

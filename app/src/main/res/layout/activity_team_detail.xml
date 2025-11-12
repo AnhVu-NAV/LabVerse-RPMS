@@ -2,15 +2,18 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:fitsSystemWindows="true">
 
-    <!-- Main Content (ScrollView + Toolbar) -->
+    <!-- Main Content -->
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:background="@color/white"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
         <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
@@ -25,7 +28,8 @@
         <!-- ScrollView with content -->
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:fillViewport="true">
 
             <LinearLayout
@@ -37,39 +41,39 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
                     android:orientation="vertical"
-                    android:padding="24dp"
-                    android:gravity="center_horizontal">
+                    android:padding="24dp">
 
                     <TextView
                         android:id="@+id/tvTeamName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
                         android:text="Team Name"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
                         android:textColor="#121417"
-                        android:layout_marginBottom="8dp" />
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvTeamDescription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="A team of researchers focused on AI and machine learning"
-                        android:textSize="14sp"
-                        android:textColor="#61758A"
+                        android:layout_marginBottom="16dp"
                         android:gravity="center"
-                        android:layout_marginBottom="16dp" />
+                        android:text=""
+                        android:textColor="#61758A"
+                        android:textSize="14sp" />
 
                     <Button
                         android:id="@+id/btnInviteMember"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Invite Member"
-                        android:textColor="@android:color/white"
                         android:backgroundTint="@android:color/holo_blue_light"
                         android:paddingStart="24dp"
                         android:paddingEnd="24dp"
+                        android:text="Invite Member"
+                        android:textColor="@android:color/white"
                         android:visibility="gone" />
                 </LinearLayout>
 
@@ -77,8 +81,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:background="#F7FAFC"
+                    android:orientation="horizontal"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp">
 
@@ -87,24 +91,24 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Members"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/holo_blue_dark"
+                        android:background="@drawable/tab_selected"
                         android:gravity="center"
                         android:paddingBottom="8dp"
-                        android:background="@drawable/tab_selected" />
+                        android:text="Members"
+                        android:textColor="@android:color/holo_blue_dark"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tabReadingLists"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Reading Lists"
-                        android:textSize="14sp"
-                        android:textColor="#61758A"
                         android:gravity="center"
-                        android:paddingBottom="8dp" />
+                        android:paddingBottom="8dp"
+                        android:text="Reading Lists"
+                        android:textColor="#61758A"
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <!-- Content Section -->
@@ -122,17 +126,16 @@
                         android:orientation="vertical"
                         android:visibility="visible">
 
-                        <!-- Members content... -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:background="@android:color/white"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal"
                             android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
                             android:paddingTop="12dp"
-                            android:paddingBottom="12dp"
-                            android:gravity="center_vertical"
-                            android:background="@android:color/white">
+                            android:paddingEnd="16dp"
+                            android:paddingBottom="12dp">
 
                             <TextView
                                 android:id="@+id/tvMembersCount"
@@ -140,23 +143,23 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="Members (0)"
+                                android:textColor="#121417"
                                 android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:textColor="#121417" />
+                                android:textStyle="bold" />
 
                             <Button
                                 android:id="@+id/btnFilter"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                                 android:layout_width="wrap_content"
                                 android:layout_height="36dp"
-                                android:text="Filter ▼"
-                                android:textSize="13sp"
-                                android:textAllCaps="false"
                                 android:backgroundTint="@android:color/transparent"
-                                android:textColor="@android:color/holo_blue_light"
                                 android:minWidth="0dp"
                                 android:paddingStart="12dp"
                                 android:paddingEnd="12dp"
-                                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                                android:text="Filter ▼"
+                                android:textAllCaps="false"
+                                android:textColor="@android:color/holo_blue_light"
+                                android:textSize="13sp" />
                         </LinearLayout>
 
                         <HorizontalScrollView
@@ -167,44 +170,44 @@
                             android:paddingStart="12dp"
                             android:paddingEnd="12dp"
                             android:paddingBottom="12dp"
-                            android:visibility="gone"
-                            android:scrollbars="none">
+                            android:scrollbars="none"
+                            android:visibility="gone">
 
                             <com.google.android.material.chip.ChipGroup
                                 android:id="@+id/chipGroupFilter"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:singleSelection="true"
-                                app:selectionRequired="true">
+                                app:selectionRequired="true"
+                                app:singleSelection="true">
 
                                 <com.google.android.material.chip.Chip
                                     android:id="@+id/chipAll"
+                                    style="@style/Widget.MaterialComponents.Chip.Choice"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="All"
                                     android:checked="true"
-                                    style="@style/Widget.MaterialComponents.Chip.Choice" />
+                                    android:text="All" />
 
                                 <com.google.android.material.chip.Chip
                                     android:id="@+id/chipApproved"
+                                    style="@style/Widget.MaterialComponents.Chip.Choice"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Active"
-                                    style="@style/Widget.MaterialComponents.Chip.Choice" />
+                                    android:text="Active" />
 
                                 <com.google.android.material.chip.Chip
                                     android:id="@+id/chipPending"
+                                    style="@style/Widget.MaterialComponents.Chip.Choice"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Pending"
-                                    style="@style/Widget.MaterialComponents.Chip.Choice" />
+                                    android:text="Pending" />
 
                                 <com.google.android.material.chip.Chip
                                     android:id="@+id/chipRejected"
+                                    style="@style/Widget.MaterialComponents.Chip.Choice"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Declined"
-                                    style="@style/Widget.MaterialComponents.Chip.Choice" />
+                                    android:text="Declined" />
                             </com.google.android.material.chip.ChipGroup>
                         </HorizontalScrollView>
 
@@ -212,22 +215,22 @@
                             android:id="@+id/tvEmptyMembers"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="No members in this team"
-                            android:textSize="14sp"
-                            android:textColor="#61758A"
                             android:gravity="center"
                             android:padding="32dp"
+                            android:text="No members in this team"
+                            android:textColor="#61758A"
+                            android:textSize="14sp"
                             android:visibility="gone" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rvMembers"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:clipToPadding="false"
+                            android:nestedScrollingEnabled="false"
                             android:paddingStart="16dp"
                             android:paddingEnd="16dp"
-                            android:paddingBottom="16dp"
-                            android:clipToPadding="false"
-                            android:nestedScrollingEnabled="false" />
+                            android:paddingBottom="16dp" />
                     </LinearLayout>
 
                     <!-- Reading Lists -->
@@ -242,19 +245,19 @@
                             android:id="@+id/tvEmptyReadingLists"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="No reading lists yet"
-                            android:textSize="14sp"
-                            android:textColor="#61758A"
                             android:gravity="center"
                             android:padding="32dp"
+                            android:text="No reading lists yet"
+                            android:textColor="#61758A"
+                            android:textSize="14sp"
                             android:visibility="gone" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rvReadingLists"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:padding="16dp"
-                            android:nestedScrollingEnabled="false" />
+                            android:nestedScrollingEnabled="false"
+                            android:padding="16dp" />
                     </LinearLayout>
                 </FrameLayout>
 
@@ -268,21 +271,34 @@
                     android:visibility="gone" />
             </LinearLayout>
         </ScrollView>
+
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <!-- DRAGGABLE Floating Add Reading List -->
+    <com.prm392.g5.labverse.widget.DraggableFloatingActionButton
         android:id="@+id/fabCreateReadingList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
-        android:src="@android:drawable/ic_input_add"
-        android:contentDescription="Create Reading List"
+        android:layout_marginBottom="88dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_add"
+        android:contentDescription="@string/cd_fab_add"
         android:visibility="gone"
-        app:tint="@android:color/white"
-        app:backgroundTint="@android:color/holo_blue_light"
-        app:elevation="6dp"
-        app:pressedTranslationZ="12dp" />
+        app:backgroundTint="@color/primary"
+        app:fabSize="normal"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.App.SmallComponent.Round"
+        app:tint="@android:color/white" />
+
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@android:color/white"
+        app:menu="@menu/bottom_navigation_menu" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
