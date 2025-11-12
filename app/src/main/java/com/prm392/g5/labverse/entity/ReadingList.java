@@ -3,13 +3,15 @@ package com.prm392.g5.labverse.entity;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
 import java.time.LocalDateTime;
 
 @Entity(tableName = "reading_list")
 public class ReadingList {
 
-    @PrimaryKey(autoGenerate = true)
-    private long id;
+    @PrimaryKey
+    @NonNull
+    private String id;
 
     @NonNull
     private String name;
@@ -21,6 +23,9 @@ public class ReadingList {
     private LocalDateTime updatedAt;
 
     private int paperCount;
+    private long   version;
+    private boolean deleteFlag;
+    private String ownerUserId;
 
     public ReadingList() {
         this.createdAt = LocalDateTime.now();
@@ -28,11 +33,12 @@ public class ReadingList {
         this.paperCount = 0;
     }
 
-    public long getId() {
+    @NonNull
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
 
@@ -77,4 +83,3 @@ public class ReadingList {
         this.paperCount = paperCount;
     }
 }
-

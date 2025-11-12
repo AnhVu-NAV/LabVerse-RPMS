@@ -72,14 +72,14 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="72dp"
-        android:src="@drawable/ic_add"
         android:clickable="true"
+        android:contentDescription="@string/cd_fab_add"
         android:focusable="true"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/primary"
         app:fabSize="normal"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.App.SmallComponent.Round"
-        app:backgroundTint="@color/primary"
-        app:tint="@android:color/white"
-        android:contentDescription="@string/cd_fab_add" />
+        app:tint="@android:color/white" />
 
     <include layout="@layout/include_bottom_navigation" />
 

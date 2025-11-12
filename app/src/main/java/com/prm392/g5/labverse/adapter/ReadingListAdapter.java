@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.entity.ReadingList;
+import com.prm392.g5.labverse.entity.ReadingListItem;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,8 +27,18 @@ public class ReadingListAdapter extends RecyclerView.Adapter<ReadingListAdapter.
     private boolean selectionMode = false;
     private Set<Integer> selectedPositions = new HashSet<>();
 
+    private OnReadingListLongClickListener longClickListener;
+
+    public interface OnReadingListLongClickListener {
+        void onReadingListLongClick(ReadingList readingList, int position, View anchor);
+    }
+
     public interface OnReadingListClickListener {
         void onReadingListClick(ReadingList readingList, int position);
+    }
+
+    public void setOnReadingListLongClickListener(OnReadingListLongClickListener l) {
+        this.longClickListener = l;
     }
 
     public ReadingListAdapter(OnReadingListClickListener listener) {
@@ -118,15 +129,35 @@ public class ReadingListAdapter extends RecyclerView.Adapter<ReadingListAdapter.
             }
         });
 
-        // Handle checkbox clicks
+        // LONG-CLICK: gọi ra Activity để show PopupMenu (Edit/Delete)
+        holder.itemView.setOnLongClickListener(v -> {
+            int pos = holder.getBindingAdapterPosition();
+            if (pos == RecyclerView.NO_POSITION) return false;
+            if (longClickListener != null) {
+                v.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
+                // anchor: dùng itemView hoặc thumbnail nếu muốn menu nằm cạnh ảnh
+                View anchor = (holder.thumbnailImageView != null) ? holder.thumbnailImageView : holder.itemView;
+                longClickListener.onReadingListLongClick(readingList, pos, anchor);
+                return true;
+            }
+            return false;
+        });
+
+        // Checkbox click: chỉ phục vụ selection mode
         if (holder.checkbox != null) {
             holder.checkbox.setOnClickListener(v -> {
-                toggleSelection(position);
+                int pos = holder.getBindingAdapterPosition();
+                if (pos == RecyclerView.NO_POSITION) return;
+                toggleSelection(pos);
                 if (listener != null) {
-                    listener.onReadingListClick(readingList, position);
+                    listener.onReadingListClick(readingList, pos);
                 }
             });
         }
+    }
+
+    public interface OnListActionsListener {
+        void onShowListMenu(View anchor, ReadingListItem item, int position);
     }
 
     @Override

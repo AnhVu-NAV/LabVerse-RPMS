@@ -28,7 +28,10 @@ public class PaperAnnotation {
 
     @ColumnInfo(name = "updated_at")
     public String updatedAt; // ISO 8601 string 2025-10-17T08:05:23Z
-
+    boolean deleteFlag;
+    long version;
+    @NonNull String syncState; // CLEAN / DIRTY / CONFLICT
+    private String ownerUserId;
 
     public PaperAnnotation() {
         this.id = UUID.randomUUID().toString();

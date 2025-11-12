@@ -7,6 +7,10 @@
     android:layout_height="match_parent"
     android:background="#F7FAFC"
     android:fitsSystemWindows="true"
+    android:clickable="true"
+    android:focusable="true"
+    android:longClickable="true"
+    android:descendantFocusability="blocksDescendants"
     tools:context=".activity.ReadingListDetailActivity">
 
     <com.google.android.material.appbar.AppBarLayout

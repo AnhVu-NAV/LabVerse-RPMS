@@ -20,12 +20,11 @@ public interface ReadingListPaperDao {
     void delete(ReadingListPaper readingListPaper);
 
     @Query("SELECT * FROM reading_list_paper WHERE readingListId = :readingListId ORDER BY addedAt DESC")
-    LiveData<List<ReadingListPaper>> getPapersInReadingList(long readingListId);
+    LiveData<List<ReadingListPaper>> getPapersInReadingList(String readingListId);
 
     @Query("DELETE FROM reading_list_paper WHERE readingListId = :readingListId AND paperId = :paperId")
-    void deletePaperFromReadingList(long readingListId, String paperId);
+    void deletePaperFromReadingList(String readingListId, String paperId);
 
     @Query("SELECT COUNT(*) FROM reading_list_paper WHERE readingListId = :readingListId")
-    LiveData<Integer> getPaperCountLive(long readingListId);
+    LiveData<Integer> getPaperCountLive(String readingListId);
 }
-

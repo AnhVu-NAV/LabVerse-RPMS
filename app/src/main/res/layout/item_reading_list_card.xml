@@ -13,6 +13,8 @@
     app:cardCornerRadius="12dp"
     android:clickable="true"
     android:focusable="true"
+    android:longClickable="true"
+    android:descendantFocusability="blocksDescendants"
     android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
@@ -28,6 +30,9 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:visibility="gone"
+            android:focusable="false"
+            android:longClickable="false"
+            android:clickable="false"
             app:buttonTint="@color/checkbox_tint"
             app:useMaterialThemeColors="false"
             android:layout_marginEnd="16dp" />
@@ -72,6 +77,9 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:scaleType="centerCrop"
+            android:focusable="false"
+            android:longClickable="false"
+            android:clickable="false"
             android:background="@drawable/thumbnail_bg"
             android:src="@drawable/ic_paper_placeholder"
             android:contentDescription="Reading list thumbnail" />

@@ -9,14 +9,14 @@ import java.time.LocalDateTime;
 
 @Entity(tableName = "reading_list_paper",
         foreignKeys = {
-            @ForeignKey(entity = ReadingList.class,
-                    parentColumns = "id",
-                    childColumns = "readingListId",
-                    onDelete = ForeignKey.CASCADE),
-            @ForeignKey(entity = Paper.class,
-                    parentColumns = "id",
-                    childColumns = "paperId",
-                    onDelete = ForeignKey.CASCADE)
+                @ForeignKey(entity = ReadingList.class,
+                        parentColumns = "id",
+                        childColumns = "readingListId",
+                        onDelete = ForeignKey.CASCADE),
+                @ForeignKey(entity = Paper.class,
+                        parentColumns = "id",
+                        childColumns = "paperId",
+                        onDelete = ForeignKey.CASCADE)
         },
         indices = {@Index("readingListId"), @Index("paperId")})
 public class ReadingListPaper {
@@ -24,7 +24,8 @@ public class ReadingListPaper {
     @PrimaryKey(autoGenerate = true)
     private long id;
 
-    private long readingListId;
+    @NonNull
+    private String readingListId;   // UUID string
 
     @NonNull
     private String paperId;
@@ -35,37 +36,17 @@ public class ReadingListPaper {
         this.addedAt = LocalDateTime.now();
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public long getReadingListId() {
-        return readingListId;
-    }
-
-    public void setReadingListId(long readingListId) {
-        this.readingListId = readingListId;
-    }
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
 
     @NonNull
-    public String getPaperId() {
-        return paperId;
-    }
+    public String getReadingListId() { return readingListId; }
+    public void setReadingListId(@NonNull String readingListId) { this.readingListId = readingListId; }
 
-    public void setPaperId(@NonNull String paperId) {
-        this.paperId = paperId;
-    }
+    @NonNull
+    public String getPaperId() { return paperId; }
+    public void setPaperId(@NonNull String paperId) { this.paperId = paperId; }
 
-    public LocalDateTime getAddedAt() {
-        return addedAt;
-    }
-
-    public void setAddedAt(LocalDateTime addedAt) {
-        this.addedAt = addedAt;
-    }
+    public LocalDateTime getAddedAt() { return addedAt; }
+    public void setAddedAt(LocalDateTime addedAt) { this.addedAt = addedAt; }
 }
-

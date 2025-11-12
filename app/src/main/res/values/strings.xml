@@ -53,5 +53,10 @@
 
     <item name="annotation_import" type="id" />
     <item name="annotation_export" type="id" />
+    <string name="paper_thumbnail">Paper thumbnail</string>
+    <string name="paper_open">Open paper detail</string>
+    <string name="please_enter_search_query">Please enter a search query</string>
+    <string name="removed_from_search_history">Removed from search history</string>
+
 
 </resources>

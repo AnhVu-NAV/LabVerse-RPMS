@@ -2,9 +2,18 @@ package com.prm392.g5.labverse.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "paper")
+@Entity(
+        tableName = "paper",
+        indices = {
+                @Index("title"),
+                @Index("authorName"),
+                @Index("journalName"),
+                @Index("publicationYear")
+        }
+)
 public class Paper {
 
     @PrimaryKey
@@ -13,7 +22,15 @@ public class Paper {
     private String s3Key;
     private boolean deleteFlag = false;
     private int totalPage = -1;
+    private String title;
+    private String authorName;
+    private String journalName;
+    private String publicationYear;
 
+    private int currentPage = 0;
+    String updatedAt;   // ISO8601
+    long version;       // hoặc String etag
+    private String ownerUserId;
     //todo paper vẫn còn thiếu thong tin nhe
 
     public Paper() {
@@ -50,5 +67,45 @@ public class Paper {
 
     public void setTotalPage(int totalPage) {
         this.totalPage = totalPage;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+
+    public String getJournalName() {
+        return journalName;
+    }
+
+    public void setJournalName(String journalName) {
+        this.journalName = journalName;
+    }
+
+    public String getPublicationYear() {
+        return publicationYear;
+    }
+
+    public void setPublicationYear(String publicationYear) {
+        this.publicationYear = publicationYear;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
     }
 }

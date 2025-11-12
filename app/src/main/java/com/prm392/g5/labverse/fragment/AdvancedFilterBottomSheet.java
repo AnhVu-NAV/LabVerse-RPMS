@@ -45,7 +45,20 @@ public class AdvancedFilterBottomSheet extends BottomSheetDialogFragment {
         initializeViews(view);
         setupListeners();
 
+        String pre = getArguments() != null ? getArguments().getString("prefill_tag", "") : "";
+        if (!pre.isEmpty()) {
+            etFilterTag.setText(pre);
+        }
+
         return view;
+    }
+
+    public static AdvancedFilterBottomSheet newInstance(String keywordPrefill) {
+        AdvancedFilterBottomSheet f = new AdvancedFilterBottomSheet();
+        Bundle b = new Bundle();
+        b.putString("prefill_tag", keywordPrefill);
+        f.setArguments(b);
+        return f;
     }
 
     private void initializeViews(View view) {
@@ -70,32 +83,25 @@ public class AdvancedFilterBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void showYearPicker() {
-        Calendar calendar = Calendar.getInstance();
-        int currentYear = calendar.get(Calendar.YEAR);
-
-        // Create a DatePickerDialog for year selection
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-            requireContext(),
-            (view, year, month, dayOfMonth) -> {
-                selectedYear = String.valueOf(year);
-                tvFilterYear.setText(selectedYear);
-                tvFilterYear.setTextColor(getResources().getColor(R.color.search_text, null));
-            },
-            currentYear,
-            0,
-            1
+        Calendar c = Calendar.getInstance();
+        DatePickerDialog d = new DatePickerDialog(
+                requireContext(),
+                (view, y, m, day) -> {
+                    selectedYear = String.valueOf(y);
+                    tvFilterYear.setText(selectedYear);
+                    tvFilterYear.setTextColor(getResources().getColor(R.color.search_text, null));
+                },
+                c.get(Calendar.YEAR), 0, 1
         );
-
-        // Hide day and month pickers (show only year)
-        datePickerDialog.getDatePicker().findViewById(
-            getResources().getIdentifier("day", "id", "android")
-        ).setVisibility(View.GONE);
-        datePickerDialog.getDatePicker().findViewById(
-            getResources().getIdentifier("month", "id", "android")
-        ).setVisibility(View.GONE);
-
-        datePickerDialog.setTitle(getString(R.string.filter_year_label));
-        datePickerDialog.show();
+        // Ẩn month/day an toàn
+        int dayId = getResources().getIdentifier("day", "id", "android");
+        int monthId = getResources().getIdentifier("month", "id", "android");
+        View dayPicker = d.getDatePicker().findViewById(dayId);
+        View monthPicker = d.getDatePicker().findViewById(monthId);
+        if (dayPicker != null) dayPicker.setVisibility(View.GONE);
+        if (monthPicker != null) monthPicker.setVisibility(View.GONE);
+        d.setTitle(getString(R.string.filter_year_label));
+        d.show();
     }
 
     private void resetFilters() {

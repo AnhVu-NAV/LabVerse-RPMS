@@ -24,7 +24,9 @@ import com.prm392.g5.labverse.adapter.ReadingListAdapter;
 import com.prm392.g5.labverse.entity.ReadingList;
 import com.prm392.g5.labverse.viewmodel.ReadingListViewModel;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ReadingListActivity extends BaseActivity {
@@ -83,12 +85,37 @@ public class ReadingListActivity extends BaseActivity {
             } else {
                 // Navigate to Reading List Detail
                 android.content.Intent intent = new android.content.Intent(this, ReadingListDetailActivity.class);
-                intent.putExtra(ReadingListDetailActivity.EXTRA_READING_LIST_ID, readingList.getId());
+                // id bây giờ là String -> truyền thẳng
+                intent.putExtra(ReadingListDetailActivity.EXTRA_READING_LIST_ID, readingList.getId());         // CHANGED: String id
                 intent.putExtra(ReadingListDetailActivity.EXTRA_READING_LIST_NAME, readingList.getName());
                 startActivity(intent);
             }
         });
         recyclerView.setAdapter(adapter);
+
+        adapter.setOnReadingListLongClickListener((readingList, pos, anchor) -> {
+            androidx.appcompat.widget.PopupMenu pm = new androidx.appcompat.widget.PopupMenu(this, anchor);
+            pm.getMenu().add(0, 1, 0, "Edit");
+            pm.getMenu().add(0, 2, 1, "Delete");
+
+            pm.setOnMenuItemClickListener(mi -> {
+                int id = mi.getItemId();
+                if (id == 1) { // Edit
+                    showEditDialog(
+                            readingList.getId(),
+                            readingList.getName(),
+                            readingList.getDescription() == null ? "" : readingList.getDescription()
+                    );
+                    return true;
+                } else if (id == 2) { // Delete
+                    confirmDelete(readingList.getId(), readingList.getName());
+                    return true;
+                }
+                return false;
+            });
+            pm.show();
+        });
+
 
         // Handle back press for selection mode
         getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
@@ -105,18 +132,21 @@ public class ReadingListActivity extends BaseActivity {
 
         // Set up ViewModel
         viewModel = new ViewModelProvider(this).get(ReadingListViewModel.class);
-        viewModel.getAllReadingLists().observe(this, readingLists -> {
+        viewModel.getReadingLists().observe(this, readingLists -> {
             if (readingLists != null) {
                 currentReadingLists = new ArrayList<>(readingLists);
                 sortAndUpdateList();
             }
         });
 
-        // Set up FAB click listener
+        // FAB: tạo Reading List
         fabAdd.setOnClickListener(v -> showCreateReadingListDialog());
 
-        // Set up bottom navigation
+        // Bottom navigation
         setupBottomNavigation(R.id.navigation_reading_list);
+
+        // nhớ load lần đầu
+        viewModel.reload();
     }
 
     @Override
@@ -190,13 +220,18 @@ public class ReadingListActivity extends BaseActivity {
                     return;
                 }
 
-                ReadingList readingList = new ReadingList();
-                readingList.setName(name);
-                readingList.setDescription(description);
+                // KHUYẾN NGHỊ: gọi API tạo để nhận UUID từ BE
+                // viewModel.createReadingList(name, description, () -> dialog.dismiss(), err -> /* toast */);
 
-                viewModel.insert(readingList);
-                Toast.makeText(this, "Reading list created", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
+                // TẠM THỜI: nếu vẫn dùng local insert, bạn phải có id String trước khi lưu.
+                // Ở đây minh hoạ nhận id từ BE trước; nếu chưa có, đừng insert local không id.
+                viewModel.createReadingList(name, description,
+                        () -> {
+                            Toast.makeText(this, "Reading list created", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        },
+                        msg -> Toast.makeText(this, "Create failed: " + msg, Toast.LENGTH_SHORT).show()
+                );
             });
         }
 
@@ -258,6 +293,7 @@ public class ReadingListActivity extends BaseActivity {
 
     private void sortAndUpdateList() {
         if (currentReadingLists.isEmpty()) {
+            adapter.setReadingLists(new ArrayList<>()); // đảm bảo clear
             return;
         }
 
@@ -265,18 +301,25 @@ public class ReadingListActivity extends BaseActivity {
 
         if (currentSortBy == SortBy.NAME) {
             sortedLists.sort((o1, o2) -> {
-                int result = o1.getName().compareToIgnoreCase(o2.getName());
+                int result = safe(o1.getName()).compareToIgnoreCase(safe(o2.getName()));
                 return currentSortOrder == SortOrder.ASCENDING ? result : -result;
             });
         } else {
-            sortedLists.sort((o1, o2) -> {
-                int result = Long.compare(o1.getId(), o2.getId());
-                return currentSortOrder == SortOrder.ASCENDING ? result : -result;
-            });
+            // CHANGED: Sort theo createdAt (nulls last), không dùng id kiểu String.
+            Comparator<ReadingList> byCreated =
+                    Comparator.comparing(ReadingList::getCreatedAt,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+            sortedLists.sort(byCreated);
+            if (currentSortOrder == SortOrder.DESCENDING) {
+                java.util.Collections.reverse(sortedLists);
+            }
         }
 
         adapter.setReadingLists(sortedLists);
     }
+
+    private static String safe(String s){ return s==null ? "" : s; }
+    private static LocalDateTime safe(LocalDateTime t){ return t==null ? LocalDateTime.MIN : t; }
 
     /**
      * Enter selection mode - allows multi-select of reading lists
@@ -427,32 +470,98 @@ public class ReadingListActivity extends BaseActivity {
      * Delete selected reading lists from the database
      */
     private void deleteSelectedReadingLists() {
-        int selectedCount = adapter.getSelectedCount();
-
-        // Get selected items
         List<ReadingList> selectedItems = adapter.getSelectedItems();
-
-        // Delete from database
-        for (ReadingList readingList : selectedItems) {
-            viewModel.delete(readingList);
+        if (selectedItems.isEmpty()) {
+            Toast.makeText(this, "No reading lists selected", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        // Remove from current list
-        currentReadingLists.removeAll(selectedItems);
-
-        // Update adapter
-        adapter.removeSelectedItems();
-
-        // Show confirmation
-        Toast.makeText(this, selectedCount + " reading list(s) deleted", Toast.LENGTH_SHORT).show();
-
-        // Exit selection mode
-        exitSelectionMode();
+        // Gọi API xoá từng list theo id
+        final int total = selectedItems.size();
+        final int[] done = {0};
+        for (ReadingList rl : selectedItems) {
+            viewModel.deleteList(rl.getId(), () -> {
+                done[0]++;
+                if (done[0] == total) {
+                    // reload sau khi xoá xong tất
+                    runOnUiThread(() -> {
+                        viewModel.reload();
+                        Toast.makeText(this, total + " reading list(s) deleted", Toast.LENGTH_SHORT).show();
+                        exitSelectionMode();
+                    });
+                }
+            });
+        }
     }
+
 
     @Override
     protected int getSelectedNavigationItemId() {
         return R.id.navigation_reading_list;
     }
-}
 
+    private void showEditDialog(String listId, String oldName, String oldDesc) {
+        var builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        var view = getLayoutInflater().inflate(R.layout.dialog_reading_list, null);
+        builder.setView(view);
+        var dialog = builder.create();
+
+        TextView title = view.findViewById(R.id.tvDialogTitle);
+        com.google.android.material.textfield.TextInputLayout tilName = view.findViewById(R.id.tilName);
+        com.google.android.material.textfield.TextInputEditText etName = view.findViewById(R.id.etName);
+        com.google.android.material.textfield.TextInputEditText etDescription = view.findViewById(R.id.etDescription);
+        android.widget.Button btnCancel = view.findViewById(R.id.btnCancel);
+        android.widget.Button btnSave = view.findViewById(R.id.btnSave);
+        android.widget.ProgressBar progress = view.findViewById(R.id.progressBar);
+
+        title.setText("Edit Reading List");
+        btnSave.setText("Save");
+        etName.setText(oldName);
+        etDescription.setText(oldDesc);
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        btnSave.setOnClickListener(v -> {
+            String newName = String.valueOf(etName.getText()).trim();
+            String newDesc = String.valueOf(etDescription.getText()).trim();
+            if (newName.isEmpty()) {
+                tilName.setError("Name is required");
+                return;
+            }
+            tilName.setError(null);
+
+            progress.setVisibility(View.VISIBLE);
+            btnSave.setEnabled(false);
+
+            // gọi VM rename rồi reload
+            viewModel.rename(
+                    listId,
+                    newName,
+                    newDesc.isEmpty() ? null : newDesc,
+                    () -> runOnUiThread(() -> {
+                        progress.setVisibility(View.GONE);
+                        dialog.dismiss();
+                        viewModel.reload();
+                    })
+            );
+        });
+
+        dialog.show();
+    }
+
+    private void confirmDelete(String listId, String listName) {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Delete reading list")
+                .setMessage("Are you sure you want to delete \"" + listName + "\"?")
+                .setPositiveButton("Delete", (d, w) -> {
+                    // gọi API delete rồi reload
+                    viewModel.deleteList(listId, () -> runOnUiThread(() -> {
+                        viewModel.reload();  // reload luôn
+                    }));
+
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+}

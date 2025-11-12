@@ -4,69 +4,51 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.adapter.PaperAdapter;
+import com.prm392.g5.labverse.config.SharePreferenceManager;
+import com.prm392.g5.labverse.entity.PaperCache;
+import com.prm392.g5.labverse.viewmodel.MyLibraryViewModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyLibraryActivity extends BaseActivity {
+
+    private MyLibraryViewModel vm;
+    private PaperAdapter adapter;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_library);
 
-        // Initialize views
+        // Views
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout = findViewById(R.id.tab_layout);
         RecyclerView papersRecyclerView = findViewById(R.id.papers_recycler_view);
         FloatingActionButton fabAdd = findViewById(R.id.fab_add);
 
-        // Set the toolbar as the action bar
+        // Toolbar
         setSupportActionBar(toolbar);
-        // Handle search icon click
         toolbar.setNavigationOnClickListener(v -> {
             Intent intent = new Intent(MyLibraryActivity.this, SearchActivity.class);
             startActivity(intent);
         });
 
-
-        // Setup RecyclerView with LinearLayoutManager
+        // RecyclerView + Adapter rỗng (dữ liệu sẽ đổ từ LiveData)
         papersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // Create sample data
-        List<PaperAdapter.PaperItem> papers = new ArrayList<>();
-        papers.add(new PaperAdapter.PaperItem(
-            "The Impact of AI on Education",
-            "Dr. Emily Carter, Dr. David Lee",
-            "Unread",
-            0,
-            0
-        ));
-        papers.add(new PaperAdapter.PaperItem(
-            "Sustainable Energy Solutions",
-            "Dr. Maria Rodriguez, Dr. John Smith",
-            "Reading",
-            60,
-            0
-        ));
-        papers.add(new PaperAdapter.PaperItem(
-            "Advancements in Biotechnology",
-            "Dr. Robert Johnson, Dr. Sarah Williams",
-            "Finished",
-            100,
-            0
-        ));
-
-        // Set adapter with click listener
-        PaperAdapter adapter = new PaperAdapter(papers, (paper, position) -> {
-            // Open PaperDetailActivity when paper is clicked
+        adapter = new PaperAdapter(new ArrayList<>(), (paper, position) -> {
             Intent intent = new Intent(MyLibraryActivity.this, PaperDetailActivity.class);
             intent.putExtra(PaperDetailActivity.EXTRA_PAPER_TITLE, paper.title);
             intent.putExtra(PaperDetailActivity.EXTRA_PAPER_AUTHORS, paper.authors);
@@ -75,16 +57,82 @@ public class MyLibraryActivity extends BaseActivity {
         });
         papersRecyclerView.setAdapter(adapter);
 
-        // Set the default selected item for the bottom navigation
-        // Setup bottom navigation
+        // Bottom nav
         setupBottomNavigation(R.id.navigation_library);
-        // Set click listener for FAB
+
+        // FAB (Import New Paper)
         fabAdd.setOnClickListener(v -> {
-            // TODO: Implement add paper functionality
-            // For now, just show a toast or log
+            // TODO: mở màn import hoặc gọi API lấy uploadUrl rồi chuyển màn
         });
 
-        // Further UI setup and adapter implementation would go here
+        // ViewModel
+        vm = new ViewModelProvider(this).get(MyLibraryViewModel.class);
+
+        String userId = SharePreferenceManager.getInstance().getUserId();
+        if (userId == null) {
+            // user chưa login → đẩy về Login
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+        vm.initUser(userId);
+
+
+        // observe
+        vm.getPapers().observe(this, list -> {
+            List<PaperAdapter.PaperItem> items = new ArrayList<>();
+            for (PaperCache e : list) {
+                items.add(new PaperAdapter.PaperItem(
+                        e.title,
+                        e.authors,
+                        e.journal,
+                        toUiStatus(e.status),
+                        e.progress,
+                        R.drawable.ic_paper_placeholder
+                ));
+            }
+            adapter.setItems(items);
+        });
+
+
+        // Tabs → đổi filter + trigger sync
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0: vm.setFilter("recently_added"); break;
+                    case 1: vm.setFilter("recently_read");  break;
+                    case 2: vm.setFilter("favorites");      break;
+                }
+            }
+            @Override public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override public void onTabReselected(TabLayout.Tab tab) {}
+        });
+
+        // Lần đầu: Recently Added + sync
+        vm.setFilter("recently_added");
+        // (tuỳ chọn) chọn đúng tab đầu tiên trên UI nếu cần
+        if (tabLayout.getTabAt(0) != null) tabLayout.getTabAt(0).select();
+    }
+
+    // Map từ cache entity → item hiển thị
+    private PaperAdapter.PaperItem map(PaperCache e) {
+        return new PaperAdapter.PaperItem(
+                e.title,
+                e.authors,
+                e.journal,
+                toUiStatus(e.status),
+                e.progress,
+                0 /* commentsCount nếu có */
+        );
+    }
+
+    private String toUiStatus(String s){
+        if (s == null) return "Unread";
+        switch (s) {
+            case "READING":  return "Reading";
+            case "FINISHED": return "Finished";
+            default:         return "Unread";
+        }
     }
 
     @Override
@@ -96,11 +144,10 @@ public class MyLibraryActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_profile) {
-            // TODO: Handle profile click
+            // TODO: mở profile
             return true;
         } else if (item.getItemId() == android.R.id.home) {
-            // Handle navigation icon (search) click
-            // TODO: Implement search functionality
+            // icon search trên toolbar (đã handle ở setNavigationOnClickListener)
             return true;
         }
         return super.onOptionsItemSelected(item);

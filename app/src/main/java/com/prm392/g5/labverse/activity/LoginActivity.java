@@ -189,7 +189,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         //todo test import
-        Intent intent = new Intent(this, ImportPaperActivity.class);
+        Intent intent = new Intent(this, MyLibraryActivity.class);
         startActivity(intent);
 
         //todo chuyển người dùng qua activity ListTeamOfPiActivity
@@ -198,7 +198,10 @@ public class LoginActivity extends AppCompatActivity {
 
 //        Intent intent = new Intent(this, MyInvitationsActivity.class);
 //        startActivity(intent);
-        finish();
+        Log.d("CHECK_PREF", "saved userId=" + SharePreferenceManager.getInstance().getUserId());
+        String userId = SharePreferenceManager.getInstance().getUserId();
+        Log.d("CHECK_PREF", "read userId=" + userId);
+//        finish();
     }
 
     public void loginWithGoogle() {
