@@ -108,4 +108,28 @@ public class Paper {
     public void setCurrentPage(int currentPage) {
         this.currentPage = currentPage;
     }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
+    public String getOwnerUserId() {
+        return ownerUserId;
+    }
+
+    public void setOwnerUserId(String ownerUserId) {
+        this.ownerUserId = ownerUserId;
+    }
 }

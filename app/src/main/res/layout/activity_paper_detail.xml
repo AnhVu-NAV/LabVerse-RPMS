@@ -48,15 +48,16 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- ViewPager2 for tab content -->
+
+    <!-- Bottom Navigation -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="72dp"
         android:clipToPadding="false"
+        android:paddingBottom="72dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <!-- Bottom Navigation -->
     <include layout="@layout/include_bottom_navigation" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

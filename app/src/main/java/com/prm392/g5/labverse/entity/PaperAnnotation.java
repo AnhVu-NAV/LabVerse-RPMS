@@ -30,8 +30,10 @@ public class PaperAnnotation {
     public String updatedAt; // ISO 8601 string 2025-10-17T08:05:23Z
     boolean deleteFlag;
     long version;
-    @NonNull String syncState; // CLEAN / DIRTY / CONFLICT
+    @NonNull
+    public String syncState; // CLEAN / DIRTY / CONFLICT
     private String ownerUserId;
+    public long updatedAtEpoch;
 
     public PaperAnnotation() {
         this.id = UUID.randomUUID().toString();
@@ -83,5 +85,46 @@ public class PaperAnnotation {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public boolean isDeleteFlag() {
+        return deleteFlag;
+    }
+
+    public void setDeleteFlag(boolean deleteFlag) {
+        this.deleteFlag = deleteFlag;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
+    @NonNull
+    public String getSyncState() {
+        return syncState;
+    }
+
+    public void setSyncState(@NonNull String syncState) {
+        this.syncState = syncState;
+    }
+
+    public String getOwnerUserId() {
+        return ownerUserId;
+    }
+
+    public void setOwnerUserId(String ownerUserId) {
+        this.ownerUserId = ownerUserId;
+    }
+
+    public long getUpdatedAtEpoch() {
+        return updatedAtEpoch;
+    }
+
+    public void setUpdatedAtEpoch(long updatedAtEpoch) {
+        this.updatedAtEpoch = updatedAtEpoch;
     }
 }

@@ -2,11 +2,19 @@ package com.prm392.g5.labverse.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "papers_cache")
+@Entity(tableName = "papers_cache",
+primaryKeys = {"userId", "id"},
+indices = {
+@Index("userId"),
+@Index("createdAtEpoch"),
+@Index("lastReadAtEpoch"),
+@Index("favorite")
+    })
 public class PaperCache {
-    @PrimaryKey @NonNull public String id;
+    @NonNull public String id;
     public String title;
     public String authors;
     public String journal;
@@ -15,7 +23,11 @@ public class PaperCache {
     public boolean favorite;
     public long   createdAtEpoch;
     public Long   lastReadAtEpoch; // nullable
-    String localPath;   // where pdf saved
-    long fileSize;
-    String fileHash;
+    public String localPath;   // where pdf saved
+    public long fileSize;
+    public String fileHash;
+    @NonNull
+    public String userId;
+
+    public int pendingDownload;
 }

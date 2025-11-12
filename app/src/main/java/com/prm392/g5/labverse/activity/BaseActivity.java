@@ -2,44 +2,49 @@ package com.prm392.g5.labverse.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.util.NetworkStatus;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected BottomNavigationView bottomNavigation;
+    private TextView tvNetworkBanner; // Hiển thị "Offline" / "Online"
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Quan sát trạng thái mạng
+        NetworkStatus networkStatus = new NetworkStatus(getApplicationContext());
+        networkStatus.observe(this, isConnected -> {
+            if (isConnected != null) {
+                updateNetworkBanner(isConnected);
+            }
+        });
     }
 
     /**
-     * Setup bottom navigation with the current selected item
-     * Call this method after setContentView() in child activities
-     * @param selectedItemId The menu item id to be selected (e.g., R.id.navigation_library)
+     * Gắn BottomNavigation và NetworkBanner (nếu layout có)
      */
     protected void setupBottomNavigation(int selectedItemId) {
         bottomNavigation = findViewById(R.id.bottom_navigation);
+        tvNetworkBanner = findViewById(R.id.tv_network_status); // TextView banner (tuỳ layout)
 
         if (bottomNavigation == null) {
             return;
         }
 
-        // Set the selected item
         bottomNavigation.setSelectedItemId(selectedItemId);
 
-        // Set up navigation listener
         bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-
-            // Avoid restarting the same activity
-            if (itemId == selectedItemId) {
-                return true;
-            }
+            if (itemId == selectedItemId) return true;
 
             if (itemId == R.id.navigation_library) {
                 navigateToActivity(MyLibraryActivity.class);
@@ -48,7 +53,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 navigateToActivity(ReadingListActivity.class);
                 return true;
             } else if (itemId == R.id.navigation_groups) {
-                // TODO: Navigate to Groups when implemented
                 Toast.makeText(this, "Groups - Coming Soon", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (itemId == R.id.navigation_explore) {
@@ -60,31 +64,38 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Navigate to another activity and finish current one to avoid activity stack buildup
-     */
+    private void updateNetworkBanner(boolean isOnline) {
+        if (tvNetworkBanner == null) return;
+
+        if (isOnline) {
+            tvNetworkBanner.setText("🔵 Online");
+            tvNetworkBanner.setBackgroundColor(getColor(R.color.green_600));
+            tvNetworkBanner.setVisibility(View.VISIBLE);
+
+            // Ẩn sau 2s cho nhẹ nhàng
+            tvNetworkBanner.postDelayed(() -> tvNetworkBanner.setVisibility(View.GONE), 2000);
+        } else {
+            tvNetworkBanner.setText("⚪ Offline mode");
+            tvNetworkBanner.setBackgroundColor(getColor(R.color.gray_700));
+            tvNetworkBanner.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void navigateToActivity(Class<?> activityClass) {
         Intent intent = new Intent(this, activityClass);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
-        // Disable transition animation for smoother navigation
         overridePendingTransition(0, 0);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Ensure correct item is selected when returning to this activity
         if (bottomNavigation != null && getSelectedNavigationItemId() != 0) {
             bottomNavigation.setSelectedItemId(getSelectedNavigationItemId());
         }
     }
 
-    /**
-     * Override this method in child activities to specify which navigation item should be selected
-     * @return The menu item id (e.g., R.id.navigation_library)
-     */
     protected abstract int getSelectedNavigationItemId();
 }
-

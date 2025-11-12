@@ -9,8 +9,10 @@ import com.prm392.g5.labverse.entity.SyncMeta;
 
 @Dao
 public interface SyncMetaDao {
-    @Query("SELECT value FROM sync_meta WHERE userId=:userId AND key=:key LIMIT 1")
-    String get(String userId, String key);
+
+    // Trả về đúng cột 'value' → Room mới convert về String được
+    @Query("SELECT value FROM sync_meta WHERE userId = :userId AND `key` = :key LIMIT 1")
+    String getValue(String userId, String key);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void upsert(SyncMeta meta);

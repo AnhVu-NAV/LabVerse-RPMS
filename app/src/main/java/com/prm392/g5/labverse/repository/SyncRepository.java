@@ -2,7 +2,10 @@ package com.prm392.g5.labverse.repository;
 
 import android.content.Context;
 
+import com.prm392.g5.labverse.apiService.SyncApiService;
 import com.prm392.g5.labverse.config.AppDatabase;
+import com.prm392.g5.labverse.dto.sync.DeltaResponse;
+import com.prm392.g5.labverse.dto.sync.PushResult;
 import com.prm392.g5.labverse.entity.Paper;
 import com.prm392.g5.labverse.entity.PaperAnnotation;
 import com.prm392.g5.labverse.entity.SyncMeta;
@@ -12,10 +15,10 @@ import java.util.List;
 
 public class SyncRepository {
     private final AppDatabase db;
-    private final ApiService api; // retrofit của bạn
+    private final SyncApiService api; // retrofit của bạn
     private final String userId;
 
-    public SyncRepository(Context ctx, ApiService api, String userId) {
+    public SyncRepository(Context ctx, SyncApiService api, String userId) {
         this.db = AppDatabase.getInstance(ctx);
         this.api = api;
         this.userId = userId;
@@ -29,7 +32,7 @@ public class SyncRepository {
     }
 
     public void pullDelta() throws Exception {
-        String since = db.syncMetaDao().get(userId, "lastDeltaSyncAt");
+        String since = db.syncMetaDao().getValue(userId, "lastDeltaSyncAt");
         DeltaResponse delta = api.fetchDelta(userId, since).execute().body();
         db.runInTransaction(() -> {
             db.paperDao().upsertAll(delta.papersMappedForRoom(userId));

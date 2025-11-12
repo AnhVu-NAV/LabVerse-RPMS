@@ -82,4 +82,28 @@ public class ReadingList {
     public void setPaperCount(int paperCount) {
         this.paperCount = paperCount;
     }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
+    public boolean isDeleteFlag() {
+        return deleteFlag;
+    }
+
+    public void setDeleteFlag(boolean deleteFlag) {
+        this.deleteFlag = deleteFlag;
+    }
+
+    public String getOwnerUserId() {
+        return ownerUserId;
+    }
+
+    public void setOwnerUserId(String ownerUserId) {
+        this.ownerUserId = ownerUserId;
+    }
 }

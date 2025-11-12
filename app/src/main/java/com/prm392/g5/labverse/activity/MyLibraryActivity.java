@@ -17,6 +17,7 @@ import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.adapter.PaperAdapter;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.entity.PaperCache;
+import com.prm392.g5.labverse.util.WorkScheduler;
 import com.prm392.g5.labverse.viewmodel.MyLibraryViewModel;
 
 import java.util.ArrayList;
@@ -76,7 +77,8 @@ public class MyLibraryActivity extends BaseActivity {
             return;
         }
         vm.initUser(userId);
-
+        WorkScheduler.initSync(getApplicationContext());
+//        WorkScheduler.prefetchRecent(getApplicationContext());
 
         // observe
         vm.getPapers().observe(this, list -> {
@@ -103,6 +105,7 @@ public class MyLibraryActivity extends BaseActivity {
                     case 1: vm.setFilter("recently_read");  break;
                     case 2: vm.setFilter("favorites");      break;
                 }
+                WorkScheduler.initSync(getApplicationContext());
             }
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
             @Override public void onTabReselected(TabLayout.Tab tab) {}

@@ -63,6 +63,7 @@ dependencies {
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
 
     implementation("io.nutrient:nutrient:10.7.0")
+    implementation("androidx.work:work-runtime:2.9.0")
 
     // ViewPager2 and TabLayout
     implementation("androidx.viewpager2:viewpager2:1.0.0")

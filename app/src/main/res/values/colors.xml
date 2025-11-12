@@ -73,4 +73,7 @@
     <color name="lv_hint">#9CA3AF</color>
     <color name="lv_divider">#E5E7EB</color>
 
+    <color name="green_600">#16A34A</color> <!-- Xanh lá LabVerse (hoặc Primary xanh lá cây) -->
+    <color name="gray_700">#374151</color>  <!-- Xám trung tính cho text/icon -->
+
 </resources>

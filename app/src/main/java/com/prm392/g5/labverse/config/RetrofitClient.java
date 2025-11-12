@@ -1,5 +1,8 @@
 package com.prm392.g5.labverse.config;
 
+import com.prm392.g5.labverse.apiService.SyncApiService;
+import com.prm392.g5.labverse.repository.SyncRepository;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -8,6 +11,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
     private static Retrofit retrofit = null;
     private static final String BASE_URL = "http://10.0.2.2:8080";
+    SyncApiService syncApi = RetrofitClient.getInstance().create(SyncApiService.class);
+//    SyncRepository syncRepo = new SyncRepository(context, syncApi, userId);
+
     public static Retrofit getInstance() {
         if (retrofit == null) {
             // enable logging to Logcat

@@ -81,6 +81,19 @@
         app:shapeAppearanceOverlay="@style/ShapeAppearance.App.SmallComponent.Round"
         app:tint="@android:color/white" />
 
+    <!-- Banner trạng thái mạng (ẩn mặc định) -->
+    <TextView
+        android:id="@+id/tv_network_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="6dp"
+        android:textSize="13sp"
+        android:background="@color/gray_700"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        android:text="Offline mode"/>
+
     <include layout="@layout/include_bottom_navigation" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -36,7 +36,7 @@ public class PaperRepository {
 
     private PaperApiService paperApiService;
     private PaperDashboardDao dashDao;
-
+    private  AppDatabase db;
     public PaperRepository() {
         paperApiService = RetrofitClient.getInstance().create(PaperApiService.class);
     }
@@ -59,53 +59,91 @@ public class PaperRepository {
 
     public PaperRepository(Context ctx) {
         paperApiService = RetrofitClient.getInstance().create(PaperApiService.class);
-        AppDatabase db = Room.databaseBuilder(ctx, AppDatabase.class, "LabVerse.db")
-                .fallbackToDestructiveMigration()
-                .build();
+        db = AppDatabase.getInstance(ctx);
         dashDao = db.paperDashboardDao();
     }
 
 
-    public LiveData<List<PaperCache>> observe(String filter) {
-        switch (filter) {
-            case "recently_read": return dashDao.recentlyRead();
-            case "favorites":     return dashDao.favorites();
+    public LiveData<List<PaperCache>> observe(String userId, String filter) {
+        if (userId == null || userId.isEmpty()) {
+            // Tránh trả LiveData null: fallback về recently_added với userId rỗng (sẽ rỗng)
+            return dashDao.observeRecentlyAdded("__NO_USER__");
+        }
+        switch (filter == null ? "" : filter) {
+            case "recently_read":
+                return dashDao.observeRecentlyRead(userId);
+            case "favorites":
+                return dashDao.observeFavorites(userId);
             case "recently_added":
-            default:              return dashDao.recentlyAdded();
+            default:
+                return dashDao.observeRecentlyAdded(userId);
         }
     }
 
+//    // ===== Quan sát cache theo user + filter (hiển thị offline-first) =====
+//    public LiveData<List<PaperCache>> observe(String userId, String filter) {
+//        if (userId == null || userId.isEmpty()) {
+//            // tránh NPE: quan sát một userId giả sẽ luôn rỗng
+//            return dashDao.observeRecentlyAdded("__NO_USER__");
+//        }
+//        String f = (filter == null ? "" : filter);
+//        switch (f) {
+//            case "recently_read": return dashDao.observeRecentlyRead(userId);
+//            case "favorites":     return dashDao.observeFavorites(userId);
+//            case "recently_added":
+//            default:              return dashDao.observeRecentlyAdded(userId);
+//        }
+//    }
+
+    // ===== Đồng bộ từ BE -> Room (nhớ set userId vào entity) =====
     public void sync(String userId, String filter) {
-        paperApiService.listPapers(userId, filter, 0, 50).enqueue(new Callback<PageResponse<PaperCardDto>>() {
-            @Override public void onResponse(Call<PageResponse<PaperCardDto>> call, Response<PageResponse<PaperCardDto>> resp) {
-                if (!resp.isSuccessful() || resp.body()==null) return;
-                List<PaperCache> list = new ArrayList<>();
-                for (PaperCardDto d : resp.body().content) list.add(map(d));
-                Executors.newSingleThreadExecutor().execute(() -> dashDao.upsertAll(list));
-            }
-            @Override public void onFailure(Call<PageResponse<PaperCardDto>> call, Throwable t) {}
-        });
+        if (userId == null || userId.isEmpty()) return;
+        String f = (filter == null ? "recently_added" : filter);
+
+        paperApiService.listPapers(userId, f, 0, 50)
+                .enqueue(new Callback<PageResponse<PaperCardDto>>() {
+                    @Override
+                    public void onResponse(Call<PageResponse<PaperCardDto>> call,
+                                           Response<PageResponse<PaperCardDto>> resp) {
+                        if (!resp.isSuccessful() || resp.body() == null) return;
+
+                        List<PaperCache> list = new ArrayList<>();
+                        for (PaperCardDto d : resp.body().content) list.add(map(d, userId));
+
+                        // dùng executor chung của Room để tránh tạo thread pool rời rạc
+                        AppDatabase.databaseWriteExecutor.execute(() -> dashDao.upsertAll(list));
+                    }
+
+                    @Override
+                    public void onFailure(Call<PageResponse<PaperCardDto>> call, Throwable t) {
+                        // có thể log nếu cần
+                    }
+                });
     }
 
-    private PaperCache map(PaperCardDto d) {
+    private PaperCache map(PaperCardDto d, String userId) {
         PaperCache e = new PaperCache();
-        e.id = d.id; e.title = d.title; e.authors = d.authors; e.journal = d.journal;
-        e.status = d.status; e.progress = d.progress; e.favorite = d.favorite;
+        e.userId = userId;                 // <<< QUAN TRỌNG: set userId để không vi phạm NOT NULL
+        e.id = d.id;
+        e.title = d.title;
+        e.authors = d.authors;
+        e.journal = d.journal;
+        e.status = d.status;
+        e.progress = d.progress;
+        e.favorite = d.favorite;
         e.createdAtEpoch = toEpoch(d.createdAt);
-        e.lastReadAtEpoch = d.lastReadAt == null ? null : toEpoch(d.lastReadAt);
+        e.lastReadAtEpoch = (d.lastReadAt == null ? null : toEpoch(d.lastReadAt));
+        // e.localPath giữ nguyên (null) nếu chưa tải file
         return e;
     }
 
     private static long toEpoch(String iso) {
         if (iso == null || iso.isEmpty()) return 0L;
         try {
-            // Nếu backend có Z/+offset thì dùng Instant.parse luôn
             if (iso.endsWith("Z") || iso.contains("+")) {
                 return Instant.parse(iso).toEpochMilli();
             }
-            // Mặc định: chuỗi không có zone -> parse LocalDateTime
             LocalDateTime ldt = LocalDateTime.parse(iso, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            // Chọn zone hiển thị/logic của app (thường là systemDefault hoặc UTC)
             return ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         } catch (Exception e) {
             android.util.Log.w("PaperRepository", "Bad date: " + iso, e);
