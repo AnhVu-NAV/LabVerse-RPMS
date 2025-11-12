@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 import retrofit2.Call;
+import java.util.List;
+
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -37,6 +39,7 @@ public class PaperRepository {
     private PaperApiService paperApiService;
     private PaperDashboardDao dashDao;
     private  AppDatabase db;
+
     public PaperRepository() {
         paperApiService = RetrofitClient.getInstance().create(PaperApiService.class);
     }
@@ -55,6 +58,10 @@ public class PaperRepository {
 
     public void getDownloadUrl(String s3Key, Callback<S3SignedUrlResponse> callback){
         paperApiService.getDownloadUrl(s3Key).enqueue(callback);
+    }
+
+    public void getMyPapers(Callback<List<PaperInfoResponse>> callback) {
+        paperApiService.getMyPapers().enqueue(callback);
     }
 
     public PaperRepository(Context ctx) {

@@ -32,6 +32,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.prm392.g5.labverse.BuildConfig;
 import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.activity.forgotPassword.ForgotPasswordActivity;
+import com.prm392.g5.labverse.activity.team.ListMyTeamsActivity;
 import com.prm392.g5.labverse.activity.team.ListTeamOfPiActivity;
 import com.prm392.g5.labverse.activity.team.MyInvitationsActivity;
 import com.prm392.g5.labverse.config.RetrofitClient;
@@ -194,6 +195,9 @@ public class LoginActivity extends AppCompatActivity {
 
         //todo chuyển người dùng qua activity ListTeamOfPiActivity
 //        Intent intent = new Intent(this, ListTeamOfPiActivity.class);
+//        startActivity(intent);
+
+//        Intent intent = new Intent(this, ListMyTeamsActivity.class);
 //        startActivity(intent);
 
 //        Intent intent = new Intent(this, MyInvitationsActivity.class);

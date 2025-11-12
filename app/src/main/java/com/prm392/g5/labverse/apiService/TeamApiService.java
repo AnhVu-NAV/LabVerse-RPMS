@@ -22,23 +22,24 @@ import retrofit2.http.Query;
 
 public interface TeamApiService {
 
+    @GET("api/team/pi/my-teams")
+    Call<List<TeamResponse>> getPiTeams(@Query("userId") String userId);
+
     @GET("api/team/my-teams")
-    Call<List<TeamResponse>> getMyTeams(@Query("userId") String userId);
+    Call<List<TeamResponse>> getMyTeams();
 
     @GET("api/team/{teamId}/members")
     Call<List<MemberResponse>> getTeamMembers(@Path("teamId") String teamId);
 
-    @POST("api/team/create")
+    @POST("api/team/pi/create")
     Call<TeamResponse> createTeam(@Body TeamRequest teamRequest);
-
-
-    @PUT("api/team/{teamId}")
+    @PUT("api/team/pi/{teamId}")
     Call<TeamResponse> updateTeam(
             @Path("teamId") String teamId,
             @Body TeamRequest teamRequest
     );
 
-    @DELETE("api/team/delete/{teamId}")
+    @DELETE("api/team/pi/delete/{teamId}")
     Call<ResponseBody> deleteTeam(@Path("teamId") String teamId);
 
     @DELETE("api/team/{teamId}/members/{memberId}")
@@ -77,7 +78,6 @@ public interface TeamApiService {
             @Path("readingListId") String readingListId
     );
 
-
     @GET("api/team/{teamId}/reading-lists/{readingListId}/papers")
     Call<List<TeamReadingListPaperResponse>> getTeamReadingListPapers(
             @Path("teamId") String teamId,
@@ -99,4 +99,11 @@ public interface TeamApiService {
             @Path("paperId") String paperId
     );
 
+    @POST("api/team/{teamId}/reading-lists/{readingListId}/papers/{paperId}")
+    Call<TeamReadingListPaperResponse> addPaperToReadingList(
+            @Path("teamId") String teamId,
+            @Path("readingListId") String readingListId,
+            @Path("paperId") String paperId
+            // body optional nên không cần @Body ở đây
+    );
 }

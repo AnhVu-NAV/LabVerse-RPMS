@@ -26,12 +26,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ListTeamOfPiActivity extends AppCompatActivity {
+public class ListMyTeamsActivity extends AppCompatActivity {
 
     private RecyclerView rvTeams;
     private ProgressBar progressBar;
     private TextView tvEmptyTeams;
-    private Button btnAdd;
+    private Button btnAdd;   // Nếu user không được tạo team thì có thể ẩn button này
+
     private TeamAdapter adapter;
     private TeamRepository teamRepository;
     private final List<TeamResponse> teamList = new ArrayList<>();
@@ -46,6 +47,8 @@ public class ListTeamOfPiActivity extends AppCompatActivity {
         tvEmptyTeams = findViewById(R.id.tvEmptyTeams);
         btnAdd = findViewById(R.id.btnAdd);
 
+        btnAdd.setVisibility(View.GONE);
+
         rvTeams.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new TeamAdapter(teamList, team -> {
@@ -59,27 +62,22 @@ public class ListTeamOfPiActivity extends AppCompatActivity {
                 return;
             }
 
-            Intent intent = new Intent(ListTeamOfPiActivity.this, TeamDetailActivity.class);
+            Intent intent = new Intent(ListMyTeamsActivity.this, TeamDetailActivity.class);
             intent.putExtra("TEAM_ID", team.getId());
             intent.putExtra("TEAM_NAME", team.getName());
             intent.putExtra("TEAM_DESCRIPTION", team.getDescription());
 
-            String currentUserId = SharePreferenceManager.getInstance().getUserId();
-            intent.putExtra("CREATED_BY", currentUserId);
+            // Ở đây phải truyền đúng CREATED_BY = owner của team (từ response),
+            // để TeamDetailActivity tự tính isOwner = currentUserId.equals(createdBy)
+            intent.putExtra("CREATED_BY", team.getCreatedBy());
 
-            startActivityForResult(intent, 200);
+            startActivity(intent);
         });
 
         rvTeams.setAdapter(adapter);
 
         teamRepository = new TeamRepository();
-
         loadTeams();
-
-        btnAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(ListTeamOfPiActivity.this, CreateTeamActivity.class);
-            startActivity(intent);
-        });
     }
 
     private void loadTeams() {
@@ -87,10 +85,10 @@ public class ListTeamOfPiActivity extends AppCompatActivity {
         rvTeams.setVisibility(View.GONE);
         tvEmptyTeams.setVisibility(View.GONE);
 
-        teamRepository.getListTeamOfPi(new Callback<List<TeamResponse>>() {
+        // GỌI API GÓC NHÌN USER
+        teamRepository.getMyTeams(new Callback<List<TeamResponse>>() {
             @Override
-            public void onResponse(Call<List<TeamResponse>> call,
-                                   Response<List<TeamResponse>> response) {
+            public void onResponse(Call<List<TeamResponse>> call, Response<List<TeamResponse>> response) {
                 progressBar.setVisibility(View.GONE);
 
                 if (response.isSuccessful() && response.body() != null) {
@@ -99,12 +97,13 @@ public class ListTeamOfPiActivity extends AppCompatActivity {
 
                     if (teamList.isEmpty()) {
                         tvEmptyTeams.setVisibility(View.VISIBLE);
+                        tvEmptyTeams.setText("You are not in any team yet");
                     } else {
                         rvTeams.setVisibility(View.VISIBLE);
                         adapter.notifyDataSetChanged();
                     }
                 } else {
-                    Toast.makeText(ListTeamOfPiActivity.this,
+                    Toast.makeText(ListMyTeamsActivity.this,
                             "Failed to load teams", Toast.LENGTH_SHORT).show();
                     tvEmptyTeams.setVisibility(View.VISIBLE);
                     tvEmptyTeams.setText("Failed to load teams");
@@ -116,25 +115,10 @@ public class ListTeamOfPiActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 tvEmptyTeams.setVisibility(View.VISIBLE);
                 tvEmptyTeams.setText("Error: " + t.getMessage());
-                Toast.makeText(ListTeamOfPiActivity.this,
+                Toast.makeText(ListMyTeamsActivity.this,
                         "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode,
-                                    int resultCode,
-                                    Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        android.util.Log.d("TEAM_LIST",
-                "onActivityResult - requestCode: " + requestCode + ", resultCode: " + resultCode);
-
-        if (requestCode == 200 && resultCode == RESULT_OK) {
-            android.util.Log.d("TEAM_LIST", "Reloading teams...");
-            loadTeams();
-        }
     }
 
     @Override

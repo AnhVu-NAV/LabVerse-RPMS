@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvPaperTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paper title"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#121417"
+            android:maxLines="2"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/tvPaperAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Author name"
+            android:textSize="14sp"
+            android:textColor="#61758A"
+            android:layout_marginTop="4dp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/tvPaperYear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Year: 2024"
+            android:textSize="12sp"
+            android:textColor="#94A3B8"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tap to add to reading list"
+            android:textSize="12sp"
+            android:textColor="#9AA5B1"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

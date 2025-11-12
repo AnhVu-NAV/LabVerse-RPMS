@@ -204,7 +204,12 @@ public class TeamDetailActivity extends AppCompatActivity {
 
         if (isOwner) {
             btnInviteMember.setVisibility(View.VISIBLE);
+        } else {
+            btnInviteMember.setVisibility(View.GONE);
+            btnFilter.setVisibility(View.GONE);
+            filterChipScrollView.setVisibility(View.GONE);
         }
+
     }
 
     private void loadMembers() {

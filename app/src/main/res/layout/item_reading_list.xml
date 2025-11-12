@@ -42,9 +42,9 @@
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_more"
-                android:tint="#61758A"
                 android:contentDescription="More options"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:tint="#61758A" />
         </LinearLayout>
 
         <!-- Description -->

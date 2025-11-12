@@ -7,12 +7,14 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.adapter.TeamReadingListPaperAdapter;
 import com.prm392.g5.labverse.dto.team.SetPaperPriorityRequest;
@@ -29,10 +31,13 @@ import retrofit2.Response;
 
 public class TeamReadingListPapersActivity extends AppCompatActivity {
 
+    private static final int REQ_SELECT_PAPER = 300;
+
     private Toolbar toolbar;
     private RecyclerView rvPapers;
     private LinearLayout layoutEmpty;
     private ProgressBar progressBar;
+    private FloatingActionButton fabAddPaper;
 
     private TeamReadingListPaperAdapter adapter;
     private TeamRepository teamRepository;
@@ -50,6 +55,7 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
         initViews();
         loadIntentData();
         setupToolbar();
+        setupFab();
         loadPapers();
     }
 
@@ -58,6 +64,7 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
         rvPapers = findViewById(R.id.rvPapers);
         layoutEmpty = findViewById(R.id.layoutEmpty);
         progressBar = findViewById(R.id.progressBar);
+        fabAddPaper = findViewById(R.id.fabAddPaper);
 
         rvPapers.setLayoutManager(new LinearLayoutManager(this));
         teamRepository = new TeamRepository();
@@ -77,6 +84,17 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(readingListName != null ? readingListName : "Papers");
         }
         toolbar.setNavigationOnClickListener(v -> finish());
+    }
+
+    private void setupFab() {
+        fabAddPaper.setVisibility(View.VISIBLE);
+
+        fabAddPaper.setOnClickListener(v -> {
+            Intent intent = new Intent(TeamReadingListPapersActivity.this, SelectMyPaperActivity.class);
+            intent.putExtra("TEAM_ID", teamId);
+            intent.putExtra("READING_LIST_ID", readingListId);
+            startActivityForResult(intent, REQ_SELECT_PAPER);
+        });
     }
 
     private void loadPapers() {
@@ -227,7 +245,7 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
     }
 
     private void updatePaperPriority(TeamReadingListPaperResponse paper, String priority) {
-        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
 
         SetPaperPriorityRequest request = new SetPaperPriorityRequest(priority);
 
@@ -280,5 +298,13 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
         intent.putExtra("PAPER_ID", paper.getPaperId());
         intent.putExtra("PAPER_TITLE", paper.getTitle());
         startActivity(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_SELECT_PAPER && resultCode == RESULT_OK) {
+            loadPapers();
+        }
     }
 }

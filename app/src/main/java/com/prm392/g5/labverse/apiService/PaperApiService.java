@@ -64,4 +64,7 @@ public interface PaperApiService {
 
     @GET("/api/papers/all")
     Call<List<PaperSummaryDTO>> getAllPapersForCurrentUser();
+
+    @GET("api/papers/my-papers")
+    Call<List<PaperInfoResponse>> getMyPapers();
 }

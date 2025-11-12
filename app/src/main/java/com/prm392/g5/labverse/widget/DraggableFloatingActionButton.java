@@ -102,4 +102,3 @@ public class DraggableFloatingActionButton extends FloatingActionButton implemen
         return true;
     }
 }
-
