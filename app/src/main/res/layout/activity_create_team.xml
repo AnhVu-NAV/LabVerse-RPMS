@@ -85,30 +85,6 @@
                     android:gravity="top|start" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Info Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:cardBackgroundColor="#E3F2FD"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="💡"
-                        android:textSize="24sp"
-                        android:layout_marginEnd="12dp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
             <!-- Create Button -->
             <Button
                 android:id="@+id/btnCreateTeam"

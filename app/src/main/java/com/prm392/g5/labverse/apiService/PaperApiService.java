@@ -5,6 +5,8 @@ import com.prm392.g5.labverse.dto.paper.AddPaperRequest;
 import com.prm392.g5.labverse.dto.paper.AddPaperResponse;
 import com.prm392.g5.labverse.dto.paper.PaperInfoResponse;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -26,5 +28,6 @@ public interface PaperApiService {
 
     @GET("/api/papers/{id}")
     Call<PaperInfoResponse> getPaperInfo(@Path("id") String id);
-
+    @GET("api/papers/my-papers")
+    Call<List<PaperInfoResponse>> getMyPapers();
 }

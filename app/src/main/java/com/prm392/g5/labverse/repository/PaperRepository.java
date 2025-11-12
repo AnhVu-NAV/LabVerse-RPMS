@@ -8,6 +8,8 @@ import com.prm392.g5.labverse.dto.paper.AddPaperRequest;
 import com.prm392.g5.labverse.dto.paper.AddPaperResponse;
 import com.prm392.g5.labverse.dto.paper.PaperInfoResponse;
 
+import java.util.List;
+
 import retrofit2.Callback;
 
 public class PaperRepository {
@@ -32,6 +34,9 @@ public class PaperRepository {
 
     public void getDownloadUrl(String s3Key, Callback<S3SignedUrlResponse> callback){
         paperApiService.getDownloadUrl(s3Key).enqueue(callback);
+    }
+    public void getMyPapers(Callback<List<PaperInfoResponse>> callback) {
+        paperApiService.getMyPapers().enqueue(callback);
     }
 
 }

@@ -86,6 +86,7 @@ public class TeamReadingListPaperAdapter extends RecyclerView.Adapter<TeamReadin
         } else {
             holder.btnSetPriority.setVisibility(View.GONE);
             holder.btnRemove.setVisibility(View.GONE);
+            holder.btnViewStatus.setVisibility(View.GONE);
         }
 
         // View Status button - available for all users
