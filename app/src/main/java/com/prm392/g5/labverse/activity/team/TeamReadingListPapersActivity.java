@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.adapter.TeamReadingListPaperAdapter;
+import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.dto.team.SetPaperPriorityRequest;
 import com.prm392.g5.labverse.dto.team.TeamReadingListPaperResponse;
 import com.prm392.g5.labverse.repository.TeamRepository;
@@ -87,15 +88,20 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
     }
 
     private void setupFab() {
-        fabAddPaper.setVisibility(View.VISIBLE);
-
-        fabAddPaper.setOnClickListener(v -> {
-            Intent intent = new Intent(TeamReadingListPapersActivity.this, SelectMyPaperActivity.class);
-            intent.putExtra("TEAM_ID", teamId);
-            intent.putExtra("READING_LIST_ID", readingListId);
-            startActivityForResult(intent, REQ_SELECT_PAPER);
-        });
+        String role = SharePreferenceManager.getInstance().getUserRole();
+        if ("INTERN".equalsIgnoreCase(role)) {
+            fabAddPaper.setVisibility(View.GONE);
+        } else {
+            fabAddPaper.setVisibility(View.VISIBLE);
+            fabAddPaper.setOnClickListener(v -> {
+                Intent intent = new Intent(TeamReadingListPapersActivity.this, SelectMyPaperActivity.class);
+                intent.putExtra("TEAM_ID", teamId);
+                intent.putExtra("READING_LIST_ID", readingListId);
+                startActivityForResult(intent, REQ_SELECT_PAPER);
+            });
+        }
     }
+
 
     private void loadPapers() {
         progressBar.setVisibility(View.VISIBLE);
