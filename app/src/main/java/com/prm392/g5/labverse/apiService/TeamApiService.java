@@ -1,6 +1,8 @@
 package com.prm392.g5.labverse.apiService;
 
 import com.prm392.g5.labverse.dto.team.MemberResponse;
+import com.prm392.g5.labverse.dto.team.SetPaperPriorityRequest;
+import com.prm392.g5.labverse.dto.team.TeamReadingListPaperResponse;
 import com.prm392.g5.labverse.dto.team.TeamReadingListRequest;
 import com.prm392.g5.labverse.dto.team.TeamReadingListResponse;
 import com.prm392.g5.labverse.dto.team.TeamRequest;
@@ -73,6 +75,28 @@ public interface TeamApiService {
     Call<ResponseBody> deleteTeamReadingList(
             @Path("teamId") String teamId,
             @Path("readingListId") String readingListId
+    );
+
+
+    @GET("api/team/{teamId}/reading-lists/{readingListId}/papers")
+    Call<List<TeamReadingListPaperResponse>> getTeamReadingListPapers(
+            @Path("teamId") String teamId,
+            @Path("readingListId") String readingListId
+    );
+
+    @PUT("api/team/{teamId}/reading-lists/{readingListId}/papers/{paperId}/priority")
+    Call<TeamReadingListPaperResponse> updateTeamReadingListPaperPriority(
+            @Path("teamId") String teamId,
+            @Path("readingListId") String readingListId,
+            @Path("paperId") String paperId,
+            @Body SetPaperPriorityRequest request
+    );
+
+    @DELETE("api/team/{teamId}/reading-lists/{readingListId}/papers/{paperId}")
+    Call<ResponseBody> removePaperFromReadingList(
+            @Path("teamId") String teamId,
+            @Path("readingListId") String readingListId,
+            @Path("paperId") String paperId
     );
 
 }

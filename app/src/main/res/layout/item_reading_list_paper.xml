@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header: Title & Priority -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvPaperTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Paper Title"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#121417"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipPriority"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="HIGH"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                style="@style/Widget.MaterialComponents.Chip.Action"
+                app:chipBackgroundColor="@android:color/holo_red_dark"
+                app:chipCornerRadius="6dp"
+                app:chipMinHeight="24dp" />
+        </LinearLayout>
+
+        <!-- Authors -->
+        <TextView
+            android:id="@+id/tvPaperAuthors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Author: Author Name"
+            android:textSize="14sp"
+            android:textColor="#61758A"
+            android:layout_marginTop="4dp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <!-- Action Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end|center_vertical"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Tap to view details"
+                android:textSize="12sp"
+                android:textColor="#9AA5B1"
+                android:gravity="start" />
+
+            <!-- View Status Icon -->
+            <ImageButton
+                android:id="@+id/btnViewStatus"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_view_status"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="View Status"
+                android:padding="8dp" />
+
+            <!-- Set Priority Icon -->
+            <ImageButton
+                android:id="@+id/btnSetPriority"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_set_priority"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Set Priority"
+                android:padding="8dp"
+                android:layout_marginStart="4dp" />
+
+            <!-- Remove Icon -->
+            <ImageButton
+                android:id="@+id/btnRemove"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_remove_paper"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Remove"
+                android:padding="8dp"
+                android:layout_marginStart="4dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

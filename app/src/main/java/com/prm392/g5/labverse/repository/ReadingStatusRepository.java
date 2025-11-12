@@ -5,6 +5,9 @@ import com.prm392.g5.labverse.apiService.ReadingStatusApiService;
 import com.prm392.g5.labverse.config.RetrofitClient;
 import com.prm392.g5.labverse.dto.readingStatus.ReadingStatusRequest;
 import com.prm392.g5.labverse.dto.readingStatus.ReadingStatusResponse;
+import com.prm392.g5.labverse.dto.team.TeamReadingStatusResponse;
+
+import java.util.List;
 
 import retrofit2.Callback;
 
@@ -23,4 +26,7 @@ public class ReadingStatusRepository {
         readingStatusApiService.createOrUpdateReadingStatus(request).enqueue(callback);
     }
 
+    public void getTeamReadingStatus(String teamId, String paperId, Callback<List<TeamReadingStatusResponse>> callback){
+        readingStatusApiService.getTeamReadingStatus(teamId, paperId).enqueue(callback);
+    }
 }

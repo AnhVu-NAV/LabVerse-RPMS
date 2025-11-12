@@ -17,14 +17,20 @@
         android:theme="@style/Theme.LabVerse_PRM392_G5"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.team.TeamPaperReadingStatusActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.team.TeamReadingListPapersActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.team.MyInvitationsActivity"
             android:exported="false" />
         <activity
             android:name=".activity.LogoutActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".activity.VerifyAccountActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".activity.RoleSelectActivity"
             android:exported="false" />
@@ -100,6 +106,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
