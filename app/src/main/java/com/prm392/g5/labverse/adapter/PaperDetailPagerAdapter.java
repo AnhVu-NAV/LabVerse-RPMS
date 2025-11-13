@@ -29,7 +29,7 @@ public class PaperDetailPagerAdapter extends FragmentStateAdapter {
             case 1:
                 return CitationFragment.newInstance();
             case 2:
-                return AnnotationsFragment.newInstance();
+                return AnnotationsFragment.newInstance(paperId);
             case 3:
                 return DiscussionFragment.newInstance();
             default:

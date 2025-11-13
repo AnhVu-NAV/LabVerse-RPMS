@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.activity.BaseActivity;
+import com.prm392.g5.labverse.activity.PaperDetailActivity;
 import com.prm392.g5.labverse.adapter.TeamReadingListPaperAdapter;
 import com.prm392.g5.labverse.dto.team.SetPaperPriorityRequest;
 import com.prm392.g5.labverse.dto.team.TeamReadingListPaperResponse;
@@ -144,9 +145,12 @@ public class TeamReadingListPapersActivity extends BaseActivity {
                                         }
                                         @Override
                                         public void onPaperClick(TeamReadingListPaperResponse paper) {
-                                            // TODO: mở Paper detail team view
-                                            Toast.makeText(TeamReadingListPapersActivity.this,
-                                                    "Clicked: " + paper.getTitle(), Toast.LENGTH_SHORT).show();
+                                            Intent i = new Intent(TeamReadingListPapersActivity.this, PaperDetailActivity.class);
+                                            i.putExtra("PAPER_ID", paper.getPaperId());
+                                            i.putExtra("TEAM_ID", teamId);
+                                            i.putExtra("READING_LIST_ID", readingListId);
+                                            i.putExtra("IS_TEAM_CONTEXT", true); // để màn detail biết đang ở team mode (ẩn/hiện nút phù hợp)
+                                            startActivity(i);
                                         }
                                         @Override
                                         public void onRemovePaperClick(TeamReadingListPaperResponse paper, int position) {

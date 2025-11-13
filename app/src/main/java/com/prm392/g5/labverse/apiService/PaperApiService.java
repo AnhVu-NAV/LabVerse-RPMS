@@ -1,6 +1,7 @@
 package com.prm392.g5.labverse.apiService;
 
 import com.prm392.g5.labverse.dto.S3SignedUrlResponse;
+import com.prm392.g5.labverse.dto.meta.PaperMetaDto;
 import com.prm392.g5.labverse.dto.paper.AddPaperRequest;
 import com.prm392.g5.labverse.dto.paper.AddPaperResponse;
 import com.prm392.g5.labverse.dto.paper.PaperInfoResponse;
@@ -67,4 +68,7 @@ public interface PaperApiService {
 
     @GET("api/papers/my-papers")
     Call<List<PaperInfoResponse>> getMyPapers();
+
+    @GET("/api/metadata/resolve")
+    Call<PaperMetaDto> resolveByDoi(@Query("doi") String doi);
 }

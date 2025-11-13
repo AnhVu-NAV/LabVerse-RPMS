@@ -157,4 +157,8 @@ public class PaperRepository {
             return 0L;
         }
     }
+
+    public void resolveDoi(String doi, retrofit2.Callback<com.prm392.g5.labverse.dto.meta.PaperMetaDto> cb) {
+        paperApiService.resolveByDoi(doi).enqueue(cb);
+    }
 }

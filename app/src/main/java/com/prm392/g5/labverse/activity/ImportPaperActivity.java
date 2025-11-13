@@ -16,6 +16,8 @@ import com.prm392.g5.labverse.config.AppDatabase;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.dao.PaperDao;
 import com.prm392.g5.labverse.dto.S3SignedUrlResponse;
+import com.prm392.g5.labverse.dto.meta.AuthorDto;
+import com.prm392.g5.labverse.dto.meta.PaperMetaDto;
 import com.prm392.g5.labverse.dto.paper.AddPaperRequest;
 import com.prm392.g5.labverse.dto.paper.AddPaperResponse;
 import com.prm392.g5.labverse.entity.Paper;
@@ -321,8 +323,8 @@ public class ImportPaperActivity extends AppCompatActivity {
             paper.setDoi(null);
         }
 
-//        PdfMetadataUtil.PdfInfo info = PdfMetadataUtil.extractMetadata(this, uploadedFile);
-//        paper.setTotalPage(info.pageCount);
+        PdfMetadataUtil.PdfInfo info = PdfMetadataUtil.extractMetadata(this, uploadedFile);
+        paper.setTotalPage(info.pageCount);
 
 
     }
@@ -363,10 +365,10 @@ public class ImportPaperActivity extends AppCompatActivity {
         requestDto.setS3Key(s3Key);
         requestDto.setTotalPage(paper.getTotalPage());
         //todo tạm thời để cho đủ object request, sau em TA làm thì xem lại nhé
-        requestDto.setAuthorName("");
-        requestDto.setPublicationYear("");
-        requestDto.setTitle("");
-        requestDto.setDoi("");
+        requestDto.setAuthorName(paper.getAuthorName());
+        requestDto.setPublicationYear(paper.getPublicationYear());
+        requestDto.setTitle(paper.getTitle());
+        requestDto.setDoi(paper.getDoi());
 
         paperRepository.addPaper(requestDto, new Callback<AddPaperResponse>() {
             @Override

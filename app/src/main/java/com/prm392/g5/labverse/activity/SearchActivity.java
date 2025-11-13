@@ -1,5 +1,6 @@
 package com.prm392.g5.labverse.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -88,13 +89,15 @@ public class SearchActivity extends BaseActivity
         resultsAdapter = new SearchResultAdapter(
                 // onPaperClick
                 item -> {
-                    // TODO: mở trang chi tiết Paper
-                    Toast.makeText(this, "Open paper: " + item.paper.getTitle(), Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(this, PaperDetailActivity.class);
+                    i.putExtra("paper_id", item.paper.getId()); // đảm bảo getId() có giá trị
+                    startActivity(i);
                 },
                 // onReadingListClick
                 item -> {
-                    // TODO: mở trang chi tiết Reading List
-                    Toast.makeText(this, "Open list: " + item.readingList.getName(), Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(this, ReadingListDetailActivity.class);
+                    i.putExtra("reading_list_id", item.readingList.getId());
+                    startActivity(i);
                 }
         );
         rvResults.setAdapter(resultsAdapter);
