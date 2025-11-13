@@ -183,29 +183,11 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             Log.d("Login", "User has role: " + prefManager.getUserRole());
 
-           //todo chuyển người dùng qua activity Library của Tuấn Anh
             //đã chọn role, chuyển qua Library
-//            Intent intent = new Intent(this, LibraryActivity.class);
-//            startActivity(intent);
+            Intent intent = new Intent(this, MyLibraryActivity.class);
+            startActivity(intent);
         }
-
-        //todo test import
-        Intent intent = new Intent(this, MyLibraryActivity.class);
-        startActivity(intent);
-
-        //todo chuyển người dùng qua activity ListTeamOfPiActivity
-//        Intent intent = new Intent(this, ListTeamOfPiActivity.class);
-//        startActivity(intent);
-
-//        Intent intent = new Intent(this, ListMyTeamsActivity.class);
-//        startActivity(intent);
-
-//        Intent intent = new Intent(this, MyInvitationsActivity.class);
-//        startActivity(intent);
-        Log.d("CHECK_PREF", "saved userId=" + SharePreferenceManager.getInstance().getUserId());
-        String userId = SharePreferenceManager.getInstance().getUserId();
-        Log.d("CHECK_PREF", "read userId=" + userId);
-//        finish();
+        finish();
     }
 
     public void loginWithGoogle() {
