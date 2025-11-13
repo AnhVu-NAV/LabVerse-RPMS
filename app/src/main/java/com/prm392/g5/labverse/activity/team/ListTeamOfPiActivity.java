@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.activity.BaseActivity;
 import com.prm392.g5.labverse.adapter.TeamAdapter;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.dto.team.TeamResponse;
@@ -26,7 +27,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ListTeamOfPiActivity extends AppCompatActivity {
+public class ListTeamOfPiActivity extends BaseActivity {
 
     private RecyclerView rvTeams;
     private ProgressBar progressBar;
@@ -40,6 +41,7 @@ public class ListTeamOfPiActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_team_of_pi);
+        setupBottomNavigation(R.id.navigation_groups);
 
         rvTeams = findViewById(R.id.rvTeams);
         progressBar = findViewById(R.id.progressBar);
@@ -141,5 +143,15 @@ public class ListTeamOfPiActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadTeams();
+    }
+
+    @Override
+    protected int getSelectedNavigationItemId() {
+        return R.id.navigation_groups;
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        super.onPointerCaptureChanged(hasCapture);
     }
 }

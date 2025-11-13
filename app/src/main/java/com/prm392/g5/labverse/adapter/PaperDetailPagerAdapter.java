@@ -13,8 +13,11 @@ public class PaperDetailPagerAdapter extends FragmentStateAdapter {
 
     private static final int NUM_TABS = 4;
 
-    public PaperDetailPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
-        super(fragmentActivity);
+    private final String paperId;
+
+    public PaperDetailPagerAdapter(@NonNull FragmentActivity fa, @NonNull String paperId) {
+        super(fa);
+        this.paperId = paperId;
     }
 
     @NonNull
@@ -22,7 +25,7 @@ public class PaperDetailPagerAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position) {
             case 0:
-                return ReadFragment.newInstance();
+                return ReadFragment.newInstance(paperId);
             case 1:
                 return CitationFragment.newInstance();
             case 2:
@@ -30,7 +33,7 @@ public class PaperDetailPagerAdapter extends FragmentStateAdapter {
             case 3:
                 return DiscussionFragment.newInstance();
             default:
-                return ReadFragment.newInstance();
+                return ReadFragment.newInstance(paperId);
         }
     }
 

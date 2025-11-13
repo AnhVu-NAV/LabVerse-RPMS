@@ -17,6 +17,12 @@
         android:theme="@style/Theme.LabVerse_PRM392_G5"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.EditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.team.SelectMyPaperActivity"
             android:exported="false" />
         <activity
@@ -105,8 +111,7 @@
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".activity.LoginActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".activity.MyLibraryActivity"
             android:exported="true">

@@ -9,6 +9,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.activity.team.ListMyTeamsActivity;
+import com.prm392.g5.labverse.activity.team.ListTeamOfPiActivity;
+import com.prm392.g5.labverse.config.SharePreferenceManager;
 import com.prm392.g5.labverse.util.NetworkStatus;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -53,7 +56,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                 navigateToActivity(ReadingListActivity.class);
                 return true;
             } else if (itemId == R.id.navigation_groups) {
-                Toast.makeText(this, "Groups - Coming Soon", Toast.LENGTH_SHORT).show();
+                String role = SharePreferenceManager.getInstance().getUserRole();
+                if ("PI".equals(role)){
+                    navigateToActivity(ListTeamOfPiActivity.class);
+                }else {
+                    navigateToActivity(ListMyTeamsActivity.class);
+                }
                 return true;
             } else if (itemId == R.id.navigation_explore) {
                 navigateToActivity(SearchActivity.class);

@@ -26,6 +26,7 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.activity.BaseActivity;
 import com.prm392.g5.labverse.adapter.MemberAdapter;
 import com.prm392.g5.labverse.adapter.TeamReadingListAdapter;
 import com.prm392.g5.labverse.config.SharePreferenceManager;
@@ -44,7 +45,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class TeamDetailActivity extends AppCompatActivity {
+public class TeamDetailActivity extends BaseActivity {
 
     private Toolbar toolbar;
     private TextView tvTeamName, tvTeamDescription, tvMembersCount;
@@ -79,6 +80,7 @@ public class TeamDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         TeamDetailActivity.this.setContentView(R.layout.activity_team_detail);
+        setupBottomNavigation(R.id.navigation_groups);
         registerEditTeamLauncher();
 
         initViews();
@@ -86,6 +88,11 @@ public class TeamDetailActivity extends AppCompatActivity {
         setupListeners();
         loadTeamDetails();
         loadMembers();
+    }
+
+    @Override
+    protected int getSelectedNavigationItemId() {
+        return R.id.navigation_groups;
     }
 
     private void registerEditTeamLauncher() {
@@ -907,5 +914,10 @@ public class TeamDetailActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        super.onPointerCaptureChanged(hasCapture);
     }
 }

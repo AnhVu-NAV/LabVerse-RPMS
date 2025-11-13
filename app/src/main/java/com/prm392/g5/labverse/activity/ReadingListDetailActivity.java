@@ -522,8 +522,8 @@ public class ReadingListDetailActivity extends BaseActivity {
 
         if (importFileButton != null) {
             importFileButton.setOnClickListener(v -> {
-                Toast.makeText(this, "Import File - Coming Soon", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
+                ImportPaperActivity.open(this);
             });
         }
 

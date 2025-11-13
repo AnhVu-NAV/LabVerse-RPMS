@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.prm392.g5.labverse.R;
+import com.prm392.g5.labverse.activity.BaseActivity;
 import com.prm392.g5.labverse.adapter.TeamReadingListPaperAdapter;
 import com.prm392.g5.labverse.dto.team.SetPaperPriorityRequest;
 import com.prm392.g5.labverse.dto.team.TeamReadingListPaperResponse;
@@ -29,7 +30,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class TeamReadingListPapersActivity extends AppCompatActivity {
+public class TeamReadingListPapersActivity extends BaseActivity {
 
     private static final int REQ_SELECT_PAPER = 300;
 
@@ -51,12 +52,18 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_reading_list_papers);
+        setupBottomNavigation(R.id.navigation_groups);
 
         initViews();
         loadIntentData();
         setupToolbar();
         setupFab();
         loadPapers();
+    }
+
+    @Override
+    protected int getSelectedNavigationItemId() {
+        return R.id.navigation_groups;
     }
 
     private void initViews() {
@@ -87,14 +94,19 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
     }
 
     private void setupFab() {
-        fabAddPaper.setVisibility(View.VISIBLE);
+        if (fabAddPaper == null) return;
 
-        fabAddPaper.setOnClickListener(v -> {
-            Intent intent = new Intent(TeamReadingListPapersActivity.this, SelectMyPaperActivity.class);
-            intent.putExtra("TEAM_ID", teamId);
-            intent.putExtra("READING_LIST_ID", readingListId);
-            startActivityForResult(intent, REQ_SELECT_PAPER);
-        });
+        if (isOwner) {
+            fabAddPaper.setVisibility(View.VISIBLE);
+            fabAddPaper.setOnClickListener(v -> {
+                Intent intent = new Intent(this, SelectMyPaperActivity.class);
+                intent.putExtra("TEAM_ID", teamId);
+                intent.putExtra("READING_LIST_ID", readingListId);
+                startActivityForResult(intent, REQ_SELECT_PAPER);
+            });
+        } else {
+            fabAddPaper.setVisibility(View.GONE);
+        }
     }
 
     private void loadPapers() {
@@ -112,35 +124,36 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
 
                     if (papers.isEmpty()) {
                         layoutEmpty.setVisibility(View.VISIBLE);
+                        rvPapers.setVisibility(View.GONE);
                     } else {
+                        layoutEmpty.setVisibility(View.GONE);
                         rvPapers.setVisibility(View.VISIBLE);
 
                         if (adapter == null) {
-                            adapter = new TeamReadingListPaperAdapter(papers, isOwner,
+                            adapter = new TeamReadingListPaperAdapter(
+                                    papers,
+                                    isOwner,
                                     new TeamReadingListPaperAdapter.OnPaperActionListener() {
                                         @Override
                                         public void onSetPriorityClick(TeamReadingListPaperResponse paper, int position) {
                                             showSetPriorityDialog(paper, position);
                                         }
-
                                         @Override
                                         public void onViewStatusClick(TeamReadingListPaperResponse paper) {
                                             openReadingStatus(paper);
                                         }
-
                                         @Override
                                         public void onPaperClick(TeamReadingListPaperResponse paper) {
-                                            // TODO: Implement detail view later
+                                            // TODO: mở Paper detail team view
                                             Toast.makeText(TeamReadingListPapersActivity.this,
-                                                    "Clicked: " + paper.getTitle(),
-                                                    Toast.LENGTH_SHORT).show();
+                                                    "Clicked: " + paper.getTitle(), Toast.LENGTH_SHORT).show();
                                         }
-
                                         @Override
                                         public void onRemovePaperClick(TeamReadingListPaperResponse paper, int position) {
                                             showRemovePaperDialog(paper);
                                         }
-                                    });
+                                    }
+                            );
                             rvPapers.setAdapter(adapter);
                         } else {
                             adapter.updatePapers(papers);
@@ -148,11 +161,8 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
                     }
                 } else {
                     layoutEmpty.setVisibility(View.VISIBLE);
-                    ApiErrorHandler.handleApiResponseError(
-                            TeamReadingListPapersActivity.this,
-                            response,
-                            "LoadPapers"
-                    );
+                    rvPapers.setVisibility(View.GONE);
+                    ApiErrorHandler.handleApiResponseError(TeamReadingListPapersActivity.this, response, "LoadPapers");
                 }
             }
 
@@ -160,11 +170,8 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
             public void onFailure(Call<List<TeamReadingListPaperResponse>> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 layoutEmpty.setVisibility(View.VISIBLE);
-                ApiErrorHandler.handleNetworkFailure(
-                        TeamReadingListPapersActivity.this,
-                        t,
-                        "LoadPapers"
-                );
+                rvPapers.setVisibility(View.GONE);
+                ApiErrorHandler.handleNetworkFailure(TeamReadingListPapersActivity.this, t, "LoadPapers");
             }
         });
     }
@@ -245,7 +252,7 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
     }
 
     private void updatePaperPriority(TeamReadingListPaperResponse paper, String priority) {
-        progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
 
         SetPaperPriorityRequest request = new SetPaperPriorityRequest(priority);
 
@@ -261,26 +268,17 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
 
                         if (response.isSuccessful()) {
                             Toast.makeText(TeamReadingListPapersActivity.this,
-                                    "Priority updated to " + priority,
-                                    Toast.LENGTH_SHORT).show();
-                            loadPapers(); // Reload to reflect changes
+                                    "Priority updated to " + priority, Toast.LENGTH_SHORT).show();
+                            loadPapers();
                         } else {
-                            ApiErrorHandler.handleApiResponseError(
-                                    TeamReadingListPapersActivity.this,
-                                    response,
-                                    "UpdatePriority"
-                            );
+                            ApiErrorHandler.handleApiResponseError(TeamReadingListPapersActivity.this, response, "UpdatePriority");
                         }
                     }
 
                     @Override
                     public void onFailure(Call<TeamReadingListPaperResponse> call, Throwable t) {
                         progressBar.setVisibility(View.GONE);
-                        ApiErrorHandler.handleNetworkFailure(
-                                TeamReadingListPapersActivity.this,
-                                t,
-                                "UpdatePriority"
-                        );
+                        ApiErrorHandler.handleNetworkFailure(TeamReadingListPapersActivity.this, t, "UpdatePriority");
                     }
                 }
         );
@@ -306,5 +304,10 @@ public class TeamReadingListPapersActivity extends AppCompatActivity {
         if (requestCode == REQ_SELECT_PAPER && resultCode == RESULT_OK) {
             loadPapers();
         }
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        super.onPointerCaptureChanged(hasCapture);
     }
 }

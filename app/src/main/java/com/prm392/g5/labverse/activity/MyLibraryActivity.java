@@ -1,16 +1,23 @@
 package com.prm392.g5.labverse.activity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.prm392.g5.labverse.R;
@@ -51,6 +58,7 @@ public class MyLibraryActivity extends BaseActivity {
         papersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new PaperAdapter(new ArrayList<>(), (paper, position) -> {
             Intent intent = new Intent(MyLibraryActivity.this, PaperDetailActivity.class);
+            intent.putExtra(PaperDetailActivity.EXTRA_PAPER_ID, paper.id);
             intent.putExtra(PaperDetailActivity.EXTRA_PAPER_TITLE, paper.title);
             intent.putExtra(PaperDetailActivity.EXTRA_PAPER_AUTHORS, paper.authors);
             intent.putExtra(PaperDetailActivity.EXTRA_PAPER_STATUS, paper.status);
@@ -58,13 +66,12 @@ public class MyLibraryActivity extends BaseActivity {
         });
         papersRecyclerView.setAdapter(adapter);
 
+
         // Bottom nav
         setupBottomNavigation(R.id.navigation_library);
 
         // FAB (Import New Paper)
-        fabAdd.setOnClickListener(v -> {
-            // TODO: mở màn import hoặc gọi API lấy uploadUrl rồi chuyển màn
-        });
+        fabAdd.setOnClickListener(v -> setupFabImport());
 
         // ViewModel
         vm = new ViewModelProvider(this).get(MyLibraryViewModel.class);
@@ -85,6 +92,7 @@ public class MyLibraryActivity extends BaseActivity {
             List<PaperAdapter.PaperItem> items = new ArrayList<>();
             for (PaperCache e : list) {
                 items.add(new PaperAdapter.PaperItem(
+                        e.id,
                         e.title,
                         e.authors,
                         e.journal,
@@ -147,13 +155,23 @@ public class MyLibraryActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_profile) {
-            // TODO: mở profile
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
             return true;
         } else if (item.getItemId() == android.R.id.home) {
             // icon search trên toolbar (đã handle ở setNavigationOnClickListener)
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setupFabImport() {
+        FloatingActionButton fabAdd = findViewById(R.id.fab_add);
+        fabAdd.setOnClickListener(v -> {
+            // Mở thẳng màn import file (ImportPaperActivity)
+            ImportPaperActivity.open(this);
+        });
     }
 
     @Override

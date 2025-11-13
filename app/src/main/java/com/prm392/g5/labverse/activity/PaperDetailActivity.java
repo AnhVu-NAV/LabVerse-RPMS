@@ -10,7 +10,7 @@ import com.prm392.g5.labverse.R;
 import com.prm392.g5.labverse.adapter.PaperDetailPagerAdapter;
 
 public class PaperDetailActivity extends BaseActivity {
-
+    public static final String EXTRA_PAPER_ID = "paper_id";
     public static final String EXTRA_PAPER_TITLE = "paper_title";
     public static final String EXTRA_PAPER_AUTHORS = "paper_authors";
     public static final String EXTRA_PAPER_STATUS = "paper_status";
@@ -19,7 +19,7 @@ public class PaperDetailActivity extends BaseActivity {
     private ViewPager2 viewPager;
     private Toolbar toolbar;
     private String paperTitle;
-
+    private String paperId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +28,7 @@ public class PaperDetailActivity extends BaseActivity {
         // Get data from Intent
         Intent intent = getIntent();
         paperTitle = intent.getStringExtra(EXTRA_PAPER_TITLE);
+        paperId = intent.getStringExtra(EXTRA_PAPER_ID);
         if (paperTitle == null) {
             paperTitle = "The Impact of AI on Education"; // Default title
         }
@@ -56,7 +57,7 @@ public class PaperDetailActivity extends BaseActivity {
     }
 
     private void setupViewPager() {
-        PaperDetailPagerAdapter adapter = new PaperDetailPagerAdapter(this);
+        PaperDetailPagerAdapter adapter = new PaperDetailPagerAdapter(this, paperId);
         viewPager.setAdapter(adapter);
 
         // Link TabLayout with ViewPager2

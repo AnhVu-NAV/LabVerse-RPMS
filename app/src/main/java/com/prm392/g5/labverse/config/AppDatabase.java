@@ -13,18 +13,20 @@ import com.prm392.g5.labverse.dao.PaperDashboardDao;
 import com.prm392.g5.labverse.dao.ReadingListDao;
 import com.prm392.g5.labverse.dao.ReadingListPaperDao;
 import com.prm392.g5.labverse.dao.SyncMetaDao;
+import com.prm392.g5.labverse.dao.UserDao;
 import com.prm392.g5.labverse.entity.Paper;
 import com.prm392.g5.labverse.entity.PaperAnnotation;
 import com.prm392.g5.labverse.entity.PaperCache;
 import com.prm392.g5.labverse.entity.ReadingList;
 import com.prm392.g5.labverse.entity.ReadingListPaper;
 import com.prm392.g5.labverse.entity.SyncMeta;
+import com.prm392.g5.labverse.entity.UserEntity;
 import com.prm392.g5.labverse.util.LocalDateTimeConverter;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Paper.class, PaperAnnotation.class, ReadingList.class, ReadingListPaper.class, PaperCache.class, SyncMeta.class}, version = 8, exportSchema = false)
+@Database(entities = {Paper.class, PaperAnnotation.class, ReadingList.class, ReadingListPaper.class, PaperCache.class, SyncMeta.class, UserEntity.class}, version = 10, exportSchema = false)
 @TypeConverters({LocalDateTimeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -36,6 +38,9 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract PaperDashboardDao paperDashboardDao();
     public abstract ReadingListPaperDao readingListPaperDao();
     public abstract SyncMetaDao syncMetaDao();
+
+    public abstract UserDao userDao();
+
 
     // Thread pool cho tác vụ ghi DB
     public static final ExecutorService databaseWriteExecutor =

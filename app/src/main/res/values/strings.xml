@@ -57,6 +57,6 @@
     <string name="paper_open">Open paper detail</string>
     <string name="please_enter_search_query">Please enter a search query</string>
     <string name="removed_from_search_history">Removed from search history</string>
-
+    <string name="open_pdf">Open PDF</string>
 
 </resources>

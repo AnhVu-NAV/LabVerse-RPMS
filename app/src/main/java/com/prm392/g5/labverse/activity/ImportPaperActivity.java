@@ -33,10 +33,12 @@ import retrofit2.Response;
 
 public class ImportPaperActivity extends AppCompatActivity {
 
-    private final PaperRepository paperRepository;
+    private PaperRepository paperRepository;
     private File uploadedFile;
     private String s3Key;
     private Paper paper;
+
+    public ImportPaperActivity() { /* must be empty */ }
 
     public ImportPaperActivity(PaperRepository paperRepository) {
         this.paperRepository = paperRepository;

@@ -11,8 +11,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
     private static Retrofit retrofit = null;
     private static final String BASE_URL = "http://10.0.2.2:8080";
-    SyncApiService syncApi = RetrofitClient.getInstance().create(SyncApiService.class);
-//    SyncRepository syncRepo = new SyncRepository(context, syncApi, userId);
 
     public static Retrofit getInstance() {
         if (retrofit == null) {
