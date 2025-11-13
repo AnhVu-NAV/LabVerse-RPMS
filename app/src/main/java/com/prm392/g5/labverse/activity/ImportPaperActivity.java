@@ -25,6 +25,7 @@ import com.prm392.g5.labverse.util.PdfMetadataUtil;
 import com.prm392.g5.labverse.util.S3Util;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 import retrofit2.Call;
@@ -38,27 +39,28 @@ public class ImportPaperActivity extends AppCompatActivity {
     private String s3Key;
     private Paper paper;
 
-    public ImportPaperActivity() { /* must be empty */ }
-
-    public ImportPaperActivity(PaperRepository paperRepository) {
-        this.paperRepository = paperRepository;
-    }
 
     public static void open(Context context) {
         Intent intent = new Intent(context, ImportPaperActivity.class);
         context.startActivity(intent);
     }
 
-    //todo cần link với giao diện của TA
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        paperRepository = new PaperRepository(this);
         // Đăng ký launcher chọn file PDF
         ActivityResultLauncher<String> pickPdfLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
                 uri -> {
                     if (uri != null) {
+                        final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+                        try {
+                            getContentResolver().takePersistableUriPermission(uri, takeFlags);
+                        } catch (SecurityException e) {
+                            Log.w("Upload", "Không thể giữ quyền đọc cho URI", e);
+                        }
                         copyUriToTempFile(uri);
                     }
                 });
@@ -67,19 +69,24 @@ public class ImportPaperActivity extends AppCompatActivity {
 
 
     private void copyUriToTempFile(Uri uri) {
-        try {
-            InputStream inputStream = getContentResolver().openInputStream(uri);
+        try (InputStream inputStream = getContentResolver().openInputStream(uri)) {
+            if (inputStream == null) {
+                Log.d("IMPORT_PAPER", "copyUriToTempFile: Không mở được file từ URI");
+                throw new IOException("Không mở được file");
+            }
+
+            //Xử lí tên file, loại bỏ bất kì kí tự không hợp lệ
             String fileName = getFileName(uri);
 
+            String userId = SharePreferenceManager.getInstance().getUserId();
+
             //the s3Key is simmilar to the location of the destination file
-            s3Key = SharePreferenceManager.getInstance().getUserId() + "/paper/" + fileName;
+            s3Key = userId + "/paper/" + fileName;
             uploadedFile = new File(getExternalFilesDir(null), s3Key);
 
             // Tạo thư mục cha nếu chưa có
             File parentDir = uploadedFile.getParentFile();
-            if (parentDir != null && !parentDir.exists()) {
-                parentDir.mkdirs(); // tạo đầy đủ cả cây thư mục
-            }
+            if (parentDir != null && !parentDir.exists()) parentDir.mkdirs();
 
             //viết ra file đích
             FileUtil.copyContentFromTo(inputStream, uploadedFile);
@@ -88,8 +95,8 @@ public class ImportPaperActivity extends AppCompatActivity {
             //hơi liều nhưng để xử lí nhanh thì đành làm thế
             uploadToS3();
         } catch (Exception e) {
-            Log.e("Upload", "Copy file lỗi", e);
-            Toast.makeText(ImportPaperActivity.this, "Có lỗi xảy ra trong quá trình import paper. Hãy thử lại", Toast.LENGTH_SHORT).show();
+//            Log.e("IMPORT_PAPER", "Copy file lỗi", e);
+            Toast.makeText(this, "Lỗi khi import file PDF", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -115,7 +122,7 @@ public class ImportPaperActivity extends AppCompatActivity {
                 int cut = path.lastIndexOf('/');
                 name = (cut != -1) ? path.substring(cut + 1) : path;
             } else {
-                name = "temp.pdf";
+                name = "temp.pdf"; //call back file ko có tên
             }
         }
         //Sanitize toàn bộ tên trước (tránh ký tự lạ ảnh hưởng đến substring)
