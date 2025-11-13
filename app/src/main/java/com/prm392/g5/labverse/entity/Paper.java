@@ -31,7 +31,7 @@ public class Paper {
     String updatedAt;   // ISO8601
     long version;       // hoặc String etag
     private String ownerUserId;
-    //todo paper vẫn còn thiếu thong tin nhe
+    private String doi;
 
     public Paper() {
     }
@@ -131,5 +131,13 @@ public class Paper {
 
     public void setOwnerUserId(String ownerUserId) {
         this.ownerUserId = ownerUserId;
+    }
+
+    public String getDoi() {
+        return doi;
+    }
+
+    public void setDoi(String doi) {
+        this.doi = doi;
     }
 }
