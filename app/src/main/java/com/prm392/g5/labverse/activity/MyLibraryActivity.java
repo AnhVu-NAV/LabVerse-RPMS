@@ -125,6 +125,15 @@ public class MyLibraryActivity extends BaseActivity {
         if (tabLayout.getTabAt(0) != null) tabLayout.getTabAt(0).select();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Gọi lại sync hoặc reload nhẹ khi quay về
+        WorkScheduler.initSync(getApplicationContext()); // nếu cần
+//        if (vm != null) vm.refreshIfStale(); // tự bạn định nghĩa: chỉ requery khi dữ liệu cũ
+    }
+
+
     // Map từ cache entity → item hiển thị
     private PaperAdapter.PaperItem map(PaperCache e) {
         return new PaperAdapter.PaperItem(
