@@ -1,7 +1,10 @@
 package com.prm392.g5.labverse.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
@@ -78,6 +81,24 @@ public class PaperDetailActivity extends BaseActivity {
             }
         }).attach();
     }
+
+    public static void open(
+            Context context,
+            String paperId,
+            String paperTitle,
+            @Nullable String teamId,
+            @Nullable String readingListId,
+            boolean isTeamContext
+    ) {
+        Intent intent = new Intent(context, PaperDetailActivity.class);
+        intent.putExtra(EXTRA_PAPER_ID, paperId);
+        intent.putExtra(EXTRA_PAPER_TITLE, paperTitle);
+        if (teamId != null) intent.putExtra("TEAM_ID", teamId);
+        if (readingListId != null) intent.putExtra("READING_LIST_ID", readingListId);
+        intent.putExtra("IS_TEAM_CONTEXT", isTeamContext);
+        context.startActivity(intent);
+    }
+
 
     @Override
     protected int getSelectedNavigationItemId() {

@@ -146,7 +146,8 @@ public class TeamReadingListPapersActivity extends BaseActivity {
                                         @Override
                                         public void onPaperClick(TeamReadingListPaperResponse paper) {
                                             Intent i = new Intent(TeamReadingListPapersActivity.this, PaperDetailActivity.class);
-                                            i.putExtra("PAPER_ID", paper.getPaperId());
+                                            i.putExtra(PaperDetailActivity.EXTRA_PAPER_ID, paper.getPaperId());
+                                            i.putExtra(PaperDetailActivity.EXTRA_PAPER_TITLE, paper.getTitle());
                                             i.putExtra("TEAM_ID", teamId);
                                             i.putExtra("READING_LIST_ID", readingListId);
                                             i.putExtra("IS_TEAM_CONTEXT", true); // để màn detail biết đang ở team mode (ẩn/hiện nút phù hợp)

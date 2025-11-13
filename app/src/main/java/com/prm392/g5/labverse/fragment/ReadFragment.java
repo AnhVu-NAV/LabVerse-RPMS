@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,8 +50,10 @@ public class ReadFragment extends Fragment {
             btnOpenPaper.setOnClickListener(v -> {
                 if (paperId != null) {
                     PrepareViewPdfActivity.open(requireContext(), paperId);
+//                    Toast.makeText(requireContext(), "Opening paper: " + paperId, Toast.LENGTH_SHORT).show();
                 }
             });
+            
         } else {
             // Log để dễ debug nếu layout bị đổi ID/không có nút:
             android.util.Log.w("ReadFragment", "btnOpenPdf not found in fragment_read layout");
